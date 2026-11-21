@@ -1,0 +1,173 @@
+{
+  "repository": "https://github.com/excalidraw/excalidraw",
+  "commit": "701b901a0f1ba3d0b390d9cdf63d112e25abac4b",
+  "sources": [
+    {
+      "file": "shape",
+      "sha256": "d9db3f15f23d199f48dd9d0b3b9a24461b321880cc4e98ee857c932c6574412f",
+      "declarations": [
+        "getDashArrayDashed",
+        "getDashArrayDotted",
+        "adjustRoughness",
+        "generateRoughOptions",
+        "modifyIframeLikeForRoughOptions",
+        "generateArrowheadCardinalityOne",
+        "generateArrowheadLinesToTip",
+        "getArrowheadLineOptions",
+        "generateArrowheadOutlineCircle",
+        "fillArrowheadOutline",
+        "getArrowheadShapes",
+        "getFreedrawFillCurvePoints",
+        "_generateElementShape",
+        "ELBOW_ARROW_CORNER_RADIUS",
+        "generateElbowArrowShape",
+        "getFreeDrawSvgPath",
+        "VARIABLE_WIDTH_FREEDRAW",
+        "CONSTANT_WIDTH_FREEDRAW",
+        "getFreedrawStreamline",
+        "getVariableWidthFreedrawOutline",
+        "createLaserPointer",
+        "getConstantWidthFreedrawOutline",
+        "getFreedrawOutlinePoints",
+        "med",
+        "TO_FIXED_PRECISION",
+        "getSvgPathFromStroke"
+      ]
+    },
+    {
+      "file": "bounds",
+      "sha256": "161493986eca16878ee7b46e34e8ad3d825ea1864edc992d88d3429c8eecb207",
+      "declarations": [
+        "getDiamondPoints",
+        "CARDINALITY_MARKER_SIZE",
+        "CROWFOOT_ARROWHEAD_SIZE",
+        "CARDINALITY_ONE_OR_MANY_BAR_OFFSET",
+        "CARDINALITY_INNER_BAR_OFFSET",
+        "CARDINALITY_ZERO_CIRCLE_OFFSET",
+        "CARDINALITY_ZERO_CIRCLE_SCALE",
+        "getArrowheadSize",
+        "ARROW_ARROWHEAD_ANGLE",
+        "ARROW_ARROWHEAD_WIDEST_ANGLE",
+        "ARROW_ARROWHEAD_WIDEST_SIZE",
+        "getArrowheadAngle",
+        "getArrowheadCorner",
+        "getSidesClearSize",
+        "isCardinalityArrowhead",
+        "getCardinalityMarkerScale",
+        "getArrowheadSizeBeyondLastSegment",
+        "getArrowheadPoints"
+      ]
+    },
+    {
+      "file": "utils",
+      "sha256": "3298aed68967c41efc7b337212b26208ecc05798fa384ae4b07fda5b567b237d",
+      "declarations": [
+        "isPathALoop",
+        "getCornerRadius"
+      ]
+    },
+    {
+      "file": "constants",
+      "sha256": "be5c14d191f218a77dad05f62127d7f846ed9a80c7151c26ebb8798df1c83f66",
+      "declarations": [
+        "ROUGHNESS",
+        "ROUNDNESS",
+        "DEFAULT_ADAPTIVE_RADIUS",
+        "DEFAULT_PROPORTIONAL_RADIUS",
+        "LINE_CONFIRM_THRESHOLD",
+        "THEME",
+        "DEFAULT_STROKE_STREAMLINE"
+      ]
+    },
+    {
+      "file": "colors",
+      "sha256": "2350aca6e19da59b24cf009ecc670271e100b0fe7e74ed967dc16a6c17beb26e",
+      "declarations": [
+        "DARK_MODE_COLORS_CACHE",
+        "DARK_MODE_FILTER_INVERT_PERCENT",
+        "DARK_MODE_FILTER_HUE_ROTATE_DEGREES",
+        "cssHueRotate",
+        "cssInvert",
+        "applyDarkModeFilter",
+        "rgbToHex",
+        "isTransparent"
+      ]
+    },
+    {
+      "file": "typeChecks",
+      "sha256": "c5a156114ef397f77e3e4f33f1025c44c04865f513e3251b83a3ec9724044bfa",
+      "declarations": [
+        "isLinearElement",
+        "isLinearElementType",
+        "isArrowElement",
+        "isElbowArrow",
+        "isIframeLikeElement",
+        "isIframeElement",
+        "isEmbeddableElement"
+      ]
+    },
+    {
+      "file": "comparisons",
+      "sha256": "290f5fb88e6e3477b9400a7f9f39f89d5593d742f5350726e75ee31d7e401cb7",
+      "declarations": [
+        "canChangeRoundness"
+      ]
+    },
+    {
+      "file": "heading",
+      "sha256": "638ef9760c2cf97a09f08bea3b49c514b1506562cc58f958b7026a2022cb2ca5",
+      "declarations": [
+        "HEADING_RIGHT",
+        "HEADING_DOWN",
+        "HEADING_LEFT",
+        "HEADING_UP",
+        "vectorToHeading",
+        "headingForPoint",
+        "headingForPointIsHorizontal",
+        "compareHeading",
+        "headingIsHorizontal"
+      ]
+    },
+    {
+      "file": "point",
+      "sha256": "9dc06414ec2fd9606c3733e39f2dc0716192acc859962b2b6c07d75b0a081651",
+      "declarations": [
+        "pointFrom",
+        "pointFromArray",
+        "pointRotateRads",
+        "pointDistance"
+      ]
+    },
+    {
+      "file": "vector",
+      "sha256": "782f79f8c9d2b23b31d5dcbb6397466229d31cc982570ad1a51565f7c46d2499",
+      "declarations": [
+        "vector",
+        "vectorFromPoint",
+        "vectorMagnitudeSq",
+        "vectorDot"
+      ]
+    },
+    {
+      "file": "shape-utils",
+      "sha256": "ec4ab1aab5fcca5edd94addc5f9f8ee4d12d9a8b635e141e7c29c1d17c697335",
+      "declarations": [
+        "getCurvePathOps"
+      ]
+    },
+    {
+      "file": "angle",
+      "sha256": "fad5a8e86381be41aae536fadf548ab3fac993a23de6908170d03dc7c0a52bc9",
+      "declarations": [
+        "degreesToRadians"
+      ]
+    },
+    {
+      "file": "math-utils",
+      "sha256": "18af91526daf025a957f07040b79bea57d3412fe910a998ca64f11fab8e01ade",
+      "declarations": [
+        "clamp"
+      ]
+    }
+  ]
+}

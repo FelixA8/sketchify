@@ -1,0 +1,11 @@
+{
+  "description": "Recorded from the untouched legacy application before removal; test-only Arial alias uses the locked Next.js Geist font to avoid host-font differences.",
+  "testFontSha256": "bde046ddd9f20be35b0bd56cc79eb752b967fb6661a3fe76cb067bb09f871d76",
+  "sources": {
+    "scene.js": "b49d093c91588b24ab54ad8f7b59ec29fef067831f96786f664c35efa2f021b4",
+    "text.js": "4fe63abb02a0b7cc30d7082b23594027282ad7fa39f9f9cf93216413a840aaca",
+    "text-editor.js": "f0a90d4935ba061b2351ad9397c4abe2ecb2145622e5a6bbe34272c36cead5da",
+    "app.js": "9cdd852e4d47a8232ac604eb5abe6a4207515203c233dbded788dd2c3a5789fe",
+    "strokes.js": "7c513b13f8c79f2f67c963e4e98c0a30f13c833bdd24e7560af3da0d0ec6abc4"
+  }
+}

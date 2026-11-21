@@ -1,0 +1,34 @@
+import { useLayoutEffect, useRef } from 'react';
+import { useBoard } from './context';
+import { Icon } from './Icon';
+import { projectNameLabel, renamedProject } from './project-name';
+import { ExportDialog } from './ExportDialog';
+const shortcuts = [['Selection / Hand', 'v / h'], ['Rectangle / Diamond / Ellipse', 'r / d / o'], ['Arrow / Line / Draw / Text', 'a / l / p / t'], ['Sticky note', 'n'], ['Eraser', 'e'], ['Add shape with keyboard', 'Choose tool, focus canvas, Enter'], ['Bold / Italic / Underline text', '⌘b / ⌘i / ⌘u'], ['Add or edit text link', '⌘k while editing'], ['Open text link', '⌘/Ctrl + click'], ['Finish / Cancel text editing', '⌘Enter / Escape'], ['Keep tool active', 'q'], ['Pan canvas', 'Space + drag'], ['Select multiple', 'Shift + click or drag'], ['Undo / Redo', '⌘z / ⌘⇧z'], ['Duplicate selection', '⌘d or Alt + drag'], ['Copy / Cut / Paste', '⌘c / ⌘x / ⌘v'], ['Save / Open', '⌘s / ⌘o'], ['Fit drawing / Reset zoom', 'Shift + 1 / Shift + 0'], ['Nudge selection', 'Arrow keys'], ['Delete selection', 'Delete / Backspace'], ['Square / Circle / Snap angle', 'Hold Shift while drawing']];
+export function Dialog() {
+  const { state: s, run } = useBoard(), dialog = useRef<HTMLDialogElement>(null), name = useRef<HTMLInputElement>(null);
+  useLayoutEffect(() => {
+    if (s.dialog && !dialog.current!.open) dialog.current!.showModal();
+    if (!s.dialog && dialog.current!.open) dialog.current!.close();
+    if (s.dialog === 'rename') name.current?.focus();
+    if (s.dialog === 'object-link') dialog.current?.querySelector<HTMLInputElement>('#object-url')?.focus();
+  }, [s.dialog]);
+  const title = s.dialog === 'help' ? 'Keyboard shortcuts' : s.dialog === 'rename' ? 'Rename drawing' : s.dialog === 'clear' ? 'Clear the canvas?' : s.dialog === 'export' ? 'Export image' : s.dialog === 'import' ? 'Some elements are unsupported' : s.dialog === 'delete-page' ? 'Delete page?' : 'Object link';
+  const saveName = () => run(a => { a.state.name = renamedProject(name.current!.value, a.state.name); a.closeDialog(); a.persistence.schedule(); });
+  return <dialog ref={dialog} id="dialog" className={s.dialog === 'export' ? 'export-dialog' : undefined} aria-labelledby="dialog-title" onCancel={event => { event.preventDefault(); run(a => a.closeDialog()); }} onClose={() => { if (s.dialog) run(a => a.closeDialog()); }} onClick={event => { if (event.target === event.currentTarget) { const rect = event.currentTarget.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) run(a => a.closeDialog()); } }}>
+    <div id="dialog-content">{s.dialog && <>
+      <div className="dialog-head"><h2 id="dialog-title">{title}</h2><button className="icon-button" data-close aria-label="Close dialog" onClick={() => run(a => a.closeDialog())}><Icon name="close" /></button></div>
+      {s.dialog === 'help' && <>{[...shortcuts, ['Group / Ungroup selection', '⌘g / ⌘⇧g'], ['Enter group', 'Double-click / Enter'], ['Exit group', 'Escape'], ['Toggle grid', "⌘'"], ['Toggle zen mode / Exit zen mode', 'Option+z / Escape']].map(([label, key]) => <div className="shortcut-row" key={label}><span>{label}</span><kbd>{key}</kbd></div>)}<p style={{ fontSize: 12 }}>Use Ctrl instead of ⌘ and Alt instead of Option on Windows and Linux. Paste images with ⌘v or Ctrl+v, or use Paste in the right-click menu. Drag the circle above any selected object or multi-selection to rotate it; hold Shift to snap to 15° steps. Frame contents rotate together. This local remake supports shapes, text, frames, and images. Live collaboration is not included.</p></>}
+      {s.dialog === 'rename' && <><label className="field-label">Drawing name<input ref={name} id="drawing-name" maxLength={100} defaultValue={projectNameLabel(s.name)} onKeyDown={event => { if (event.key === 'Enter' && !event.nativeEvent.isComposing) saveName(); }} /></label><div className="dialog-actions"><button className="action-button primary" id="confirm-name" onClick={saveName}>Save name</button></div></>}
+      {s.dialog === 'object-link' && s.objectLink && <form onSubmit={event => { event.preventDefault(); const input = event.currentTarget.elements.namedItem('object-url') as HTMLInputElement; run(a => a.objects.applyLink(input.value)); }}>
+        <label className="field-label">Link address<input name="object-url" id="object-url" type="text" inputMode="url" defaultValue={s.objectLink.value} placeholder="https://example.com" aria-describedby="object-link-error" autoComplete="off" spellCheck={false} /></label>
+        <p id="object-link-error" role="alert">{s.objectLink.error}</p>
+        {s.objectLink.value && <a href={s.objectLink.value} target="_blank" rel="noopener noreferrer">Open link</a>}
+        <div className="dialog-actions"><button type="button" className="action-button" onClick={() => run(a => a.objects.applyLink(''))}>Remove link</button><button type="submit" className="action-button primary">Save link</button></div>
+      </form>}
+      {s.dialog === 'clear' && <><p>This removes every element on this page. You can undo this while the project stays open.</p><div className="dialog-actions"><button className="action-button" id="cancel-clear" onClick={() => run(a => a.closeDialog())}>Cancel</button><button className="action-button danger" id="confirm-clear" onClick={() => run(a => { a.state.elements = []; a.state.layers = {}; a.state.selected.clear(); a.state.editingGroup = null; a.state.pan = { x: 0, y: 0 }; a.closeDialog(); a.commit(); })}>Clear canvas</button></div></>}
+      {s.dialog === 'delete-page' && <><p>Delete “{s.pages.find(page => page.id === s.deletingPage)?.name}” and everything on it? This cannot be undone.</p><div className="dialog-actions"><button className="action-button" onClick={() => run(a => a.closeDialog())}>Cancel</button><button id="confirm-delete-page" className="action-button danger" onClick={() => run(a => { const id = a.state.deletingPage; a.closeDialog(); if (id) a.workspace.deletePage(id); })}>Delete page</button></div></>}
+      {s.dialog === 'import' && <><p>This file contains {s.importInfo.skipped} unsupported element{s.importInfo.skipped > 1 ? 's' : ''}, such as images with missing files. Opening it will import {s.importInfo.count} supported elements.</p><div className="dialog-actions"><button id="cancel-import" className="action-button" onClick={() => run(a => { a.files.pending = null; a.closeDialog(); })}>Cancel</button><button id="confirm-import" className="action-button primary" onClick={() => run(a => { const pending = a.files.pending!; a.closeDialog(); if (pending.project) a.workspace.replaceProject(pending.project); else a.files.replace(pending.result, pending.name); a.files.pending = null; })}>Import supported elements</button></div></>}
+      {s.dialog === 'export' && <ExportDialog />}
+    </>}</div>
+  </dialog>;
+}

@@ -1,0 +1,37 @@
+node_modules/
+.DS_Store
+*.log
+artifacts/
+.next/
+out/
+*.tsbuildinfo
+test-results/
+playwright-report/
+
+# Local environment and credentials
+.env
+.env.*
+*.env
+*.env.*
+.npmrc
+.netrc
+.pypirc
+.aws/
+.ssh/
+credentials.json
+credentials.*.json
+service-account*.json
+serviceAccount*.json
+secrets/
+secrets.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+
+# Local agent instructions
+[Aa][Gg][Ee][Nn][Tt][Ss].[Mm][Dd]

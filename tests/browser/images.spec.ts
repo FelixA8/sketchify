@@ -1,0 +1,41 @@
+import { test, expect } from '@playwright/test';
+import { createCanvas } from '@napi-rs/canvas';
+const fixture = createCanvas(80, 40), ctx = fixture.getContext('2d');
+ctx.fillStyle = '#ff0000'; ctx.fillRect(0, 0, 40, 40); ctx.fillStyle = '#0000ff'; ctx.fillRect(40, 0, 40, 40);
+const base64 = fixture.toBuffer('image/png').toString('base64');
+
+test('clipboard images render, resize proportionally, reload and survive undo/redo', async ({ page }) => {
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/'); await expect(page.locator('#canvas')).toBeVisible();
+  await page.evaluate(base64 => {
+    const bytes = Uint8Array.from(atob(base64), character => character.charCodeAt(0));
+    const data = new DataTransfer(); data.items.add(new File([bytes], 'clipboard.png', { type: 'image/png' }));
+    data.setData('text/plain', 'https://example.com/image.png');
+    document.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+  }, base64);
+  await expect(page.locator('#selection-info')).toHaveText('1 selected');
+  await expect(page.locator('#save-state')).toHaveText('Saved on this device');
+  const image = await page.evaluate(() => JSON.parse(localStorage.getItem('sketchify.scene.v1')!).elements[0]);
+  expect(image.type).toBe('image'); expect(image.width).toBe(80); expect(image.height).toBe(40);
+  const pixel = () => page.locator('#canvas').evaluate((canvas, point) => [...(canvas as HTMLCanvasElement).getContext('2d')!.getImageData(point.x + 5, point.y + 5, 1, 1).data], { x: image.x, y: image.y });
+  await expect.poll(pixel).toEqual([255, 0, 0, 255]);
+  await page.getByRole('button', { name: 'Undo', exact: true }).click(); await expect(page.locator('#selection-info')).toHaveText('');
+  await page.getByRole('button', { name: 'Redo', exact: true }).click();
+  await page.reload(); await expect.poll(pixel).toEqual([255, 0, 0, 255]);
+  await page.mouse.click(image.x + 30, image.y + 20);
+  await page.mouse.move(image.x + 80, image.y + 40); await page.mouse.down();
+  await page.mouse.move(image.x + 160, image.y + 55); await page.mouse.up();
+  await expect(page.locator('#save-state')).toHaveText('Saved on this device');
+  const resized = await page.evaluate(() => JSON.parse(localStorage.getItem('sketchify.scene.v1')!).elements[0]);
+  expect(resized.width).toBe(160); expect(resized.height).toBe(80);
+  const center = { x: resized.x + resized.width / 2, y: resized.y + resized.height / 2 };
+  await page.mouse.move(center.x, resized.y - 32); await page.mouse.down();
+  await page.mouse.move(center.x + 100, center.y, { steps: 5 }); await page.mouse.up();
+  await expect(page.locator('#save-state')).toHaveText('Saved on this device');
+  const rotated = await page.evaluate(() => JSON.parse(localStorage.getItem('sketchify.scene.v1')!).elements[0]);
+  expect(rotated.angle).toBeCloseTo(Math.PI / 2); expect(rotated.x).toBe(resized.x); expect(rotated.y).toBe(resized.y);
+  await page.screenshot({ path: 'artifacts/image-rotation.png' });
+  await page.reload();
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('sketchify.scene.v1')!).elements[0].angle)).toBeCloseTo(Math.PI / 2);
+  expect(errors).toEqual([]);
+});
