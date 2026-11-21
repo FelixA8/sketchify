@@ -35,3 +35,7 @@ id_ed25519*
 
 # Local agent instructions
 [Aa][Gg][Ee][Nn][Tt][Ss].[Mm][Dd]
+
+# Keep only the root README among Markdown files
+*.[Mm][Dd]
+!/README.md

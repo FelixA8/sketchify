@@ -102,10 +102,10 @@ Linux environments may need `npx playwright install --with-deps chromium firefox
 
 The Node suite retains the original 49 scenarios and adds migration coverage. All 196 pinned renderer fixtures must match exact operation hashes and native RGBA pixels. Legacy storage, editable JSON, SVG, and native PNG outputs have separate compatibility fixtures. Their normal-text rendering uses a test-only font from the locked Next.js dependency to avoid host-font differences. Handwritten text bounds tests load the application's bundled Patrick Hand font.
 
-See [QA.md](QA.md) for verification evidence and environment limitations. Passing model/native-canvas tests does not establish browser visual parity by itself.
+Passing model/native-canvas tests does not establish browser visual parity by itself.
 
 ## Renderer scope and attribution
 
-This independent application uses rendering routines from Excalidraw commit `701b901a0f1ba3d0b390d9cdf63d112e25abac4b`, Rough.js 4.6.4, perfect-freehand 1.2.0, and points-on-curve 1.0.1. See [RENDERER.md](RENDERER.md) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+This independent application uses rendering routines from Excalidraw commit `701b901a0f1ba3d0b390d9cdf63d112e25abac4b`, Rough.js 4.6.4, perfect-freehand 1.2.0, and points-on-curve 1.0.1. See the retained [licenses](vendor/licenses/) and [source provenance](vendor/provenance.json). Font licenses are retained alongside the font files in `public/fonts/`.
 
 Live collaboration and upstream Excalidraw fonts remain out of scope. Groups, images, frames, rotation, and fixed endpoint connections to rectangles, ellipses, diamonds, and standalone text are supported. Unsupported elements and missing image files are reported before import. Handwritten text uses locally bundled Patrick Hand; SVG exports embed the font and its license. Normal and code text metrics depend on available system fonts. Parity claims concern this app's prior behavior and the pinned renderer fixtures, not the full upstream application or an unidentified live-site build.

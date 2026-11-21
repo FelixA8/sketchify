@@ -1,8 +1,0 @@
-# Individual selection border checks
-
-- Direction and liveliness PASS: retained the established sketching workspace, purple selection accent, solid strokes, and ENERGY 1 / RHYTHM 1 / MOTION 1. The user's screenshot supplies the reference for individual component bounds during box selection and multi-selection.
-- Purpose PASS: individual borders make each independent selected component visible inside the shared transform boundary. Groups have one shared border; bound labels and frame contents do not add redundant borders. Existing handles remain on the overall selection so the drawing keeps one set of transform controls. DESIGN.md records this behavior.
-- Source and content PASS: changes live in the existing TypeScript canvas renderer. No new controls, CSS, assets, animation, claims, colors, fonts, or dependencies were introduced.
-- Function and compatibility PASS: all 293 Node tests, lint, strict TypeScript, and the production build pass. Five renderer tests inspect actual pixels for both themes, grouping/ungrouping, live marquee selection, deselection, mixed selections, and rotated bounds at saved pan and zoom. Existing transformation, image, grouping, and legacy compatibility cases pass.
-- Canvas appearance PASS: inspected artifacts/selection-outlines-native-preview.png, rendered with the application's canvas renderer. Each of three ungrouped rectangles and two arrows has its own solid outline, with a shared outer selection boundary and handles, in both themes.
-- Browser gate PENDING: native browser acceptance remains unavailable under the previously confirmed localhost binding restriction. The canvas preview and pixel tests verify rendering; they do not establish browser layout or native pointer event acceptance.
