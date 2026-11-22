@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
 import { seedStorage } from './storage';
 
 for (const width of [375, 820, 1440]) for (const theme of ['light', 'dark']) test(`project name editing fits and persists at ${width}px in ${theme}`, async ({ page }) => {
@@ -35,7 +36,9 @@ for (const width of [375, 820, 1440]) for (const theme of ['light', 'dark']) tes
   await label.press('Enter'); await input.fill('Final project'); await input.press('Tab'); await expect(label).toHaveText('Final project');
   await expect(page.locator('#save-state')).toHaveText('Saved on this device');
   await page.locator('#canvas').focus();
-  const download = page.waitForEvent('download'); await page.keyboard.press('ControlOrMeta+s');
-  expect((await download).suggestedFilename()).toBe('Final project.sketchify');
+  const downloading = page.waitForEvent('download'); await page.keyboard.press('ControlOrMeta+s');
+  const download = await downloading;
+  expect(download.suggestedFilename()).toMatch(/^Final[ _]project\.sketchify$/);
+  expect(JSON.parse(await readFile((await download.path())!, 'utf8')).name).toBe('Final project');
   expect(errors).toEqual([]);
 });

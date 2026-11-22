@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 export async function seedStorage(page: Page, scene: unknown, entries: Record<string, string> = {}) {
   await page.addInitScript(values => {
@@ -6,4 +6,11 @@ export async function seedStorage(page: Page, scene: unknown, entries: Record<st
     for (const [key, value] of Object.entries(values)) localStorage.setItem(key, value);
     sessionStorage.setItem('sketchify.test.seeded', 'true');
   }, { ...entries, 'sketchify.scene.v1': JSON.stringify(scene) });
+}
+
+export async function waitForInitialSave(page: Page) {
+  await expect.poll(() => page.evaluate(() => {
+    const saved = localStorage.getItem('sketchify.scene.v1');
+    return saved ? JSON.parse(saved).project?.version : undefined;
+  })).toBe(1);
 }

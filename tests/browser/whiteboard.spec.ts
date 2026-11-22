@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { readFile } from 'node:fs/promises';
-import { seedStorage } from './storage';
+import { seedStorage, waitForInitialSave } from './storage';
 const errors = new WeakMap<Page, string[]>();
 test.beforeEach(async ({ page }) => {
   const captured: string[] = []; errors.set(page, captured);
@@ -61,11 +61,21 @@ for (const family of ['Patrick Hand', 'Excalifont']) test(`${family} loads local
   const element = (await saved(page)).elements[0];
   expect(element.fontFamily).toBe(excalifont ? 5 : 1);
   const font = `${element.fontSize}px "${family}"`;
-  const measured = await page.evaluate(font => {
+  const measured = await page.evaluate(({ font, family, fontSize }) => {
     const ctx = document.createElement('canvas').getContext('2d')!;
-    ctx.font = font; return ctx.measureText('Sketching gyp 123').width;
-  }, font);
-  expect(element.width).toBeCloseTo(measured, 3);
+    ctx.font = font;
+    const namespace = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(namespace, 'svg');
+    const label = document.createElementNS(namespace, 'text');
+    label.setAttribute('font-family', `${family},cursive`);
+    label.setAttribute('font-size', String(fontSize));
+    label.textContent = 'Sketching gyp 123';
+    svg.setAttribute('visibility', 'hidden');
+    svg.append(label); document.body.append(svg);
+    const widths = { canvas: ctx.measureText(label.textContent).width, svg: label.getComputedTextLength() };
+    svg.remove(); return widths;
+  }, { font, family, fontSize: element.fontSize });
+  expect(element.width).toBeCloseTo(measured.canvas, 3);
   await page.reload(); await saved(page); expect((await scene(page)).elements[0].fontFamily).toBe(element.fontFamily);
   await page.getByRole('button', { name: 'Main menu', exact: true }).click(); await page.getByRole('button', { name: 'Export image', exact: true }).click();
   const svgDownload = page.waitForEvent('download'); await page.locator('[data-export="svg"]').click();
@@ -83,7 +93,7 @@ for (const family of ['Patrick Hand', 'Excalifont']) test(`${family} loads local
     const label = document.querySelector('text')!;
     return { width: label.getComputedTextLength(), loaded: [...document.fonts].some(font => font.family.replace(/["']/g, '') === family && font.status === 'loaded') };
   }, { family, font });
-  expect(exported.loaded).toBe(true); expect(exported.width).toBeCloseTo(measured, 1);
+  expect(exported.loaded).toBe(true); expect(exported.width).toBeCloseTo(measured.svg, 1);
 });
 test('text width wraps without changing font size and stays wrapped when editing and reloading', async ({ page }) => {
   await page.getByRole('button', { name: 'Text', exact: true }).click(); await page.mouse.click(450, 250);
@@ -106,7 +116,9 @@ for (const [fontFamily, zoom] of [[1, 1], [2, 2], [3, .75], [5, 1.5]]) test(`tex
     elements: [{ id: 'label', type: 'text', x: 300, y: 240, fontSize: 48, fontFamily, text: 'Align\nAgain' }],
     local: { zoom, pan: { x: 100, y: -80 } },
   });
-  await page.reload(); const original = (await saved(page)).elements[0];
+  await page.reload(); await waitForInitialSave(page);
+  await page.evaluate(async () => { await document.fonts.ready; });
+  const original = (await saved(page)).elements[0];
   const x = original.x * zoom + 100, y = original.y * zoom - 80;
   const clip = { x: x - 12, y: y - 12, width: Math.ceil(original.width * zoom) + 24, height: Math.ceil(48 * zoom * 2.5) + 24 };
   async function inkBounds() {
@@ -213,7 +225,8 @@ test('library removal preserves saved drawings and clipboard reuse on desktop an
   await seedStorage(page, { elements: [{ id: 'existing', type: 'rectangle', x: 500, y: 280, width: 160, height: 100, seed: 17 }] }, {
     'sketchify.library.v1': '{invalid legacy data',
   });
-  await page.reload(); const original = (await saved(page)).elements[0];
+  await page.reload(); await waitForInitialSave(page);
+  const original = (await saved(page)).elements[0];
   for (const width of [1440, 375]) {
     await page.setViewportSize({ width, height: 900 }); await page.reload(); await saved(page);
     await expect(page.getByRole('button', { name: /library/i })).toHaveCount(0);

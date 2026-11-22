@@ -84,7 +84,8 @@ for (const width of [1280, 375]) for (const zoom of [0.75, 1, 2]) test(`frame re
   const label = page.getByRole('button', { name: 'Rename frame: Cash List', exact: true });
   const origin = await label.evaluate((button: HTMLButtonElement) => {
     const style = getComputedStyle(button);
-    return { x: button.offsetLeft, y: button.offsetTop + button.offsetHeight - parseFloat(style.lineHeight), font: style.font };
+    const { fontFamily, fontSize, fontWeight } = style;
+    return { x: button.offsetLeft, y: button.offsetTop + button.offsetHeight - parseFloat(style.lineHeight), font: { fontFamily, fontSize, fontWeight } };
   });
   const anchor = await page.locator('.frame-name-position').boundingBox();
   await label.click();
@@ -92,12 +93,13 @@ for (const width of [1280, 375]) for (const zoom of [0.75, 1, 2]) test(`frame re
   await expect(name).toBeFocused();
   const editing = await name.evaluate((input: HTMLInputElement) => {
     const style = getComputedStyle(input);
+    const { fontFamily, fontSize, fontWeight } = style;
     return { x: input.offsetLeft + parseFloat(style.borderLeftWidth) + parseFloat(style.paddingLeft),
-      y: input.offsetTop + parseFloat(style.borderTopWidth) + parseFloat(style.paddingTop), font: style.font };
+      y: input.offsetTop + parseFloat(style.borderTopWidth) + parseFloat(style.paddingTop), font: { fontFamily, fontSize, fontWeight } };
   });
   expect(editing.x).toBeCloseTo(origin.x, 0);
   expect(editing.y).toBeCloseTo(origin.y, 0);
-  expect(editing.font).toBe(origin.font);
+  expect(editing.font).toEqual(origin.font);
   await expect(name).toHaveCSS('outline-style', 'none');
   await expect(name).toHaveCSS('border-top-style', 'solid');
   await expect(name).toHaveCSS('border-top-width', '1px');

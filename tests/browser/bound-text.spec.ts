@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { seedStorage } from './storage';
+import { seedStorage, waitForInitialSave } from './storage';
 
 const saved = async (page: Page) => {
   await expect(page.locator('#save-state')).toHaveText('Saved on this device');
@@ -45,7 +45,8 @@ for (const mobile of [false, true]) for (const tool of ['Rectangle', 'Ellipse', 
       elements: [{ id: 'shape', type: tool.toLowerCase(), x, y, width, height, backgroundColor: mobile ? '#ffc9c9' : 'transparent' }],
       local: { theme: mobile ? 'dark' : 'light' },
     });
-    await page.goto('/'); const original = (await saved(page))[0];
+    await page.goto('/'); await waitForInitialSave(page);
+    const original = (await saved(page))[0];
     const editor = page.getByRole('textbox', { name: 'Edit canvas text' });
     await page.locator('#canvas').focus(); await page.keyboard.press('t');
     await page.mouse.click(x + 80, y + height / 2); await expect(editor).toBeFocused();
