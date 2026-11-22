@@ -9,6 +9,7 @@ export function storedScene(s: State) {
     grid: s.grid, name: s.name, rectangleRoundness: s.style.roundness,
     ...(JSON.stringify(s.noteStyle) !== JSON.stringify(DEFAULT_NOTE_STYLE) ? { noteStyle: s.noteStyle } : {}),
     sidebar: s.sidebar,
+    ...(s.sidebarWidth !== null ? { sidebarWidth: s.sidebarWidth } : {}),
     ...(s.iconTextSize !== 'medium' ? { iconTextSize: s.iconTextSize } : {}),
     ...(Object.keys(DEFAULT_PREFERENCES).some(key => s.preferences[key as Preference] !== DEFAULT_PREFERENCES[key as Preference]) ? { preferences: s.preferences } : {}),
   } };
@@ -33,6 +34,7 @@ export function loadStorage(store: Store, storage: Storage) {
           s.background = data.local.background || '#ffffff';
           s.theme = data.local.theme === 'dark' ? 'dark' : 'light'; s.grid = Boolean(data.local.grid);
           s.sidebar = data.local.sidebar === true;
+          if (typeof data.local.sidebarWidth === 'number' && Number.isFinite(data.local.sidebarWidth) && data.local.sidebarWidth > 0) s.sidebarWidth = data.local.sidebarWidth;
           if (data.local.noteStyle && typeof data.local.noteStyle === 'object') {
             const note = importScene({ elements: [{ ...data.local.noteStyle, type: 'stickynote', width: 250, height: 250 }] }).elements[0];
             if (note) for (const key of ['backgroundColor', 'strokeColor', 'fontSize', 'fontFamily', 'opacity', 'textAlign'] as const) Object.assign(s.noteStyle, { [key]: note[key] });

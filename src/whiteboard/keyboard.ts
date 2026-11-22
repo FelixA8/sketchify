@@ -1,4 +1,4 @@
-import { createElement, importScene } from '../scene';
+import { importScene } from '../scene';
 import { snapshot } from './store';
 import type { Controller } from './controller';
 import { tools } from './tools';
@@ -25,7 +25,7 @@ export function mountKeyboard(a: Controller) {
       const data = JSON.parse(text);
       if (Array.isArray(data.elements)) { const imported = importScene(data); a.insert(imported.elements); if (imported.skipped) a.toast(`Pasted supported shapes; ${imported.skipped} unsupported elements were skipped.`); event.preventDefault(); return; }
     } catch { /* Ordinary clipboard text becomes an editable canvas label. */ }
-    const p = a.world(a.width / 2, a.height / 2), element = { ...createElement('text', p.x, p.y, snapshot(a.state.style)), text: text.slice(0, 10000) };
+    const p = a.world(a.width / 2, a.height / 2), element = { ...a.createDrawingElement('text', p), text: text.slice(0, 10000) };
     a.measure(element); a.state.elements.push(element); a.state.selected = new Set([element.id]); a.commit(); event.preventDefault();
   });
   a.listen(document, 'keydown', event => {

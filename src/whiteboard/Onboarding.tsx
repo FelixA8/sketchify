@@ -18,8 +18,8 @@ export function Onboarding() {
   const empty = s.elements.length === 0;
   const drawing = s.tool !== 'selection' || !!s.gesture || s.space || !!s.editing;
   const workspaceOpen = s.sidebar && !s.preferences.zenMode;
-  return <>
-    <section id="welcome" className="welcome" aria-label="Empty canvas" hidden={!empty} data-pass-through={drawing} data-workspace-open={workspaceOpen}>
+  return <div className="onboarding" data-workspace-open={workspaceOpen}>
+    <section id="welcome" className="welcome" aria-label="Empty canvas" hidden={!empty} data-pass-through={drawing}>
       <div className="welcome-brand">
         <div className="brand-mark" aria-hidden="true">
           {/* eslint-disable-next-line @next/next/no-img-element -- Small local asset served directly by the static export. */}
@@ -32,11 +32,11 @@ export function Onboarding() {
       <div className="welcome-actions">
         <button type="button" onClick={() => run(a => { a.setTool('rectangle'); a.canvas.focus(); })}><Icon name="rectangle" /><span>Create a shape</span><kbd>R</kbd></button>
         <button type="button" onClick={() => run(a => a.action('open'))}><Icon name="open" /><span>Open</span><kbd>{openShortcut}</kbd></button>
-        <button type="button" onClick={() => run(a => a.openDialog('help'))}><Icon name="help" /><span>Help</span><kbd>?</kbd></button>
+        <button type="button" onClick={event => run(a => a.openDialog('help', event.currentTarget))}><Icon name="help" /><span>Help</span><kbd>?</kbd></button>
       </div>
       <p className="local-note">Saved in this browser. Save a file for backup.</p>
     </section>
-    <div className="onboarding-hints" hidden={!empty} data-workspace-open={workspaceOpen}>
+    <div className="onboarding-hints" hidden={!empty}>
       <aside className="onboarding-tip onboarding-menu" aria-label="Files and settings tip">
         <Pointer /><h2>Your files, pages & preferences</h2>
         <p>Open, save, or export as PNG and SVG.<br />Organize pages & layers next door.<br />Change the theme or turn on the grid.</p>
@@ -52,9 +52,9 @@ export function Onboarding() {
         </aside>
         <aside className="onboarding-tip onboarding-help" aria-label="Keyboard shortcuts tip">
           <h2>Shortcuts & help</h2>
-          <p>Press <kbd>?</kbd> for keyboard shortcuts.<br />Find every tool and action here.</p><Pointer down />
+          <p>Press <kbd>?</kbd> for keyboard shortcuts.<br />Find every tool and action here.</p>
         </aside>
       </div>
     </div>
-  </>;
+  </div>;
 }

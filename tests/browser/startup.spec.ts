@@ -62,27 +62,34 @@ test('initial document already contains canvas and controls without JavaScript',
   await context.close();
 });
 
-test('slow handwriting font does not block drawing or show a startup loader', async ({ page }) => {
+test('startup stays interactive and updates welcome text when a delayed handwriting font loads', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.setViewportSize({ width: 1440, height: 900 });
   let release!: () => void;
   const fontGate = new Promise<void>(resolve => { release = resolve; });
   await page.route('**/fonts/patrick-hand/PatrickHand-Regular.ttf', async route => { await fontGate; await route.continue(); });
+  const fontStatus = () => page.evaluate(() => [...document.fonts].find(face => face.family.replace(/["']/g, '') === 'Patrick Hand')?.status);
+  const textWidths = () => page.locator('#welcome h1, .welcome-subtitle, .onboarding-navigation h2').evaluateAll(elements => elements.map(element => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    return range.getBoundingClientRect().width;
+  }));
   try {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#toolbar')).toBeVisible();
     await expect(page.getByText('Loading Sketchify…', { exact: true })).toHaveCount(0);
-    expect(await page.evaluate(() => document.fonts.check('32px "Patrick Hand"'))).toBe(false);
     await page.getByRole('button', { name: 'Rectangle', exact: true }).click();
     await page.locator('#canvas').focus(); await page.keyboard.press('Enter');
     await expect(page.locator('#save-state')).toHaveText('Saved on this device');
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem('sketchify.scene.v1')!).elements[0].type)).toBe('rectangle');
     await page.locator('#canvas').focus(); await page.keyboard.press('ControlOrMeta+z');
     await expect(page.locator('#selection-info')).toHaveText('');
-    const heading = page.locator('#welcome h1');
-    const headingBox = await heading.boundingBox();
+    await expect(page.locator('#welcome h1')).toBeVisible();
+    await expect(page.locator('.onboarding-navigation h2')).toBeVisible();
+    const fallbackWidths = await textWidths();
     release();
-    await expect.poll(() => page.evaluate(() => document.fonts.check('32px "Patrick Hand"'))).toBe(true);
-    expect(await heading.boundingBox()).toEqual(headingBox);
+    await expect.poll(fontStatus).toBe('loaded');
+    await expect.poll(async () => (await textWidths()).map((width, index) => width !== fallbackWidths[index])).toEqual([true, true, true]);
     await page.screenshot({ path: 'artifacts/startup-no-loader.png' });
     expect(errors).toEqual([]);
   } finally { release(); }

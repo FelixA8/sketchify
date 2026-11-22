@@ -21,7 +21,7 @@ export type Gesture =
   | { kind: 'erase'; snapshot: Element[] };
 export interface State {
   restored: boolean;
-  pages: CanvasPage[]; activePageId: string; layers: Layers; sidebar: boolean;
+  pages: CanvasPage[]; activePageId: string; layers: Layers; sidebar: boolean; sidebarWidth: number | null;
   deletingPage: string | null;
   elements: Element[]; selected: Set<string>; tool: Tool; locked: boolean; style: Style; noteStyle: Style;
   pan: Point; zoom: number; background: string; theme: 'light' | 'dark'; grid: boolean;
@@ -43,7 +43,7 @@ export interface State {
 export function initialState(width = 1440): State {
   return {
     restored: false,
-    pages: [blankPage('Page 1', 'page-1')], activePageId: 'page-1', layers: {}, sidebar: false, deletingPage: null,
+    pages: [blankPage('Page 1', 'page-1')], activePageId: 'page-1', layers: {}, sidebar: false, sidebarWidth: null, deletingPage: null,
     elements: [], selected: new Set(), tool: 'selection', locked: false, style: { ...DEFAULT_STYLE },
     noteStyle: { ...DEFAULT_NOTE_STYLE },
     pan: { x: 0, y: 0 }, zoom: 1, background: '#ffffff', theme: 'light', grid: false,

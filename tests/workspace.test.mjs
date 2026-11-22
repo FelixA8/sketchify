@@ -10,6 +10,7 @@ const click = (app, label) => { const target = button(app, label); assert.ok(tar
 const project = app => { app.scene(); return JSON.parse(app.window.localStorage.getItem('sketchify.scene.v1')).project; };
 const show = app => click(app, 'Toggle pages and layers');
 const row = (app, key) => app.document.querySelector(`[data-layer-select="${key}"]`);
+const layerName = (app, key) => row(app, key).parentElement.querySelector('.layer-name');
 function edit(app, label, value) {
   const input = app.document.querySelector(`input[aria-label="${label}"]`); assert.ok(input, label);
   input.value = value; app.dispatch(input, 'keydown', { key: 'Enter' });
@@ -34,12 +35,77 @@ test('layer tree selects exact members, reveals canvas selection, renames indepe
   const app = createApp({ savedElements: [box('a', 450, { groupIds: ['inner', 'outer'] }), box('b', 650, { groupIds: ['outer'] }), box('label', 450, { type: 'text', text: 'Content', containerId: 'a', groupIds: ['inner', 'outer'] })] }); show(app);
   assert.ok(row(app, 'g:outer')); assert.ok(row(app, 'g:inner')); assert.ok(row(app, 'e:label'));
   app.click(row(app, 'e:a')); assert.equal(row(app, 'e:a').getAttribute('aria-pressed'), 'true'); assert.equal(row(app, 'e:b').getAttribute('aria-pressed'), 'false');
-  app.click(row(app, 'e:label').querySelector('span')); edit(app, 'Layer name', 'Label layer');
+  app.click(layerName(app, 'e:label')); edit(app, 'Layer name', 'Label layer');
   assert.equal(project(app).pages[0].layers['e:label'].name, 'Label layer'); assert.equal(app.scene().find(e => e.id === 'label').text, 'Content');
   app.click(app.get('undo-button')); assert.equal(project(app).pages[0].layers['e:label'], undefined);
   click(app, 'Collapse all layers'); assert.equal(row(app, 'e:a'), null);
   app.dispatch(app.canvas, 'pointerdown', { clientX: 450, clientY: 290, button: 0 }); app.dispatch(app.canvas, 'pointerup', { clientX: 450, clientY: 290, button: 0 });
   assert.ok(row(app, 'e:a'));
+});
+test('only the layer icon brings an off-screen component into view and saves the camera without editing the drawing', () => {
+  const app = createApp({ savedElements: [box('far', 2400), box('here')], savedLocal: { sidebar: true } });
+  const before = project(app).pages[0];
+  app.click(layerName(app, 'e:far'));
+  assert.equal(row(app, 'e:far').getAttribute('aria-pressed'), 'true');
+  assert.deepEqual(project(app).pages[0], before);
+  app.key('Escape');
+  app.click(row(app, 'e:here'));
+  assert.deepEqual(project(app).pages[0], before);
+  app.click(row(app, 'e:far'));
+  assert.equal(app.get('zoom-reset').textContent, '100%');
+  app.advanceFrame(150);
+  const midpointZoom = Number.parseInt(app.get('zoom-reset').textContent, 10);
+  assert.ok(midpointZoom > 100 && midpointZoom < 500);
+  app.advanceFrame(150);
+  const after = project(app).pages[0];
+  assert.equal(after.zoom, 5);
+  assert.deepEqual(after.pan, { x: 702 - 2450 * 5, y: 454 - 290 * 5 });
+  assert.deepEqual(after.elements, before.elements);
+  assert.equal(app.get('undo-button').disabled, true);
+  const saved = app.window.localStorage.getItem('sketchify.scene.v1');
+  const reload = createApp({ storageEntries: { 'sketchify.scene.v1': saved } });
+  assert.deepEqual(project(reload).pages[0], after);
+});
+test('manual panning interrupts the layer navigation at the current view', () => {
+  const app = createApp({ savedElements: [box('far', 2400)], savedLocal: { sidebar: true } });
+  app.click(row(app, 'e:far'));
+  app.advanceFrame(150);
+  const midwayZoom = app.get('zoom-reset').textContent;
+  app.dispatch(app.canvas, 'wheel', { deltaX: 40, deltaY: 30 });
+  const panned = project(app).pages[0];
+  assert.equal(`${Math.round(panned.zoom * 100)}%`, midwayZoom);
+  assert.ok(panned.pan.x < -40 && panned.pan.x > 702 - 2450 * 5 - 40);
+  app.advanceFrame(300);
+  assert.deepEqual(project(app).pages[0], panned);
+});
+test('switching pages interrupts layer navigation and keeps each page view independent', () => {
+  const app = createApp({ savedElements: [box('far', 2400)], savedLocal: { sidebar: true } });
+  click(app, 'Add page');
+  app.click(app.document.querySelector('.page-select'));
+  app.click(row(app, 'e:far'));
+  app.advanceFrame(150);
+  app.click([...app.document.querySelectorAll('.page-select')].find(button => button.textContent === 'Page 2'));
+  app.advanceFrame(300);
+  const [first, second] = project(app).pages;
+  assert.ok(first.zoom > 1 && first.zoom < 5);
+  assert.equal(second.zoom, 1);
+  assert.deepEqual(second.pan, { x: 0, y: 0 });
+});
+test('group icon frames visible members and a hidden member icon leaves the camera in place', () => {
+  const groupIds = ['g'];
+  const app = createApp({ savedElements: [box('a', 1000, { groupIds }), box('b', 2200, { groupIds }), box('hidden', 4000, { groupIds })] });
+  show(app);
+  click(app, 'Hide Rectangle');
+  app.click(row(app, 'g:g'));
+  app.advanceFrame(300);
+  const framed = project(app).pages[0];
+  assert.equal(row(app, 'e:a').getAttribute('aria-pressed'), 'true');
+  assert.equal(row(app, 'e:b').getAttribute('aria-pressed'), 'true');
+  assert.equal(framed.zoom, (1220 - 184 - 72) / 1300);
+  assert.equal(framed.pan.x + 1650 * framed.zoom, 702);
+  app.click(row(app, 'e:hidden'));
+  assert.deepEqual(project(app).pages[0].pan, framed.pan);
+  assert.equal(project(app).pages[0].zoom, framed.zoom);
 });
 test('hidden groups are excluded from selection and SVG export; child visibility survives restoring parent', async () => {
   const app = createApp({ savedElements: [box('a', 450, { groupIds: ['g'], backgroundColor: '#ffc9c9' }), box('b', 650, { groupIds: ['g'] }), box('c', 900)] }); show(app);
@@ -63,7 +129,7 @@ test('locking a parent prevents canvas edits and deletion while allowing inspect
 });
 test('page actions duplicate hierarchy with fresh IDs, reorder, rename and confirm deletion', () => {
   const app = createApp({ savedElements: [box('a', 450, { groupIds: ['g'] }), box('b', 650, { groupIds: ['g'] })] }); show(app);
-  app.click(row(app, 'g:g').querySelector('span')); edit(app, 'Layer name', 'Named group');
+  app.click(layerName(app, 'g:g')); edit(app, 'Layer name', 'Named group');
   click(app, 'Page actions for Page 1'); app.click([...app.document.querySelectorAll('.workspace-actions button')].find(button => button.textContent === 'Duplicate'));
   const copied = project(app).pages[1]; assert.equal(copied.name, 'Page 1 copy'); assert.equal(copied.elements.length, 2);
   assert.notEqual(copied.elements[0].id, 'a'); assert.notEqual(copied.elements[0].groupIds[0], 'g');
@@ -107,7 +173,7 @@ for (const theme of ['light', 'dark']) for (const width of [375, 1440]) test(`si
   const app = createApp({ theme, width, savedElements: [box('a', 450, { groupIds: ['g'] }), box('b', 650, { groupIds: ['g'] })] }); show(app);
   assert.equal(app.get('workspace').hidden, false);
   click(app, 'Collapse Group'); assert.equal(row(app, 'e:a'), null);
-  app.click(row(app, 'g:g')); app.dispatch(row(app, 'g:g'), 'keydown', { key: 'ArrowRight' });
+  row(app, 'g:g').focus(); app.dispatch(row(app, 'g:g'), 'keydown', { key: 'ArrowRight' });
   assert.ok(row(app, 'e:a'));
   row(app, 'g:g').focus(); app.dispatch(row(app, 'g:g'), 'keydown', { key: 'ArrowRight' });
   assert.equal(app.document.activeElement, row(app, 'e:b'));
@@ -118,4 +184,24 @@ for (const theme of ['light', 'dark']) for (const width of [375, 1440]) test(`si
   app.click(app.get('confirm-delete-page')); assert.equal(project(app).pages.length, 1);
   click(app, 'Close sidebar'); assert.equal(app.get('workspace').hidden, true);
   assert.equal(app.document.activeElement, app.get('workspace-toggle'));
+});
+
+
+test('sidebar width restores locally without changing scene history or project files', () => {
+  const app = createApp({ savedElements: [box('a')], savedLocal: { sidebar: true, sidebarWidth: 360 } });
+  assert.equal(app.get('app').style.getPropertyValue('--workspace-width'), '360px');
+  assert.equal(app.get('undo-button').disabled, true);
+  const data = project(app);
+  assert.equal(data.sidebarWidth, undefined);
+  const saved = app.window.localStorage.getItem('sketchify.scene.v1');
+  assert.equal(JSON.parse(saved).local.sidebarWidth, 360);
+  const reload = createApp({ storageEntries: { 'sketchify.scene.v1': saved } });
+  assert.equal(reload.get('app').style.getPropertyValue('--workspace-width'), '360px');
+  assert.deepEqual(project(reload), data);
+});
+
+for (const sidebarWidth of [-100, 0, '360', {}, null]) test(`invalid sidebar width ${JSON.stringify(sidebarWidth)} keeps the default and loads the drawing`, () => {
+  const app = createApp({ savedElements: [box('a')], savedLocal: { sidebar: true, sidebarWidth } });
+  assert.equal(app.get('app').style.getPropertyValue('--workspace-width'), '');
+  assert.equal(app.scene()[0].id, 'a');
 });

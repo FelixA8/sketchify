@@ -1,4 +1,4 @@
-export type Tool = 'selection' | 'hand' | 'rectangle' | 'diamond' | 'ellipse' | 'arrow' | 'line' | 'freedraw' | 'text' | 'stickynote' | 'eraser';
+export type Tool = 'selection' | 'hand' | 'rectangle' | 'diamond' | 'ellipse' | 'arrow' | 'line' | 'freedraw' | 'text' | 'stickynote' | 'frame' | 'eraser';
 export interface Point { x: number; y: number }
 export interface Box extends Point { width: number; height: number }
 export interface Roundness { type: number; value?: number }
@@ -19,7 +19,7 @@ export interface Element extends Box, Style, TextModel {
   baseFontSize?: number | null;
   textWidth?: number;
   verticalAlign?: 'top' | 'middle' | 'bottom';
-  id: string; type: Tool | 'frame' | 'image'; seed: number; points: number[][]; angle: number;
+  id: string; type: Tool | 'image'; seed: number; points: number[][]; angle: number;
   imageData?: string; fileId?: string; scale?: [number, number];
   status?: 'pending' | 'saved' | 'error';
   locked?: boolean; link?: string | null; frameId?: string | null; containerId?: string | null; name?: string;

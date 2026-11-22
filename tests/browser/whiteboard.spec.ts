@@ -48,20 +48,22 @@ test('rich text retains native focus, formatting, links, cancellation and export
 });
 for (const family of ['Patrick Hand', 'Excalifont']) test(`${family} loads locally and survives reload, standalone SVG and PNG exports`, async ({ page }) => {
   const excalifont = family === 'Excalifont';
+  const handwriting = /^(?:"Patrick Hand"|Patrick Hand), cursive$/;
   await expect.poll(() => page.evaluate(family => [...document.fonts].some(font => font.family.replace(/["']/g, '') === family && font.status === 'loaded'), family)).toBe(true);
-  await expect(page.locator('.welcome h1')).toHaveCSS('font-family', '"Patrick Hand", cursive');
+  await expect(page.locator('.welcome h1')).toHaveCSS('font-family', handwriting);
   await page.getByRole('button', { name: 'Text', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Excalifont', exact: true })).toHaveAttribute('aria-pressed', 'true');
   if (!excalifont) await page.getByRole('button', { name: 'Hand drawn', exact: true }).click();
   await page.mouse.click(450, 300);
-  await expect(page.locator('#text-editor')).toHaveCSS('font-family', excalifont ? 'Excalifont, cursive' : '"Patrick Hand", cursive');
+  await expect(page.locator('#text-editor')).toHaveCSS('font-family', excalifont ? 'Excalifont, cursive' : handwriting);
   await page.keyboard.type('Sketching gyp 123'); await page.getByRole('button', { name: 'Done', exact: true }).click();
   const element = (await saved(page)).elements[0];
   expect(element.fontFamily).toBe(excalifont ? 5 : 1);
-  const measured = await page.evaluate(family => {
+  const font = `${element.fontSize}px "${family}"`;
+  const measured = await page.evaluate(font => {
     const ctx = document.createElement('canvas').getContext('2d')!;
-    ctx.font = `24px "${family}"`; return ctx.measureText('Sketching gyp 123').width;
-  }, family);
+    ctx.font = font; return ctx.measureText('Sketching gyp 123').width;
+  }, font);
   expect(element.width).toBeCloseTo(measured, 3);
   await page.reload(); await saved(page); expect((await scene(page)).elements[0].fontFamily).toBe(element.fontFamily);
   await page.getByRole('button', { name: 'Main menu', exact: true }).click(); await page.getByRole('button', { name: 'Export image', exact: true }).click();
@@ -75,11 +77,11 @@ for (const family of ['Patrick Hand', 'Excalifont']) test(`${family} loads local
   expect(png.width).toBe(Math.ceil((element.width + 48) * 2));
   // Open the exported file with no app stylesheet or local font installed.
   await page.goto(`data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`);
-  const exported = await page.evaluate(async family => {
-    await document.fonts.load(`24px "${family}"`);
+  const exported = await page.evaluate(async ({ family, font }) => {
+    await document.fonts.load(font);
     const label = document.querySelector('text')!;
     return { width: label.getComputedTextLength(), loaded: [...document.fonts].some(font => font.family.replace(/["']/g, '') === family && font.status === 'loaded') };
-  }, family);
+  }, { family, font });
   expect(exported.loaded).toBe(true); expect(exported.width).toBeCloseTo(measured, 1);
 });
 test('text width wraps without changing font size and stays wrapped when editing and reloading', async ({ page }) => {

@@ -1,4 +1,4 @@
-import { createElement, sceneBounds } from '../scene';
+import { createElement, pointInElementBounds, sceneBounds } from '../scene';
 import type { Element, Point, Style, Tool } from '../types';
 import { selectedElements, screenToWorld, measureText } from './canvas';
 import { createPersistence, loadStorage } from './persistence';
@@ -27,6 +27,7 @@ export class Controller {
   private toastTimer?: ReturnType<typeof setTimeout>;
   private returnFocus: HTMLElement | null = null;
   private fontRefreshPending = false;
+  private layerNavigationFrame: number | null = null;
   constructor(readonly store: Store, readonly root: HTMLElement) {
     this.persistence = createPersistence(store, (message, error) => this.toast(message, error));
     this.text = new TextSession(this); this.files = new FileActions(this); this.objects = new ObjectActions(this);
@@ -63,11 +64,12 @@ export class Controller {
       if (input.id === 'corner-rounding') this.applyStyle('roundness', { type: 3, value: Number(input.value) });
     });
     this.listen(window, 'blur', () => { this.state.space = false; this.finishGesture(); this.state.contextMenu = null; });
-    this.listen(window, 'resize', () => { this.state.contextMenu = null; });
+    this.listen(window, 'resize', () => { this.cancelLayerNavigation(); this.state.contextMenu = null; });
     this.listen(window, 'hashchange', () => this.objects.followObjectLink());
     this.run(() => this.objects.followObjectLink());
     this.listen(window, 'beforeunload', () => { this.text.finish(); this.finishFrameName(); this.persistence.persist(); });
     this.listen(document, 'pointerdown', event => {
+      this.cancelLayerNavigation();
       const target = event.target as HTMLElement;
       if (!target.closest('#canvas, #text-editor, #properties, #text-formatting')) this.text.finish();
       if (!target.closest('#menu, #menu-button')) this.state.menu = false;
@@ -82,7 +84,11 @@ export class Controller {
     }
     this.store.change(s => { s.restored = true; });
   }
-  dispose() { this.abort.abort(); this.text.dispose(); this.persistence.dispose(); clearTimeout(this.toastTimer); this.files.dispose(); }
+  dispose() {
+    this.abort.abort();
+    if (this.layerNavigationFrame !== null) cancelAnimationFrame(this.layerNavigationFrame);
+    this.text.dispose(); this.persistence.dispose(); clearTimeout(this.toastTimer); this.files.dispose();
+  }
   toast(message: string, error = false) {
     this.store.change(s => { s.toast = { message, error }; }); clearTimeout(this.toastTimer);
     this.toastTimer = setTimeout(() => this.store.change(s => { s.toast = null; }), error ? 7000 : 3500);
@@ -97,7 +103,7 @@ export class Controller {
     this.fontRefreshPending = false;
     this.remeasureScene(); this.text.refreshFontMetrics(); this.persistence.schedule();
   }
-  commit() { this.syncGeometry(); this.store.commit(); this.persistence.schedule(); }
+  commit() { this.cancelLayerNavigation(); this.syncGeometry(); this.store.commit(); this.persistence.schedule(); }
   rebindConnectors(originals: Element[]) {
     const ids = new Set(originals.map(element => element.id));
     for (const original of originals) {
@@ -122,6 +128,22 @@ export class Controller {
   world(x: number, y: number) { return screenToWorld(this.state, x, y); }
   point(event: MouseEvent) { const rect = this.canvas.getBoundingClientRect(); return this.world(event.clientX - rect.left, event.clientY - rect.top); }
   snap(p: Point) { return this.state.grid ? { x: Math.round(p.x / 20) * 20, y: Math.round(p.y / 20) * 20 } : p; }
+  frameAt(point: Point) {
+    const { elements, layers } = this.state;
+    if (!elements.some(element => element.type === 'frame')) return undefined;
+    const { hidden, locked } = layerModel(elements, layers);
+    for (let index = elements.length - 1; index >= 0; index--) {
+      const frame = elements[index];
+      if (frame.type === 'frame' && !hidden.has(frame.id) && !locked.has(frame.id) && pointInElementBounds(frame, point)) return frame.id;
+    }
+  }
+  createDrawingElement(tool: Tool, point: Point, anchor = point) {
+    if (tool === 'frame') return { ...createElement(tool, point.x, point.y, { roughness: 0, strokeWidth: 1, strokeColor: '#73737d' }), name: 'Frame' };
+    const element = createElement(tool, point.x, point.y, snapshot(tool === 'stickynote' ? this.state.noteStyle : this.state.style));
+    const frameId = this.frameAt(anchor);
+    if (frameId) element.frameId = frameId;
+    return element;
+  }
   measure(element: Element) { measureText(element, this.ctx); }
   editFrameName(id: string) {
     const frame = this.state.elements.find(element => element.id === id && element.type === 'frame');
@@ -216,7 +238,7 @@ export class Controller {
     if (final) this.commit();
   }
   removeSelected() { this.removeElements(new Set(this.objects.editable().map(element => element.id))); }
-  history(direction: 'undo' | 'redo') { this.text.finish(); this.state.contextMenu = null; this.store.travel(direction); this.remeasureScene(); this.persistence.schedule(); }
+  history(direction: 'undo' | 'redo') { this.cancelLayerNavigation(); this.text.finish(); this.state.contextMenu = null; this.store.travel(direction); this.remeasureScene(); this.persistence.schedule(); }
   theme(theme: State['theme']) { this.state.theme = theme; this.persistence.schedule(); }
   togglePreference(key: Preference | 'grid') {
     this.state.connectorHint = null;
@@ -231,20 +253,96 @@ export class Controller {
     this.persistence.schedule();
   }
   zoom(next: number, anchor = { x: this.width / 2, y: this.height / 2 }) {
+    this.cancelLayerNavigation();
     this.text.finish(); const p = this.world(anchor.x, anchor.y), s = this.state;
     s.zoom = Math.max(.1, Math.min(5, next)); s.pan = { x: anchor.x - p.x * s.zoom, y: anchor.y - p.y * s.zoom }; this.persistence.schedule();
   }
   fit() {
+    this.cancelLayerNavigation();
     this.text.finish(); const s = this.state;
     const visible = this.visible();
     if (!visible.length) { s.pan = { x: 0, y: 0 }; s.zoom = 1; return; }
-    const b = sceneBounds(visible), left = innerWidth > 760 && s.sidebar ? 184 : 60, right = innerWidth > 760 && !this.get('properties').hidden ? 240 : 60;
+    const workspace = this.get('workspace');
+    const b = sceneBounds(visible), left = innerWidth > 760 && !workspace.hidden ? workspace.getBoundingClientRect().right || 16 + (s.sidebarWidth ?? 168) : 60, right = innerWidth > 760 && !this.get('properties').hidden ? 240 : 60;
     s.zoom = Math.max(.1, Math.min(1.5, (this.width - left - right) / Math.max(b.width, 1), (this.height - 240) / Math.max(b.height, 1)));
     s.pan = { x: left + (this.width - left - right - b.width * s.zoom) / 2 - b.x * s.zoom, y: (this.height - b.height * s.zoom) / 2 - b.y * s.zoom - (innerWidth <= 760 ? 30 : 0) };
     this.persistence.schedule();
   }
-  openDialog(kind: NonNullable<State['dialog']>) {
-    const active = document.activeElement as HTMLElement;
+  revealLayer(elements: Element[]) {
+    if (!elements.length) return;
+    const s = this.state, mobile = innerWidth <= 760;
+    const workspace = this.get('workspace'), inspector = this.get('properties');
+    const toolbar = this.get('toolbar').getBoundingClientRect();
+    const header = this.root.querySelector('.top-left')!.getBoundingClientRect();
+    const footer = this.root.querySelector('.bottom-left')!.getBoundingClientRect();
+    const top = mobile ? header.bottom || 64 : toolbar.bottom || 72;
+    const bottom = mobile ? toolbar.top || this.height - 136 : footer.top || this.height - 64;
+    let right = this.width;
+    if (s.panel) {
+      const style = window.getComputedStyle(inspector);
+      const offset = Number.parseFloat(style.right) || (mobile ? 12 : 16);
+      const width = Number.parseFloat(style.width) || 204;
+      right = inspector.getBoundingClientRect().left || this.width - offset - width;
+    }
+    const overview = this.root.querySelector('.canvas-overview')?.getBoundingClientRect();
+    if (overview?.width) {
+      const density = Number.parseFloat(window.getComputedStyle(this.root).getPropertyValue('--panel-density')) || 1;
+      right = mobile || !s.panel ? Math.min(right, overview.left) : right - overview.width - 16 * density;
+    }
+    let left = s.sidebar && !mobile ? workspace.getBoundingClientRect().right || 16 + (s.sidebarWidth ?? 168) : 0;
+    const closeSidebar = s.sidebar && (mobile || right - left <= 72);
+    if (closeSidebar) { s.sidebar = false; left = 0; this.canvas.focus({ preventScroll: true }); }
+
+    const b = sceneBounds(elements);
+    const start = { x: b.x * s.zoom + s.pan.x, y: b.y * s.zoom + s.pan.y };
+    const clipped = start.x < left || start.y < top || start.x + b.width * s.zoom > right || start.y + b.height * s.zoom > bottom;
+    if (clipped && right > left && bottom > top) {
+      const padding = Math.min(36, (right - left) / 4, (bottom - top) / 4);
+      const zoom = Math.max(.1, Math.min(5, (right - left - 2 * padding) / Math.max(b.width, 1), (bottom - top - 2 * padding) / Math.max(b.height, 1)));
+      const pan = { x: (left + right) / 2 - (b.x + b.width / 2) * zoom, y: (top + bottom) / 2 - (b.y + b.height / 2) * zoom };
+      this.animateLayerNavigation(pan, zoom);
+    } else if (closeSidebar) this.persistence.schedule();
+  }
+  cancelLayerNavigation() {
+    if (this.layerNavigationFrame === null) return;
+    cancelAnimationFrame(this.layerNavigationFrame);
+    this.layerNavigationFrame = null;
+    this.persistence.schedule();
+  }
+  private animateLayerNavigation(pan: Point, zoom: number) {
+    const finish = () => {
+      this.state.pan = pan; this.state.zoom = zoom;
+      this.persistence.schedule();
+    };
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { finish(); return; }
+
+    const anchor = { x: this.width / 2, y: this.height / 2 };
+    const start = this.world(anchor.x, anchor.y), startZoom = this.state.zoom;
+    const end = { x: (anchor.x - pan.x) / zoom, y: (anchor.y - pan.y) / zoom };
+    let started: number | undefined;
+    const step = (time: number) => {
+      started ??= time;
+      const progress = Math.min(1, (time - started) / 300);
+      if (progress === 1) { this.layerNavigationFrame = null; this.run(finish); return; }
+
+      const frame = this.layerNavigationFrame;
+      if (progress > 0) {
+        const eased = progress * progress * (3 - 2 * progress);
+        const frameZoom = startZoom * (zoom / startZoom) ** eased;
+        this.run(() => {
+          this.state.zoom = frameZoom;
+          this.state.pan = {
+            x: anchor.x - (start.x + (end.x - start.x) * eased) * frameZoom,
+            y: anchor.y - (start.y + (end.y - start.y) * eased) * frameZoom,
+          };
+        });
+      }
+      // The canvas subscriber must queue its paint before the next camera step.
+      if (this.layerNavigationFrame === frame) this.layerNavigationFrame = requestAnimationFrame(step);
+    };
+    this.layerNavigationFrame = requestAnimationFrame(step);
+  }
+  openDialog(kind: NonNullable<State['dialog']>, active = document.activeElement as HTMLElement) {
     this.returnFocus = active.closest('#menu') ? this.get('menu-button') : active;
     this.text.finish(); this.state.menu = false; this.state.dialog = kind;
   }
@@ -274,10 +372,15 @@ export class Controller {
     if (!elements.length) return;
     const b = sceneBounds(elements), center = this.world(this.width / 2, this.height / 2);
     const copies = copyElements(elements, point ? { x: point.x - b.x, y: point.y - b.y } : { x: center.x - b.x - b.width / 2, y: center.y - b.y - b.height / 2 });
+    if (!copies.some(element => element.type === 'frame')) {
+      const frameId = this.frameAt(point ?? center);
+      if (frameId) for (const element of copies) element.frameId = frameId;
+    }
     this.state.elements.push(...copies); this.state.selected = new Set(copies.map(e => e.id)); this.state.tool = 'selection'; this.state.editingGroup = null;
     if (innerWidth > 760) this.state.panel = true; this.commit();
   }
   finishGesture(cancel = false) {
+    if (cancel) this.cancelLayerNavigation();
     const s = this.state, gesture = s.gesture; s.connectorHint = null; if (!gesture) return; s.gesture = null; s.cursor = null;
     if (cancel) {
       if (gesture.kind === 'draw') s.elements = s.elements.filter(e => e.id !== gesture.id);
@@ -296,9 +399,10 @@ export class Controller {
         element.baseHeight = element.height;
         this.text.edit({ x: element.x, y: element.y }, element); this.commit(); return;
       }
-      if (b.width < 2 && b.height < 2) s.elements = s.elements.filter(e => e.id !== gesture.id);
+      const tooSmall = element.type === 'frame' ? b.width < 2 || b.height < 2 : b.width < 2 && b.height < 2;
+      if (tooSmall) s.elements = s.elements.filter(e => e.id !== gesture.id);
       else {
-        if (['rectangle', 'ellipse', 'diamond'].includes(element.type)) Object.assign(element, b);
+        if (['rectangle', 'ellipse', 'diamond', 'frame'].includes(element.type)) Object.assign(element, b);
         if (!s.locked) { s.tool = 'selection'; s.selected = new Set([element.id]); }
       }
     }
@@ -311,11 +415,11 @@ export class Controller {
     const group = selected[0] && selectionGroup(selected[0], s.editingGroup);
     if (s.tool === 'text') this.text.edit(p);
     else if (s.tool === 'stickynote') {
-      const note = createElement('stickynote', p.x - NOTE_SIZE / 2, p.y - NOTE_SIZE / 2, snapshot(s.noteStyle));
+      const note = this.createDrawingElement('stickynote', { x: p.x - NOTE_SIZE / 2, y: p.y - NOTE_SIZE / 2 }, p);
       s.elements.push(note); this.text.edit(p, note); this.commit();
     }
     else if (!['selection', 'hand', 'eraser'].includes(s.tool)) {
-      const element = { ...createElement(s.tool, p.x - 80, p.y - 50, snapshot(s.style)), width: 160, height: 100 };
+      const element = { ...this.createDrawingElement(s.tool, { x: p.x - 80, y: p.y - 50 }, p), width: 160, height: 100 };
       if (['line', 'arrow', 'freedraw'].includes(s.tool)) element.points = [[0, 0], [160, 100]];
       s.elements.push(element); s.selected = new Set([element.id]); if (!s.locked) s.tool = 'selection'; this.commit();
     } else if (group && selected.every(element => selectionGroup(element, s.editingGroup) === group)) this.objects.enterGroup(selected[0].id);

@@ -12,6 +12,40 @@ async function fitsViewport(page: Page, selector: string) {
   expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
 }
 
+for (const width of [375, 1440]) test.describe(`experience survey at ${width}px`, () => {
+  const mobile = width === 375;
+  test.use({ hasTouch: mobile, viewport: { width, height: mobile ? 667 : 900 } });
+
+  for (const theme of ['light', 'dark']) test(`opens in a new tab in ${theme} mode`, async ({ page, context, browserName }) => {
+    const survey = 'https://forms.gle/AtpuDWgYtMiseJzE8';
+    await context.route(survey, route => route.fulfill({ contentType: 'text/html', body: '<title>Sketchify survey</title>' }));
+    await page.goto('/');
+    const menuButton = page.getByRole('button', { name: 'Main menu', exact: true });
+    if (theme === 'dark') {
+      await menuButton.click();
+      await page.getByRole('button', { name: 'Dark', exact: true }).click();
+      await page.keyboard.press('Escape');
+    }
+    await menuButton.click();
+    const menu = page.getByRole('region', { name: 'Main menu', exact: true });
+    const link = menu.getByRole('link', { name: 'Share your experience (opens in a new tab)', exact: true });
+    await link.scrollIntoViewIfNeeded();
+    await expect(link).toBeInViewport({ ratio: 1 });
+    await expect(link.and(menu.locator('button[data-action="help"] + a'))).toBeVisible();
+    await fitsViewport(page, '#menu');
+    if (mobile) expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    if (browserName === 'chromium') await page.screenshot({ path: `artifacts/experience-survey-${width}-${theme}.png` });
+
+    const drawingUrl = page.url();
+    const [surveyTab] = await Promise.all([page.waitForEvent('popup'), mobile ? link.tap() : link.press('Enter')]);
+    await expect(surveyTab).toHaveURL(survey);
+    await expect(surveyTab).toHaveTitle('Sketchify survey');
+    expect(await surveyTab.evaluate(() => window.opener)).toBeNull();
+    await expect(page).toHaveURL(drawingUrl);
+    await expect(page.locator('#canvas')).toBeVisible();
+  });
+});
+
 for (const width of [375, 1440, 1600]) test(`panel icon and text sizes apply, fit and persist at ${width}px`, async ({ page }) => {
   await page.setViewportSize({ width, height: 900 }); await page.goto('/');
   await preferences(page);

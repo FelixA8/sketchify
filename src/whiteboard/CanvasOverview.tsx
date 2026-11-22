@@ -87,6 +87,7 @@ export function Minimap() {
       if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'Enter', ' '].includes(event.key)) return;
       event.preventDefault(); event.stopPropagation();
       run(a => {
+        a.cancelLayerNavigation();
         if (['Home', 'Enter', ' '].includes(event.key)) a.fit();
         else { a.state.pan.x += event.key === 'ArrowLeft' ? a.width / 4 : event.key === 'ArrowRight' ? -a.width / 4 : 0; a.state.pan.y += event.key === 'ArrowUp' ? a.height / 4 : event.key === 'ArrowDown' ? -a.height / 4 : 0; a.persistence.schedule(); }
       });
