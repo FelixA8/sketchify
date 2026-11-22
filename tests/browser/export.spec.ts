@@ -90,6 +90,6 @@ for (const theme of ['light', 'dark']) for (const [size, scale] of [['small', .6
   await expect(list).toBeHidden(); await expect(page.getByRole('dialog', { name: 'Export image' })).toBeVisible();
   await trigger.click(); await page.getByRole('option', { name: 'Entire page', exact: true }).click();
   await expect(trigger).toContainText('Entire page'); await expect(trigger).toBeFocused();
-  await trigger.click(); await page.screenshot({ path: `artifacts/export-scope-${size}-${theme}.png` });
+  await trigger.click(); await expect(list).toBeVisible();
   await page.getByRole('img', { name: 'Export preview' }).click(); await expect(list).toBeHidden();
 });

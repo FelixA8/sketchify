@@ -110,7 +110,7 @@ for (const [fontFamily, zoom] of [[1, 1], [2, 2], [3, .75], [5, 1.5]]) test(`tex
   const x = original.x * zoom + 100, y = original.y * zoom - 80;
   const clip = { x: x - 12, y: y - 12, width: Math.ceil(original.width * zoom) + 24, height: Math.ceil(48 * zoom * 2.5) + 24 };
   async function inkBounds() {
-    const image = await loadImage(await page.screenshot({ clip, caret: 'hide' }));
+    const image = await loadImage(await page.screenshot({ clip, caret: 'hide', scale: 'css' }));
     const canvas = createCanvas(image.width, image.height), ctx = canvas.getContext('2d'); ctx.drawImage(image, 0, 0);
     const pixels = ctx.getImageData(0, 0, image.width, image.height).data;
     return [0, 1].map(line => {
