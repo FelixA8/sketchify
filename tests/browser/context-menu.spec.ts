@@ -1,12 +1,12 @@
 import { test, expect, type Page } from '@playwright/test';
+import { seedStorage } from './storage';
 
 async function seed(page: Page) {
-  await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('sketchify.scene.v1', JSON.stringify({ elements: [
+  await seedStorage(page, { elements: [
     { id: 'box', type: 'rectangle', x: 400, y: 250, width: 200, height: 140, backgroundColor: '#ffec99', seed: 17 },
     { id: 'label', type: 'text', x: 440, y: 290, text: 'Right-click me', fontSize: 24, fontFamily: 2, containerId: 'box' },
-  ] })));
-  await page.reload(); await expect(page.locator('#canvas')).toBeVisible();
+  ] });
+  await page.goto('/'); await expect(page.locator('#canvas')).toBeVisible();
 }
 async function scene(page: Page) {
   await expect(page.locator('#save-state')).toHaveText('Saved on this device');
@@ -61,11 +61,11 @@ test('lock/unlock, text unbinding, frames and object links are usable from the m
 });
 
 test('frame name follows rotation, pan and zoom on a narrow canvas', async ({ page }) => {
-  await page.setViewportSize({ width: 375, height: 700 }); await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('sketchify.scene.v1', JSON.stringify({ elements: [
+  await page.setViewportSize({ width: 375, height: 700 });
+  await seedStorage(page, { elements: [
     { id: 'frame', type: 'frame', name: 'Frame', x: 100, y: 150, width: 200, height: 200, angle: Math.PI / 6 },
-  ], local: { zoom: 0.75, pan: { x: 30, y: 100 } } })));
-  await page.reload();
+  ], local: { zoom: 0.75, pan: { x: 30, y: 100 } } });
+  await page.goto('/');
   const label = page.getByRole('button', { name: 'Rename frame: Frame', exact: true });
   await label.click();
   const name = page.getByRole('textbox', { name: 'Frame name', exact: true });
@@ -76,15 +76,16 @@ test('frame name follows rotation, pan and zoom on a narrow canvas', async ({ pa
 });
 
 for (const width of [1280, 375]) for (const zoom of [0.75, 1, 2]) test(`frame rename keeps its text position at ${width}px and ${zoom} zoom`, async ({ page }) => {
-  await page.setViewportSize({ width, height: 800 }); await page.goto('/');
-  await page.evaluate(({ zoom }) => localStorage.setItem('sketchify.scene.v1', JSON.stringify({ elements: [
+  await page.setViewportSize({ width, height: 800 });
+  await seedStorage(page, { elements: [
     { id: 'frame', type: 'frame', name: 'Cash List', x: 100, y: 150, width: 200, height: 200, angle: Math.PI / 12 },
-  ], local: { zoom, pan: { x: 30, y: 100 } } })), { zoom });
-  await page.reload();
+  ], local: { zoom, pan: { x: width === 375 && zoom === 2 ? -30 : 30, y: 100 } } });
+  await page.goto('/');
   const label = page.getByRole('button', { name: 'Rename frame: Cash List', exact: true });
   const origin = await label.evaluate((button: HTMLButtonElement) => {
     const style = getComputedStyle(button);
-    return { x: button.offsetLeft, y: button.offsetTop + button.offsetHeight - parseFloat(style.lineHeight), font: style.font };
+    const { fontFamily, fontSize, fontWeight } = style;
+    return { x: button.offsetLeft, y: button.offsetTop + button.offsetHeight - parseFloat(style.lineHeight), font: { fontFamily, fontSize, fontWeight } };
   });
   const anchor = await page.locator('.frame-name-position').boundingBox();
   await label.click();
@@ -92,12 +93,13 @@ for (const width of [1280, 375]) for (const zoom of [0.75, 1, 2]) test(`frame re
   await expect(name).toBeFocused();
   const editing = await name.evaluate((input: HTMLInputElement) => {
     const style = getComputedStyle(input);
+    const { fontFamily, fontSize, fontWeight } = style;
     return { x: input.offsetLeft + parseFloat(style.borderLeftWidth) + parseFloat(style.paddingLeft),
-      y: input.offsetTop + parseFloat(style.borderTopWidth) + parseFloat(style.paddingTop), font: style.font };
+      y: input.offsetTop + parseFloat(style.borderTopWidth) + parseFloat(style.paddingTop), font: { fontFamily, fontSize, fontWeight } };
   });
   expect(editing.x).toBeCloseTo(origin.x, 0);
   expect(editing.y).toBeCloseTo(origin.y, 0);
-  expect(editing.font).toBe(origin.font);
+  expect(editing.font).toEqual(origin.font);
   await expect(name).toHaveCSS('outline-style', 'none');
   await expect(name).toHaveCSS('border-top-style', 'solid');
   await expect(name).toHaveCSS('border-top-width', '1px');

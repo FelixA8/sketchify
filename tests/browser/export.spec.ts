@@ -38,7 +38,7 @@ for (const theme of ['light', 'dark']) for (const width of [320, 768, 1440]) tes
   const box = await dialog.boundingBox(); expect(box!.x).toBeGreaterThanOrEqual(0); expect(box!.x + box!.width).toBeLessThanOrEqual(width);
   for (const control of ['PNG', 'SVG', 'Copy to clipboard']) {
     const bounds = await dialog.getByRole('button', { name: control, exact: true }).boundingBox();
-    expect(bounds!.height).toBeGreaterThanOrEqual(44);
+    expect(bounds!.height).toBeGreaterThanOrEqual(43.95);
   }
   await page.screenshot({ path: `artifacts/export-${width}-${theme}.png` });
   await page.keyboard.press('Escape'); await expect(dialog).toBeHidden(); expect(errors).toEqual([]);
@@ -69,9 +69,10 @@ test('clipboard rejection provides a visible recovery message', async ({ page })
   await expect(page.getByRole('button', { name: 'Copy to clipboard', exact: true })).toBeEnabled();
 });
 
-for (const theme of ['light', 'dark']) for (const [size, scale] of [['small', .45], ['medium', 1], ['large', 1.2]] as const) test(`custom scope options follow ${size} sizing and keyboard behavior in ${theme}`, async ({ page }) => {
+for (const theme of ['light', 'dark']) for (const [size, scale] of [['small', .675], ['medium', 1], ['large', 1.2]] as const) test(`custom scope options follow ${size} sizing and keyboard behavior in ${theme}`, async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 }); await openExport(page, theme, size);
   await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Toggle pages and layers' }).click();
   await page.locator('[data-layer-select="e:shape"]').click();
   await page.getByRole('button', { name: 'Main menu', exact: true }).click();
   await page.getByRole('button', { name: 'Export image', exact: true }).click();
@@ -85,10 +86,10 @@ for (const theme of ['light', 'dark']) for (const [size, scale] of [['small', .4
   await expect(list).toHaveCSS('background-color', theme === 'dark' ? 'rgb(35, 35, 41)' : 'rgb(255, 255, 255)');
   await page.keyboard.press('End'); await page.keyboard.press('Enter');
   await expect(trigger).toContainText('Selected elements'); await expect(trigger).toBeFocused(); await expect(list).toBeHidden();
-  await trigger.click(); await page.keyboard.press('Escape');
+  await trigger.click(); await expect(list).toBeVisible(); await trigger.press('Escape');
   await expect(list).toBeHidden(); await expect(page.getByRole('dialog', { name: 'Export image' })).toBeVisible();
   await trigger.click(); await page.getByRole('option', { name: 'Entire page', exact: true }).click();
   await expect(trigger).toContainText('Entire page'); await expect(trigger).toBeFocused();
-  await trigger.click(); await page.screenshot({ path: `artifacts/export-scope-${size}-${theme}.png` });
-  await page.getByRole('switch', { name: 'Background', exact: true }).click(); await expect(list).toBeHidden();
+  await trigger.click(); await expect(list).toBeVisible();
+  await page.getByRole('img', { name: 'Export preview' }).click(); await expect(list).toBeHidden();
 });

@@ -1,4 +1,4 @@
-import { bounds, createElement, DEFAULT_STYLE, importScene, safeTextLink, sceneBounds, uid, unrotatedBounds, pointInElementBounds } from '../scene';
+import { bounds, DEFAULT_STYLE, importScene, safeTextLink, sceneBounds, uid, unrotatedBounds, pointInElementBounds } from '../scene';
 import type { Element, Point, Style } from '../types';
 import type { Controller } from './controller';
 import { snapshot } from './store';
@@ -156,7 +156,7 @@ export class ObjectActions {
       } catch { /* Ordinary clipboard text becomes a canvas label. */ }
       if (text) a.run(() => {
         const p = point ?? a.world(a.width / 2, a.height / 2);
-        const element = { ...createElement('text', p.x, p.y, snapshot(a.state.style)), text: text.slice(0, 10000) };
+        const element = { ...a.createDrawingElement('text', p), text: text.slice(0, 10000) };
         a.measure(element); a.state.elements.push(element); a.state.selected = new Set([element.id]); a.commit();
       });
     } catch {
@@ -235,7 +235,7 @@ export class ObjectActions {
   }
   wrapFrame() {
     const a = this.app, elements = this.editable(); if (!elements.length) return;
-    const b = sceneBounds(elements), frame = { ...createElement('frame', b.x - 24, b.y - 24), width: b.width + 48, height: b.height + 48, name: 'Frame', roughness: 0, strokeWidth: 1, strokeColor: '#73737d' };
+    const b = sceneBounds(elements), frame = { ...a.createDrawingElement('frame', { x: b.x - 24, y: b.y - 24 }), width: b.width + 48, height: b.height + 48 };
     const selectedIds = new Set(elements.map(element => element.id));
     const index = a.state.elements.findIndex(element => selectedIds.has(element.id));
     a.state.elements.splice(index, 0, frame);
@@ -284,6 +284,7 @@ export class ObjectActions {
     const a = this.app; if (!window.location.hash.startsWith('#object=')) return;
     let id: string; try { id = decodeURIComponent(window.location.hash.slice(8)); } catch { return; }
     const element = a.state.elements.find(element => element.id === id); if (!element) return;
+    a.cancelLayerNavigation();
     const b = bounds(element); a.state.editingGroup = null; a.state.selected = expandGroups(a.state.elements, new Set([element.id])); a.state.tool = 'selection';
     a.state.pan = { x: a.width / 2 - (b.x + b.width / 2) * a.state.zoom, y: a.height / 2 - (b.y + b.height / 2) * a.state.zoom };
     a.persistence.schedule();

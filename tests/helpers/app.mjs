@@ -76,7 +76,11 @@ export function createApp({ savedElements = [], zoom = 1, pan = { x: 0, y: 0 }, 
       cancelAnimationFrame: window.cancelAnimationFrame, setTimeout: window.setTimeout, clearTimeout: window.clearTimeout,
       IS_REACT_ACT_ENVIRONMENT: true });
   }
-  function flushFrames() { for (const [id, fn] of frames) { frames.delete(id); fn(); } }
+  let frameTime = 0;
+  function flushFrames(elapsed = 16) {
+    frameTime += elapsed;
+    act(() => { for (const [id, fn] of [...frames]) if (frames.delete(id)) fn(frameTime); });
+  }
   activate();
   const container = document.getElementById('mount');
   const content = React.createElement(strict ? React.StrictMode : React.Fragment, null, React.createElement(Whiteboard));
@@ -112,6 +116,7 @@ export function createApp({ savedElements = [], zoom = 1, pan = { x: 0, y: 0 }, 
   }
   function scene() { activate(); act(() => { for (const [id, fn] of timers) { timers.delete(id); fn(); } }); flushFrames(); return JSON.parse(window.localStorage.getItem('sketchify.scene.v1')).elements; }
   return { get, canvas, editor, document, window, activate, dispatch, click, select, scene, captures, opened, downloads, filenames, pendingSaves: () => timers.size,
+    advanceFrame(elapsed) { activate(); flushFrames(elapsed); },
     tool: name => click(document.querySelector(`[data-tool="${name}"]`)),
     input(value) { activate(); editor.textContent = value; select(value.length); dispatch(editor, 'input'); },
     type: value => dispatch(editor, 'beforeinput', { inputType: 'insertText', data: value }),

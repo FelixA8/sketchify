@@ -1,5 +1,5 @@
 'use client';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { createStore, initialState } from './store';
 import { Controller } from './controller';
 import { mountCanvas } from './canvas';
@@ -45,5 +45,6 @@ export default function Whiteboard() {
 }
 function BoardRoot({ root, children }: { root: React.RefObject<HTMLElement | null>; children: React.ReactNode }) {
   const { state: s } = useBoard();
-  return <main ref={root} id="app" data-panel-size={s.iconTextSize} aria-label="Sketchify whiteboard">{children}</main>;
+  const style = s.sidebarWidth !== null ? { '--workspace-width': `${s.sidebarWidth}px` } as CSSProperties : undefined;
+  return <main ref={root} id="app" data-panel-size={s.iconTextSize} aria-label="Sketchify whiteboard" style={style}>{children}</main>;
 }

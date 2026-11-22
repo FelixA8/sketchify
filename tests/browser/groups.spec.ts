@@ -1,12 +1,12 @@
 import { test, expect, type Page } from '@playwright/test';
+import { seedStorage } from './storage';
 
 async function seed(page: Page, theme = 'light', mobile = false) {
-  await page.goto('/');
-  await page.evaluate(({ theme, mobile }) => localStorage.setItem('sketchify.scene.v1', JSON.stringify({ elements: [
+  await seedStorage(page, { elements: [
     { id: 'one', type: 'rectangle', x: mobile ? 50 : 400, y: 250, width: mobile ? 80 : 120, height: 80 },
     { id: 'two', type: 'ellipse', x: mobile ? 220 : 700, y: 250, width: mobile ? 80 : 120, height: 80 },
-  ], local: { theme } })), { theme, mobile });
-  await page.reload(); await expect(page.locator('#canvas')).toBeVisible();
+  ], local: { theme } });
+  await page.goto('/'); await expect(page.locator('#canvas')).toBeVisible();
 }
 async function scene(page: Page) {
   await expect(page.locator('#save-state')).toHaveText('Saved on this device');

@@ -1,4 +1,4 @@
-import { bounds, createElement, hitTest, resizeElement, resizeLocalElement, sceneBounds, unrotatedBounds, rotatePoint, normalizeAngle, pointInElementBounds } from '../scene';
+import { bounds, hitTest, resizeElement, resizeLocalElement, sceneBounds, unrotatedBounds, rotatePoint, normalizeAngle, pointInElementBounds } from '../scene';
 import { linkAt } from '../text';
 import type { Controller } from './controller';
 import type { Point } from '../types';
@@ -76,7 +76,7 @@ export function mountGestures(a: Controller) {
         const initial = event.shiftKey ? new Set(s.selected) : new Set<string>(); s.selected = initial; s.gesture = { kind: 'marquee', start: p, current: p, initial };
       }
     } else {
-      const start = a.snap(p), element = createElement(s.tool, start.x, start.y, snapshot(s.tool === 'stickynote' ? s.noteStyle : s.style));
+      const start = a.snap(p), element = a.createDrawingElement(s.tool, start);
       if (['line', 'arrow', 'freedraw'].includes(s.tool)) element.points = [[0, 0], [0, 0]];
       if (isConnector(element) && s.preferences.arrowBinding) {
         const snapped = snapWithHint(p);
@@ -264,7 +264,7 @@ export function mountGestures(a: Controller) {
     event.preventDefault(); a.text.edit(p, element);
   });
   a.listen(a.canvas, 'wheel', event => {
-    event.preventDefault(); a.text.finish(); a.state.contextMenu = null;
+    event.preventDefault(); a.cancelLayerNavigation(); a.text.finish(); a.state.contextMenu = null;
     if (event.ctrlKey || event.metaKey) a.zoom(a.state.zoom * Math.exp(-event.deltaY * .008), { x: event.offsetX, y: event.offsetY });
     else { a.state.pan.x -= event.shiftKey ? event.deltaY : event.deltaX; a.state.pan.y -= event.shiftKey ? event.deltaX : event.deltaY; a.persistence.schedule(); }
   }, { passive: false });

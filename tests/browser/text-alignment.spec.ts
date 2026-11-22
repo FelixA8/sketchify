@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { seedStorage } from './storage';
 
 const saved = async (page: Page) => {
   await expect(page.locator('#save-state')).toHaveText('Saved on this device');
@@ -8,12 +9,11 @@ const saved = async (page: Page) => {
 for (const mobile of [false, true]) {
   test(`standalone text alignment works while editing and selected on ${mobile ? 'mobile dark' : 'desktop light'}`, async ({ page }) => {
     const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
-    if (mobile) await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
     if (mobile) {
-      await page.evaluate(() => localStorage.setItem('sketchify.scene.v1', JSON.stringify({ elements: [], local: { theme: 'dark' } })));
-      await page.reload();
+      await page.setViewportSize({ width: 390, height: 844 });
+      await seedStorage(page, { elements: [], local: { theme: 'dark' } });
     }
+    await page.goto('/');
     await page.getByRole('button', { name: 'Text', exact: true }).click();
     await page.mouse.click(mobile ? 70 : 460, mobile ? 330 : 250);
     const editor = page.getByRole('textbox', { name: 'Edit canvas text' });
@@ -42,11 +42,9 @@ for (const mobile of [false, true]) {
   test(`rectangle supports all nine alignments and retains them when reopened on ${mobile ? 'mobile dark' : 'desktop light'}`, async ({ page }) => {
     const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
     if (mobile) await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
     const x = mobile ? 40 : 460, y = mobile ? 220 : 240, width = 300, height = 240;
-    await page.evaluate(({ x, y, width, height, mobile }) => {
-      localStorage.setItem('sketchify.scene.v1', JSON.stringify({ elements: [{ id: 'rectangle', type: 'rectangle', x, y, width, height }], local: { theme: mobile ? 'dark' : 'light' } }));
-    }, { x, y, width, height, mobile }); await page.reload();
+    await seedStorage(page, { elements: [{ id: 'rectangle', type: 'rectangle', x, y, width, height }], local: { theme: mobile ? 'dark' : 'light' } });
+    await page.goto('/');
     await page.mouse.dblclick(x + width / 2, y);
     const editor = page.getByRole('textbox', { name: 'Edit canvas text' });
     await expect(editor).toBeFocused(); await page.keyboard.type('Longer line\nShort');
@@ -67,8 +65,8 @@ for (const mobile of [false, true]) {
     await expect(editor).toHaveCSS('text-align', 'right');
     await expect(page.getByRole('button', { name: 'Align text bottom', exact: true })).toHaveAttribute('aria-pressed', 'true');
     await page.screenshot({ path: `artifacts/rectangle-align-${mobile ? 'mobile-dark' : 'desktop-light'}.png` });
-    await page.getByRole('button', { name: 'Align text left', exact: true }).click();
-    await page.getByRole('button', { name: 'Align text top', exact: true }).click();
+    await page.getByRole('button', { name: 'Align text left', exact: true }).press('Space');
+    await page.getByRole('button', { name: 'Align text top', exact: true }).press('Space');
     await expect(editor).toBeFocused(); await expect(editor).toHaveCSS('text-align', 'left');
     await page.keyboard.press('Escape'); const before = await saved(page);
     expect(before[1].textAlign).toBe('right'); expect(before[1].verticalAlign).toBe('bottom');

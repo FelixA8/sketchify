@@ -52,7 +52,7 @@ function CornerRounding({ value }: { value: number | undefined }) {
 }
 export function Properties() {
   const { state: s, run } = useBoard(), selected = selectedElements(s);
-  const show = !s.preferences.zenMode && s.panel && !['hand', 'eraser'].includes(s.tool) && (!!s.editing || s.tool !== 'selection' || selected.length > 0);
+  const show = !s.preferences.zenMode && s.panel && !['hand', 'eraser', 'frame'].includes(s.tool) && (!!s.editing || s.tool !== 'selection' || selected.length > 0);
   const noteParent = s.editing?.container?.type === 'stickynote' ? s.editing.container : selected.find(element => element.type === 'stickynote') ?? s.elements.find(element => element.type === 'stickynote' && selected.some(text => text.containerId === element.id));
   const notes = s.tool === 'stickynote' || !!noteParent && (!!s.editing || selected.every(element => element.type === 'stickynote' || element.type === 'text' && s.elements.some(parent => parent.type === 'stickynote' && parent.id === element.containerId)));
   const style = notes ? noteParent ?? s.noteStyle : s.editing?.element || selected[0] || s.style;

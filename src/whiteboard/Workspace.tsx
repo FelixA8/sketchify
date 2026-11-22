@@ -1,6 +1,7 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useBoard } from './context';
 import { Icon } from './Icon';
+import { WorkspaceResize } from './WorkspaceResize';
 import { elementKey, layerAncestors, layerMembers, layerModel, type LayerNode } from './layers';
 
 function Rename({ value, label, save, close }: { value: string; label: string; save: (value: string) => void; close: () => void }) {
@@ -42,6 +43,9 @@ function WorkspacePanel() {
   useLayoutEffect(() => {
     sidebar.current?.querySelector<HTMLElement>('[data-selected=true]')?.scrollIntoView?.({ block: 'nearest' });
   }, [selectedToken, s.activePageId, s.sidebar]);
+  const closeSidebar = () => run(a => {
+    a.cancelLayerNavigation(); a.state.sidebar = false; a.persistence.schedule(); a.get('workspace-toggle').focus();
+  });
   const toggle = (key: string) => setCollapsed(previous => { const next = new Set(previous); if (next.has(key)) next.delete(key); else next.add(key); return next; });
   const focusLayer = (key: string) => [...(sidebar.current?.querySelectorAll<HTMLButtonElement>('[data-layer-select]') ?? [])].find(button => button.dataset.layerSelect === key)?.focus();
   const layerKeys = (event: React.KeyboardEvent, node: LayerNode) => {
@@ -83,6 +87,13 @@ function WorkspacePanel() {
     const locked = inheritedLock || !!s.layers[node.key]?.locked || !!node.element?.locked;
     const siblings = node.parent ? model.nodes.get(node.parent)!.children : model.roots, index = siblings.indexOf(node);
     const rename = () => { if (!locked) { setMenu(null); setEditing(node.key); } };
+    const select = (event: React.MouseEvent, reveal = false) => {
+      const additive = event.shiftKey || event.metaKey || event.ctrlKey;
+      setMenu(null);
+      run(a => a.workspace.selectLayer(node.key, additive, reveal));
+      if (!reveal && !additive) rename();
+    };
+    const iconLabel = hidden ? `Select ${node.name}` : `Select and locate ${node.name} on canvas`;
     return <li key={node.key} data-layer-key={node.key}>
       <div className={`workspace-row layer-row${hidden ? ' layer-hidden' : ''}`} data-selected={selected} data-selected-before={before} data-selected-after={after} data-drop={drop?.id === node.key ? drop.position : undefined} style={{ '--depth': Math.min(depth, 6) } as React.CSSProperties}
         draggable={!locked && !node.element?.containerId && !editing}
@@ -101,7 +112,8 @@ function WorkspacePanel() {
           setDrag(null); setDrop(null);
         }}>
         {node.children.length > 0 && <button className="workspace-icon branch-toggle" aria-label={`${collapsed.has(node.key) ? 'Expand' : 'Collapse'} ${node.name}`} aria-expanded={!collapsed.has(node.key)} onClick={() => toggle(node.key)}><span className={collapsed.has(node.key) ? '' : 'branch-open'}><Icon name="chevron" /></span></button>}
-        {editing === node.key ? <Rename value={node.name} label="Layer name" save={value => run(a => a.workspace.renameLayer(node.key, value))} close={() => { setEditing(null); queueMicrotask(() => focusLayer(node.key)); }} /> : <button className="layer-select" data-layer-select={node.key} aria-pressed={selected} title={node.name} onKeyDown={event => layerKeys(event, node)} onClick={event => { setMenu(null); run(a => a.workspace.selectLayer(node.key, event.shiftKey || event.metaKey || event.ctrlKey)); }}><Icon name={node.group ? 'group' : node.element!.type} /><span onClick={event => { if (!event.shiftKey && !event.metaKey && !event.ctrlKey) rename(); }}>{node.name}</span></button>}
+        <button className="workspace-icon layer-select" data-layer-select={node.key} aria-label={iconLabel} aria-pressed={selected} title={iconLabel} onKeyDown={event => layerKeys(event, node)} onClick={event => select(event, true)}><Icon name={node.group ? 'group' : node.element!.type} /></button>
+        {editing === node.key ? <Rename value={node.name} label="Layer name" save={value => run(a => a.workspace.renameLayer(node.key, value))} close={() => { setEditing(null); queueMicrotask(() => focusLayer(node.key)); }} /> : <button className="layer-name" title={node.name} onClick={event => select(event)}>{node.name}</button>}
         <button className="workspace-icon layer-control" aria-label={`${s.layers[node.key]?.hidden ? 'Show' : 'Hide'} ${node.name}`} aria-pressed={hidden} disabled={inheritedHidden} title={inheritedHidden ? 'Show its parent first' : hidden ? 'Show layer' : 'Hide layer'} onClick={() => run(a => a.workspace.toggleLayer(node.key, 'hidden'))}><Icon name={hidden ? 'eyeOff' : 'eye'} /></button>
         <button className="workspace-icon layer-control" aria-label={`${locked ? 'Unlock' : 'Lock'} ${node.name}`} aria-pressed={locked} disabled={inheritedLock} title={inheritedLock ? 'Unlock its parent first' : locked ? 'Unlock layer' : 'Lock layer'} onClick={() => run(a => a.workspace.toggleLayer(node.key, 'locked'))}><Icon name={locked ? 'lock' : 'unlock'} /></button>
         <button className="workspace-icon" aria-label={`Actions for ${node.name}`} aria-expanded={menu === node.key} onClick={() => setMenu(menu === node.key ? null : node.key)}><Icon name="more" /></button>
@@ -124,11 +136,12 @@ function WorkspacePanel() {
         if (!event.metaKey && !event.ctrlKey) event.stopPropagation();
         if (event.key === 'Escape' && !editing) {
           if (menu) setMenu(null);
-          else run(a => { a.state.sidebar = false; a.persistence.schedule(); a.get('workspace-toggle').focus(); });
+          else closeSidebar();
         }
       }}>
+      <WorkspaceResize />
       <section className="workspace-pages" aria-labelledby="pages-heading">
-        <div className="workspace-heading"><h2 id="pages-heading">Pages</h2><button className="workspace-icon" aria-label="Add page" title="Add page" onClick={() => run(a => a.workspace.addPage())}><Icon name="plus" /></button><button className="workspace-icon" aria-label="Close sidebar" onClick={() => run(a => { a.state.sidebar = false; a.persistence.schedule(); a.get('workspace-toggle').focus(); })}><Icon name="sidebar" /></button></div>
+        <div className="workspace-heading"><h2 id="pages-heading">Pages</h2><button className="workspace-icon" aria-label="Add page" title="Add page" onClick={() => run(a => a.workspace.addPage())}><Icon name="plus" /></button><button className="workspace-icon" aria-label="Close sidebar" onClick={closeSidebar}><Icon name="sidebar" /></button></div>
         <ul className="page-list">{s.pages.map((page, index) => <li key={page.id}>
           <div className="workspace-row page-row" data-selected={s.activePageId === page.id} data-drop={drop?.id === page.id ? drop.position : undefined} draggable={editing !== `p:${page.id}`}
             onDragStart={event => { event.dataTransfer.setData('application/x-sketchify-page', page.id); event.dataTransfer.effectAllowed = 'move'; setDrag({ kind: 'page', id: page.id }); }}

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { seedStorage, waitForInitialSave } from './storage';
 
 const saved = async (page: Page) => {
   await expect(page.locator('#save-state')).toHaveText('Saved on this device');
@@ -39,15 +40,13 @@ for (const mobile of [false, true]) for (const tool of ['Rectangle', 'Ellipse', 
     page.on('pageerror', error => errors.push(error.message));
     page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
     if (mobile) await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
     const x = mobile ? 40 : 400, y = mobile ? 220 : 240, width = 300, height = 200;
-    await page.evaluate(({ tool, x, y, width, height, mobile }) => {
-      localStorage.setItem('sketchify.scene.v1', JSON.stringify({
-        elements: [{ id: 'shape', type: tool.toLowerCase(), x, y, width, height, backgroundColor: mobile ? '#ffc9c9' : 'transparent' }],
-        local: { theme: mobile ? 'dark' : 'light' },
-      }));
-    }, { tool, x, y, width, height, mobile });
-    await page.reload(); const original = (await saved(page))[0];
+    await seedStorage(page, {
+      elements: [{ id: 'shape', type: tool.toLowerCase(), x, y, width, height, backgroundColor: mobile ? '#ffc9c9' : 'transparent' }],
+      local: { theme: mobile ? 'dark' : 'light' },
+    });
+    await page.goto('/'); await waitForInitialSave(page);
+    const original = (await saved(page))[0];
     const editor = page.getByRole('textbox', { name: 'Edit canvas text' });
     await page.locator('#canvas').focus(); await page.keyboard.press('t');
     await page.mouse.click(x + 80, y + height / 2); await expect(editor).toBeFocused();
@@ -70,8 +69,11 @@ for (const mobile of [false, true]) for (const tool of ['Rectangle', 'Ellipse', 
     elements = await saved(page); expect(elements).toHaveLength(5); expect(elements[3]).toEqual(attached); expect(elements[4].containerId).toBeFalsy();
 
     await page.keyboard.press('Escape');
-    await page.mouse.move(x + width, y + height / 2); await page.mouse.down();
-    await page.mouse.move(x + width + 20, y + height / 2 + 10); await page.mouse.up();
+    const [shape] = elements;
+    const gripX = shape.x + shape.width * (tool === 'Diamond' ? .8 : 1);
+    const gripY = shape.y + shape.height * (tool === 'Diamond' ? .7 : .5);
+    await page.mouse.move(gripX, gripY); await page.mouse.down();
+    await page.mouse.move(gripX + 20, gripY + 10); await page.mouse.up();
     const moved = await saved(page);
     expect(moved[0].x).toBe(original.x + 20); expect(moved[0].y).toBe(original.y + 10);
     expect(moved[3].x).toBeCloseTo(attached.x + 20); expect(moved[3].y).toBeCloseTo(attached.y + 10);

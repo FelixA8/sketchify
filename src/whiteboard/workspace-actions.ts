@@ -7,7 +7,7 @@ import { uid } from '../scene';
 
 export class WorkspaceActions {
   constructor(readonly app: Controller) {}
-  finish() { this.app.text.finish(); this.app.finishFrameName(); this.app.finishGesture(); }
+  finish() { this.app.cancelLayerNavigation(); this.app.text.finish(); this.app.finishFrameName(); this.app.finishGesture(); }
   switchPage(id: string) {
     if (id === this.app.state.activePageId || !this.app.state.pages.some(page => page.id === id)) return;
     this.finish(); activatePage(this.app.state, id);
@@ -64,8 +64,8 @@ export class WorkspaceActions {
       this.app.commit();
     } else this.replaceProject({ type: 'sketchify', version: 1, pages: [page], name, activePageId: page.id });
   }
-  selectLayer(key: string, additive = false) {
-    this.finish(); const s = this.app.state, node = layerModel(s.elements, s.layers).nodes.get(key); if (!node) return;
+  selectLayer(key: string, additive = false, reveal = false) {
+    this.finish(); const s = this.app.state, model = layerModel(s.elements, s.layers), node = model.nodes.get(key); if (!node) return;
     const members = node.group ? layerMembers(node) : [node.element!];
     if (!additive) s.selected.clear();
     const remove = additive && members.every(element => s.selected.has(element.id));
@@ -73,6 +73,7 @@ export class WorkspaceActions {
     const groupMember = node.group ? members.find(element => element.groupIds.includes(node.group!)) : undefined;
     s.editingGroup = node.group && groupMember ? groupMember.groupIds[groupMember.groupIds.indexOf(node.group) + 1] ?? null : node.element?.groupIds[0] ?? null;
     s.tool = 'selection'; if (innerWidth > 760) s.panel = true;
+    if (reveal && !remove) this.app.revealLayer(members.filter(element => !model.hidden.has(element.id)));
   }
   renameLayer(key: string, name: string) {
     const s = this.app.state, model = layerModel(s.elements, s.layers), node = model.nodes.get(key); if (!node) return;

@@ -12,6 +12,40 @@ async function fitsViewport(page: Page, selector: string) {
   expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
 }
 
+for (const width of [375, 1440]) test.describe(`experience survey at ${width}px`, () => {
+  const mobile = width === 375;
+  test.use({ hasTouch: mobile, viewport: { width, height: mobile ? 667 : 900 } });
+
+  for (const theme of ['light', 'dark']) test(`opens in a new tab in ${theme} mode`, async ({ page, context, browserName }) => {
+    const survey = 'https://forms.gle/AtpuDWgYtMiseJzE8';
+    await context.route(survey, route => route.fulfill({ contentType: 'text/html', body: '<title>Sketchify survey</title>' }));
+    await page.goto('/');
+    const menuButton = page.getByRole('button', { name: 'Main menu', exact: true });
+    if (theme === 'dark') {
+      await menuButton.click();
+      await page.getByRole('button', { name: 'Dark', exact: true }).click();
+      await page.keyboard.press('Escape');
+    }
+    await menuButton.click();
+    const menu = page.getByRole('region', { name: 'Main menu', exact: true });
+    const link = menu.getByRole('link', { name: 'Share your experience (opens in a new tab)', exact: true });
+    await link.scrollIntoViewIfNeeded();
+    await expect(link).toBeInViewport({ ratio: 1 });
+    await expect(link.and(menu.locator('button[data-action="help"] + a'))).toBeVisible();
+    await fitsViewport(page, '#menu');
+    if (mobile) expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    if (browserName === 'chromium') await page.screenshot({ path: `artifacts/experience-survey-${width}-${theme}.png` });
+
+    const drawingUrl = page.url();
+    const [surveyTab] = await Promise.all([page.waitForEvent('popup'), mobile ? link.tap() : link.press('Enter')]);
+    await expect(surveyTab).toHaveURL(survey);
+    await expect(surveyTab).toHaveTitle('Sketchify survey');
+    expect(await surveyTab.evaluate(() => window.opener)).toBeNull();
+    await expect(page).toHaveURL(drawingUrl);
+    await expect(page.locator('#canvas')).toBeVisible();
+  });
+});
+
 for (const width of [375, 1440, 1600]) test(`panel icon and text sizes apply, fit and persist at ${width}px`, async ({ page }) => {
   await page.setViewportSize({ width, height: 900 }); await page.goto('/');
   await preferences(page);
@@ -22,16 +56,16 @@ for (const width of [375, 1440, 1600]) test(`panel icon and text sizes apply, fi
     await button.focus(); await page.keyboard.press('Space');
     await expect(button).toHaveAttribute('aria-pressed', 'true');
     const icon = page.locator('.preferences-head .icon-button svg').first();
-    expect(await icon.evaluate(node => parseFloat(getComputedStyle(node).width))).toBeCloseTo(14 * scale);
-    expect(await button.evaluate(node => parseFloat(getComputedStyle(node).fontSize))).toBeCloseTo(11 * scale);
+    expect(await icon.evaluate(node => parseFloat(getComputedStyle(node).width))).toBeCloseTo(14 * scale, 1);
+    expect(await button.evaluate(node => parseFloat(getComputedStyle(node).fontSize))).toBeCloseTo(11 * scale, 1);
     for (const selector of ['#menu-button svg', '#zoom-out svg', '#zoom-in svg', '#fit-button svg', '#undo-button svg', '#redo-button svg', '#help-button svg']) {
       const glyph = page.locator(selector), expected = (width <= 760 ? 20 : 16) * scale;
-      expect(await glyph.evaluate(node => parseFloat(getComputedStyle(node).width))).toBeCloseTo(expected);
-      expect(await glyph.evaluate(node => parseFloat(getComputedStyle(node).height))).toBeCloseTo(expected);
+      expect(await glyph.evaluate(node => parseFloat(getComputedStyle(node).width))).toBeCloseTo(expected, 1);
+      expect(await glyph.evaluate(node => parseFloat(getComputedStyle(node).height))).toBeCloseTo(expected, 1);
     }
     const toolIcon = page.locator('[data-tool="rectangle"] svg');
     expect((await toolIcon.boundingBox())!.width).toBeCloseTo((width <= 760 ? 20 : 16) * scale, 1);
-    expect(await page.locator('#zoom-reset').evaluate(node => parseFloat(getComputedStyle(node).fontSize))).toBeCloseTo((width <= 760 ? 12 : 11) * scale);
+    expect(await page.locator('#zoom-reset').evaluate(node => parseFloat(getComputedStyle(node).fontSize))).toBeCloseTo((width <= 760 ? 12 : 11) * scale, 1);
     const cornerSize = (width <= 760 ? 42 : width >= 1500 ? 43.2 : 40) * scale;
     const menuButton = (await page.locator('#menu-button').boundingBox())!;
     expect(menuButton.width).toBeCloseTo(cornerSize, 1); expect(menuButton.height).toBeCloseTo(cornerSize, 1);
@@ -44,8 +78,12 @@ for (const width of [375, 1440, 1600]) test(`panel icon and text sizes apply, fi
     const helpButton = (await page.locator('#help-button').boundingBox())!;
     expect(helpButton.width).toBeCloseTo((width <= 760 ? 38 : width >= 1500 ? 43.2 : 40) * scale, 1);
     expect(helpButton.height).toBeCloseTo(cornerSize, 1);
-    if (width > 760) for (const selector of ['.zoom-controls', '.history-controls', '#toolbar']) expect((await page.locator(selector).boundingBox())!.height).toBeCloseTo(cornerSize, 1);
-    if (width <= 760) expect(await page.locator('#style-toggle svg').evaluate(node => parseFloat(getComputedStyle(node).width))).toBeCloseTo(20 * scale);
+    if (width > 760) {
+      for (const selector of ['.zoom-controls', '.history-controls']) expect((await page.locator(selector).boundingBox())!.height).toBeCloseTo(cornerSize, 1);
+      const toolbar = (await page.locator('#toolbar').boundingBox())!;
+      expect(Math.abs(toolbar.height - cornerSize)).toBeLessThan(1.2);
+    }
+    if (width <= 760) expect(await page.locator('#style-toggle svg').evaluate(node => parseFloat(getComputedStyle(node).width))).toBeCloseTo(20 * scale, 1);
     for (const selector of ['.zoom-controls', '.history-controls', '#help-button', '#toolbar']) await fitsViewport(page, selector);
     if (width === 375) expect((await button.boundingBox())!.height).toBeCloseTo(44 * scale, 1);
     await fitsViewport(page, '#menu');

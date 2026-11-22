@@ -82,7 +82,7 @@ test('text bounds meet the last painted pixel without clipping descenders or und
 });
 test('fixed-width text wraps words and long graphemes while preserving explicit breaks and marks', () => {
   const ctx = createCanvas(800, 600).getContext('2d');
-  const element = { ...createElement('text', 10, 20), textWidth: 100, text: 'Sketch ideas\nextraordinary 🧑🏽‍💻\n', textSpans: [{ start: 7, end: 12, bold: true, link: 'https://example.com/' }] };
+  const element = { ...createElement('text', 10, 20), fontFamily: 1, fontSize: 24, textWidth: 100, text: 'Sketch ideas\nextraordinary 🧑🏽‍💻\n', textSpans: [{ start: 7, end: 12, bold: true, link: 'https://example.com/' }] };
   const measured = layout(element, ctx);
   assert.equal(measured.width, 100); assert.ok(measured.height > 4 * 24 * 1.25);
   assert.ok(measured.segments.every(run => run.x + run.width <= 100.01));

@@ -21,7 +21,8 @@ export class TextSession {
     if (parent && a.isLocked(parent)) return;
     const label = existing && textContainer(existing) ? s.elements.find(element => element.type === 'text' && element.containerId === existing.id) : existing;
     if (label && a.isLocked(label)) return;
-    const element = label ? snapshot(label) : createElement('text', p.x, p.y, snapshot(s.style));
+    const element = label ? snapshot(label) : parent ? createElement('text', p.x, p.y, snapshot(s.style)) : a.createDrawingElement('text', p);
+    if (!label && parent?.frameId) element.frameId = parent.frameId;
     if (parent?.type === 'stickynote') Object.assign(element, { strokeColor: parent.strokeColor, opacity: parent.opacity, fontSize: parent.fontSize, fontFamily: parent.fontFamily, baseFontSize: parent.fontSize });
     if (parent && textContainer(parent)) Object.assign(element, { containerId: parent.id, textAlign: label?.textAlign ?? parent.textAlign ?? 'center', verticalAlign: label?.verticalAlign ?? parent.verticalAlign ?? 'middle' });
     s.editing = { id: element.id, element, fresh: !label, ...(parent && textContainer(parent) ? { container: snapshot(parent) } : {}) }; s.selected.clear();
@@ -159,5 +160,6 @@ export class TextSession {
     });
     a.listen(a.get('text-link-form'), 'keydown', event => { if (event.key === 'Escape') { event.stopPropagation(); event.preventDefault(); this.closeLink(); } });
     a.listen(a.get('properties'), 'pointerdown', event => { if (a.state.editing && (event.target as HTMLElement).closest('button')) event.preventDefault(); });
+    a.listen(a.get('style-toggle'), 'pointerdown', event => { if (a.state.editing) event.preventDefault(); });
   }
 }
