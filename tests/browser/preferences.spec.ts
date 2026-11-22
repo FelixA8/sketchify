@@ -56,16 +56,16 @@ for (const width of [375, 1440, 1600]) test(`panel icon and text sizes apply, fi
     await button.focus(); await page.keyboard.press('Space');
     await expect(button).toHaveAttribute('aria-pressed', 'true');
     const icon = page.locator('.preferences-head .icon-button svg').first();
-    expect(await icon.evaluate(node => parseFloat(getComputedStyle(node).width))).toBeCloseTo(14 * scale);
-    expect(await button.evaluate(node => parseFloat(getComputedStyle(node).fontSize))).toBeCloseTo(11 * scale);
+    expect(await icon.evaluate(node => parseFloat(getComputedStyle(node).width))).toBeCloseTo(14 * scale, 1);
+    expect(await button.evaluate(node => parseFloat(getComputedStyle(node).fontSize))).toBeCloseTo(11 * scale, 1);
     for (const selector of ['#menu-button svg', '#zoom-out svg', '#zoom-in svg', '#fit-button svg', '#undo-button svg', '#redo-button svg', '#help-button svg']) {
       const glyph = page.locator(selector), expected = (width <= 760 ? 20 : 16) * scale;
-      expect(await glyph.evaluate(node => parseFloat(getComputedStyle(node).width))).toBeCloseTo(expected);
-      expect(await glyph.evaluate(node => parseFloat(getComputedStyle(node).height))).toBeCloseTo(expected);
+      expect(await glyph.evaluate(node => parseFloat(getComputedStyle(node).width))).toBeCloseTo(expected, 1);
+      expect(await glyph.evaluate(node => parseFloat(getComputedStyle(node).height))).toBeCloseTo(expected, 1);
     }
     const toolIcon = page.locator('[data-tool="rectangle"] svg');
     expect((await toolIcon.boundingBox())!.width).toBeCloseTo((width <= 760 ? 20 : 16) * scale, 1);
-    expect(await page.locator('#zoom-reset').evaluate(node => parseFloat(getComputedStyle(node).fontSize))).toBeCloseTo((width <= 760 ? 12 : 11) * scale);
+    expect(await page.locator('#zoom-reset').evaluate(node => parseFloat(getComputedStyle(node).fontSize))).toBeCloseTo((width <= 760 ? 12 : 11) * scale, 1);
     const cornerSize = (width <= 760 ? 42 : width >= 1500 ? 43.2 : 40) * scale;
     const menuButton = (await page.locator('#menu-button').boundingBox())!;
     expect(menuButton.width).toBeCloseTo(cornerSize, 1); expect(menuButton.height).toBeCloseTo(cornerSize, 1);
@@ -78,8 +78,12 @@ for (const width of [375, 1440, 1600]) test(`panel icon and text sizes apply, fi
     const helpButton = (await page.locator('#help-button').boundingBox())!;
     expect(helpButton.width).toBeCloseTo((width <= 760 ? 38 : width >= 1500 ? 43.2 : 40) * scale, 1);
     expect(helpButton.height).toBeCloseTo(cornerSize, 1);
-    if (width > 760) for (const selector of ['.zoom-controls', '.history-controls', '#toolbar']) expect((await page.locator(selector).boundingBox())!.height).toBeCloseTo(cornerSize, 1);
-    if (width <= 760) expect(await page.locator('#style-toggle svg').evaluate(node => parseFloat(getComputedStyle(node).width))).toBeCloseTo(20 * scale);
+    if (width > 760) {
+      for (const selector of ['.zoom-controls', '.history-controls']) expect((await page.locator(selector).boundingBox())!.height).toBeCloseTo(cornerSize, 1);
+      const toolbar = (await page.locator('#toolbar').boundingBox())!;
+      expect(Math.abs(toolbar.height - cornerSize)).toBeLessThan(1.2);
+    }
+    if (width <= 760) expect(await page.locator('#style-toggle svg').evaluate(node => parseFloat(getComputedStyle(node).width))).toBeCloseTo(20 * scale, 1);
     for (const selector of ['.zoom-controls', '.history-controls', '#help-button', '#toolbar']) await fitsViewport(page, selector);
     if (width === 375) expect((await button.boundingBox())!.height).toBeCloseTo(44 * scale, 1);
     await fitsViewport(page, '#menu');

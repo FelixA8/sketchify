@@ -6,16 +6,15 @@ import { IMAGE_TYPES } from '../images';
 import { expandGroups } from './groups';
 import { finishFlowchart, isFlowchartDirection, previewFlowchart } from './flowchart';
 export function mountKeyboard(a: Controller) {
-  a.listen(document, 'keydown', event => { if (event.key === 'Tab') event.preventDefault(); }, { capture: true });
-  const typing = () => { const active = document.activeElement as HTMLElement; return active?.isContentEditable || active === a.get('text-editor') || /INPUT|TEXTAREA|SELECT/.test(active?.tagName) || a.state.dialog; };
+  const typing = (target = document.activeElement) => target instanceof HTMLElement && (target === a.get('text-editor') || target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
   for (const type of ['copy', 'cut'] as const) a.listen(document, type, event => {
-    if (typing() || !a.state.selected.size) return;
+    if (typing() || a.state.dialog || !a.state.selected.size) return;
     if (type === 'cut' && a.objects.selected().some(element => a.isLocked(element))) return;
     a.state.clipboard = snapshot(a.objects.selected()); event.clipboardData!.setData('text/plain', JSON.stringify({ type: 'sketchify-clipboard', elements: a.state.clipboard })); event.preventDefault();
     if (type === 'cut') a.removeSelected();
   });
   a.listen(document, 'paste', event => {
-    if (typing() || !event.clipboardData) return;
+    if (typing() || a.state.dialog || !event.clipboardData) return;
     const data = event.clipboardData;
     const images = [...(data.items || [])].filter(item => item.kind === 'file' && IMAGE_TYPES.includes(item.type)).map(item => item.getAsFile()).filter((file): file is File => !!file);
     if (!images.length) images.push(...[...(data.files || [])].filter(file => IMAGE_TYPES.includes(file.type)));
@@ -29,7 +28,8 @@ export function mountKeyboard(a: Controller) {
     a.measure(element); a.state.elements.push(element); a.state.selected = new Set([element.id]); a.commit(); event.preventDefault();
   });
   a.listen(document, 'keydown', event => {
-    if (typing()) return; const s = a.state, key = event.key.toLowerCase(), command = event.metaKey || event.ctrlKey;
+    if (event.defaultPrevented || (event.target instanceof HTMLElement && typing(event.target)) || typing() || a.state.dialog) return;
+    const s = a.state, key = event.key.toLowerCase(), command = event.metaKey || event.ctrlKey;
     if (key === 'escape' && finishFlowchart(a, true)) { event.preventDefault(); return; }
     if (command && !event.shiftKey && !event.altKey && isFlowchartDirection(event.key)) {
       if (previewFlowchart(a, event.key)) event.preventDefault();
@@ -48,7 +48,8 @@ export function mountKeyboard(a: Controller) {
     if (!command && event.altKey && shortcut === 'z') { event.preventDefault(); a.togglePreference('zenMode'); return; }
     if (key === 'escape') {
       if (s.preferences.zenMode) { event.preventDefault(); a.togglePreference('zenMode'); return; }
-      a.finishGesture(true); s.menu = false; s.tool = 'selection'; if (!a.objects.exitGroup()) s.selected.clear(); return;
+      if (s.menu) { s.menu = false; a.get('menu-button').focus(); return; }
+      a.finishGesture(true); s.tool = 'selection'; if (!a.objects.exitGroup()) s.selected.clear(); return;
     }
     if (command) {
       if (key === 'z') { event.preventDefault(); a.history(event.shiftKey ? 'redo' : 'undo'); }

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { seedStorage } from './storage';
 
 for (const width of [320, 1440]) for (const size of ['small', 'large']) test(`refresh keeps the saved ${size} controls at ${width}px and hides empty onboarding before hydration`, async ({ page }) => {
   await page.setViewportSize({ width, height: 900 });
@@ -114,17 +115,15 @@ for (const [theme, background, expected] of [
   ['light', '#ffffff', 'rgb(255, 255, 255)'],
   ['light', '#fffce8', 'rgb(255, 252, 232)'],
 ]) test(`saved ${theme} canvas background ${background} is present before hydration`, async ({ page }) => {
-  await page.goto('/');
-  await page.evaluate(({ theme, background }) => localStorage.setItem('sketchify.scene.v1', JSON.stringify({ elements: [], local: { theme, background } })), { theme, background });
+  await seedStorage(page, { elements: [], local: { theme, background } });
   let release!: () => void;
   const hydrationGate = new Promise<void>(resolve => { release = resolve; });
   await page.route('**/_next/**/*.js*', async route => { await hydrationGate; await route.continue(); });
   try {
-    await page.reload({ waitUntil: 'commit' });
+    await page.goto('/', { waitUntil: 'commit' });
     await expect(page.locator('#canvas')).toBeVisible();
     await expect(page.locator('html')).toHaveCSS('background-color', expected);
     await expect(page.locator('#app')).toHaveCSS('background-color', expected);
-    await page.screenshot({ path: `artifacts/startup-${theme}-${background.slice(1)}-before-hydration.png` });
     release();
     await expect(page.locator('#save-state')).toHaveText('Saved on this device');
     await expect(page.locator('#app')).toHaveCSS('background-color', expected);

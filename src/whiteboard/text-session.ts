@@ -160,5 +160,6 @@ export class TextSession {
     });
     a.listen(a.get('text-link-form'), 'keydown', event => { if (event.key === 'Escape') { event.stopPropagation(); event.preventDefault(); this.closeLink(); } });
     a.listen(a.get('properties'), 'pointerdown', event => { if (a.state.editing && (event.target as HTMLElement).closest('button')) event.preventDefault(); });
+    a.listen(a.get('style-toggle'), 'pointerdown', event => { if (a.state.editing) event.preventDefault(); });
   }
 }

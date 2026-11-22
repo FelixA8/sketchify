@@ -7,17 +7,25 @@ const base64 = fixture.toBuffer('image/png').toString('base64');
 test('clipboard images render, resize proportionally, reload and survive undo/redo', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto('/'); await expect(page.locator('#canvas')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('sketchify.scene.v1'))).not.toBeNull();
   await page.evaluate(base64 => {
     const bytes = Uint8Array.from(atob(base64), character => character.charCodeAt(0));
     const data = new DataTransfer(); data.items.add(new File([bytes], 'clipboard.png', { type: 'image/png' }));
     data.setData('text/plain', 'https://example.com/image.png');
-    document.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+    const paste = new ClipboardEvent('paste', { bubbles: true, cancelable: true });
+    Object.defineProperty(paste, 'clipboardData', { value: data });
+    document.dispatchEvent(paste);
   }, base64);
   await expect(page.locator('#selection-info')).toHaveText('1 selected');
   await expect(page.locator('#save-state')).toHaveText('Saved on this device');
   const image = await page.evaluate(() => JSON.parse(localStorage.getItem('sketchify.scene.v1')!).elements[0]);
   expect(image.type).toBe('image'); expect(image.width).toBe(80); expect(image.height).toBe(40);
-  const pixel = () => page.locator('#canvas').evaluate((canvas, point) => [...(canvas as HTMLCanvasElement).getContext('2d')!.getImageData(point.x + 5, point.y + 5, 1, 1).data], { x: image.x, y: image.y });
+  const pixel = () => page.locator('#canvas').evaluate((node, point) => {
+    const canvas = node as HTMLCanvasElement;
+    const x = (point.x + 5) * canvas.width / canvas.clientWidth;
+    const y = (point.y + 5) * canvas.height / canvas.clientHeight;
+    return [...canvas.getContext('2d')!.getImageData(x, y, 1, 1).data];
+  }, { x: image.x, y: image.y });
   await expect.poll(pixel).toEqual([255, 0, 0, 255]);
   await page.getByRole('button', { name: 'Undo', exact: true }).click(); await expect(page.locator('#selection-info')).toHaveText('');
   await page.getByRole('button', { name: 'Redo', exact: true }).click();

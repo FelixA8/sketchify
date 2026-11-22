@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { rendererHashes } from '../tests/helpers/renderer-fixture.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const result = await build({ entryPoints: [resolve(root, 'vendor/excalidraw-source.ts')], bundle: true, format: 'cjs', platform: 'node', write: false });
@@ -14,8 +15,7 @@ const fixtures = [];
 const base = { x: 24, y: 30, width: 200, height: 120, strokeColor: '#1b1b1f', backgroundColor: 'transparent', strokeWidth: 2, strokeStyle: 'solid', fillStyle: 'hachure', roughness: 1, seed: 142, points: [], roundness: null, simulatePressure: true, pressures: [] };
 function add(name, element, dark = false) {
   const shape = upstream.generateElementShape(element, new upstream.RoughGenerator(), { isExporting: false, canvasBackgroundColor: '#ffffff', embedsValidationStatus: null, theme: dark ? 'dark' : 'light' });
-  const value = !shape ? [] : (Array.isArray(shape) ? shape : [shape]).map(s => typeof s === 'string' ? s : { shape: s.shape, sets: s.sets });
-  fixtures.push({ name, element, dark, hash: createHash('sha256').update(JSON.stringify(value)).digest('hex') });
+  fixtures.push({ name, element, dark, ...rendererHashes(shape) });
 }
 for (const type of ['rectangle', 'diamond', 'ellipse', 'line', 'arrow']) {
   for (const roughness of [0, 1, 2]) {

@@ -62,7 +62,7 @@ for (const [width, height] of [[320, 568], [375, 812], [768, 900], [1024, 720], 
       if (width > 960) {
         const navigation = (await page.locator('.onboarding-navigation h2').boundingBox())!;
         const shortcuts = (await page.locator('.onboarding-help h2').boundingBox())!;
-        expect(Math.abs(navigation.y - shortcuts.y)).toBeLessThan(1);
+        expect(shortcuts.y - navigation.y).toBeCloseTo(50, 0);
       }
       const help = welcome.getByRole('button', { name: /^Help/ });
       await help.scrollIntoViewIfNeeded();

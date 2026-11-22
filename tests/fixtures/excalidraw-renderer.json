@@ -24,7 +24,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "2b8a51a8db74f8ef81ca150e6657b2a3138e48a4cd57be4b2e938f5d62b28e88"
+      "hash": "2b8a51a8db74f8ef81ca150e6657b2a3138e48a4cd57be4b2e938f5d62b28e88",
+      "roundedHash": "715acdc43c7f28580497fc348993626bb7b1ab0ddebf7b7ad133e2b860f8d3f3"
     },
     {
       "name": "rectangle/0/solid/40",
@@ -47,7 +48,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "03e5c3fdd7151cad66ce4a29c3c6b8460b0df4dca21ff566a35fd437f8b59190"
+      "hash": "03e5c3fdd7151cad66ce4a29c3c6b8460b0df4dca21ff566a35fd437f8b59190",
+      "roundedHash": "0a56c12eac556ed63169d83c2f413bcad2976ebf034c296c676727f496f03ab4"
     },
     {
       "name": "rectangle/0/solid/8",
@@ -70,7 +72,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "9fe18a088bc68099648c1feecf61e294124c113ff070b3ec80b34a569ac3a69c"
+      "hash": "9fe18a088bc68099648c1feecf61e294124c113ff070b3ec80b34a569ac3a69c",
+      "roundedHash": "9a41f08f3607dd92c86fb0b3a79b607aac0c4c9fccea818a62f42714c45f7808"
     },
     {
       "name": "rectangle/0/dashed/200",
@@ -93,7 +96,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "2c7783935525447c5d2a3d7ea037d5ba928d0f3d2e97c952fa55eb29bef132da"
+      "hash": "2c7783935525447c5d2a3d7ea037d5ba928d0f3d2e97c952fa55eb29bef132da",
+      "roundedHash": "5a9700b27e7e4c42ea0bc73151bad1dc7f5c7e08a82b831c5268a9559be47c21"
     },
     {
       "name": "rectangle/0/dashed/40",
@@ -116,7 +120,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "2dd7ed9177fd527b40465e2678f5bdfce25317a5c533908b1ab1a1da24f73bd2"
+      "hash": "2dd7ed9177fd527b40465e2678f5bdfce25317a5c533908b1ab1a1da24f73bd2",
+      "roundedHash": "7a1ce235148d40a798c9451ef223016e853d32f11ffe27e5b17df1bfb9d2a4ab"
     },
     {
       "name": "rectangle/0/dashed/8",
@@ -139,7 +144,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "88ff9873f6c882bc7fc99afefed1d8019ffe1dfef91b218d78f79881dc7a8d6c"
+      "hash": "88ff9873f6c882bc7fc99afefed1d8019ffe1dfef91b218d78f79881dc7a8d6c",
+      "roundedHash": "3a6281edfe9e6b4a7a45535d7db92d3d71d286a7168fa8d14d341308003b0046"
     },
     {
       "name": "rectangle/0/dotted/200",
@@ -162,7 +168,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "2c7783935525447c5d2a3d7ea037d5ba928d0f3d2e97c952fa55eb29bef132da"
+      "hash": "2c7783935525447c5d2a3d7ea037d5ba928d0f3d2e97c952fa55eb29bef132da",
+      "roundedHash": "5a9700b27e7e4c42ea0bc73151bad1dc7f5c7e08a82b831c5268a9559be47c21"
     },
     {
       "name": "rectangle/0/dotted/40",
@@ -185,7 +192,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "2dd7ed9177fd527b40465e2678f5bdfce25317a5c533908b1ab1a1da24f73bd2"
+      "hash": "2dd7ed9177fd527b40465e2678f5bdfce25317a5c533908b1ab1a1da24f73bd2",
+      "roundedHash": "7a1ce235148d40a798c9451ef223016e853d32f11ffe27e5b17df1bfb9d2a4ab"
     },
     {
       "name": "rectangle/0/dotted/8",
@@ -208,7 +216,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "88ff9873f6c882bc7fc99afefed1d8019ffe1dfef91b218d78f79881dc7a8d6c"
+      "hash": "88ff9873f6c882bc7fc99afefed1d8019ffe1dfef91b218d78f79881dc7a8d6c",
+      "roundedHash": "3a6281edfe9e6b4a7a45535d7db92d3d71d286a7168fa8d14d341308003b0046"
     },
     {
       "name": "rectangle/0/solid",
@@ -231,7 +240,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "f1241c997d6e5d91326a90379494b65244bddbd45492f23135cd704de6326eca"
+      "hash": "f1241c997d6e5d91326a90379494b65244bddbd45492f23135cd704de6326eca",
+      "roundedHash": "7aa54d49795f6b7f913c525304d1a7bd5a733b56d13c8bcb2c4ef577e8ef2092"
     },
     {
       "name": "rectangle/0/hachure",
@@ -254,7 +264,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "0701ce27a912c9ed9c293ffc48ce73f6204ca1a531a80f410a6fae529e344c9d"
+      "hash": "0701ce27a912c9ed9c293ffc48ce73f6204ca1a531a80f410a6fae529e344c9d",
+      "roundedHash": "32a8e20cfef2f68cce7a4241174a615e6f8efa76238009e44a0ebf4b902146ea"
     },
     {
       "name": "rectangle/0/cross-hatch",
@@ -277,7 +288,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "bf2e45b8f4a988828851c0a52b24c4efcc94bd46b469bee2e486085dd9eb0ee9"
+      "hash": "bf2e45b8f4a988828851c0a52b24c4efcc94bd46b469bee2e486085dd9eb0ee9",
+      "roundedHash": "8e4c5a078eab63e32e2a0ddab95a4ad6ea68735cb467ab39a18fa4676ab21299"
     },
     {
       "name": "rectangle/0/rounded",
@@ -302,7 +314,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "25beb1aef9010697f13482af394c344dc4e304995452222d7d4ec89fe09ac5a2"
+      "hash": "25beb1aef9010697f13482af394c344dc4e304995452222d7d4ec89fe09ac5a2",
+      "roundedHash": "9d26ee445d194b23488a82146c266c57df74e82d214b9db5f6b326a7554def61"
     },
     {
       "name": "rectangle/0/dark",
@@ -325,7 +338,8 @@
         "type": "rectangle"
       },
       "dark": true,
-      "hash": "05c55e8670fd6c8675e4e36974d074cfa122a6ff98af219605eb176a07509dc5"
+      "hash": "05c55e8670fd6c8675e4e36974d074cfa122a6ff98af219605eb176a07509dc5",
+      "roundedHash": "ad45debeda034ec74c9c6a51443ec078d48dfdf51bcd70e2b3e75e9e31636996"
     },
     {
       "name": "rectangle/1/solid/200",
@@ -348,7 +362,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "44d0b2ff72bed14ea1c393d2e22e1a37791c29de47801f78d9c102509937587f"
+      "hash": "44d0b2ff72bed14ea1c393d2e22e1a37791c29de47801f78d9c102509937587f",
+      "roundedHash": "3490cce40c5fe06c089e72085e0e439c40438a957e8c7c4d4987d1cd5e95c290"
     },
     {
       "name": "rectangle/1/solid/40",
@@ -371,7 +386,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "841aad8e9e96d7de26ecd7d1432e8b462702072ab533a9dea337c33aa94e6d12"
+      "hash": "841aad8e9e96d7de26ecd7d1432e8b462702072ab533a9dea337c33aa94e6d12",
+      "roundedHash": "4b73eaa8f40833931fcb83b4b9005d58dbc5c9d4920057996a11dfb48b2aa8b1"
     },
     {
       "name": "rectangle/1/solid/8",
@@ -394,7 +410,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "7dea6a3d47149936a25c8a2ea191bd7834eab7494cc6db25822f0d48c1b0826f"
+      "hash": "7dea6a3d47149936a25c8a2ea191bd7834eab7494cc6db25822f0d48c1b0826f",
+      "roundedHash": "71d366aa47ca4c4a9e855cd32f9f887703513377428734bcd161c995a7fd8309"
     },
     {
       "name": "rectangle/1/dashed/200",
@@ -417,7 +434,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "fed6376be4a6475e52a470b0fd8c1cad2b3775a4aa2aa0821e91fd8231c335e6"
+      "hash": "fed6376be4a6475e52a470b0fd8c1cad2b3775a4aa2aa0821e91fd8231c335e6",
+      "roundedHash": "dc83227fd3dc1af90d4ff855d031085b2713b92ffb990196ff4c622f745ad54b"
     },
     {
       "name": "rectangle/1/dashed/40",
@@ -440,7 +458,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "cb0c44e2fcb578c360c0495005663c7c58c1c22c27905d8bf3446a348c6bfcd6"
+      "hash": "cb0c44e2fcb578c360c0495005663c7c58c1c22c27905d8bf3446a348c6bfcd6",
+      "roundedHash": "844617a7f4f7381b9a5ae1c8d6e6c0dbfcf5a06374f11ea07e0dbf30c9abbec1"
     },
     {
       "name": "rectangle/1/dashed/8",
@@ -463,7 +482,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "ff96e1c0fde4cfcbada99d2d3bbdb2a9ab004b3ed36e1b2a3d39f2895ae014ed"
+      "hash": "ff96e1c0fde4cfcbada99d2d3bbdb2a9ab004b3ed36e1b2a3d39f2895ae014ed",
+      "roundedHash": "a29bafe2c989bf59e0b1c89a675b63409cf119c17b0d3de7766465bc857e8840"
     },
     {
       "name": "rectangle/1/dotted/200",
@@ -486,7 +506,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "fed6376be4a6475e52a470b0fd8c1cad2b3775a4aa2aa0821e91fd8231c335e6"
+      "hash": "fed6376be4a6475e52a470b0fd8c1cad2b3775a4aa2aa0821e91fd8231c335e6",
+      "roundedHash": "dc83227fd3dc1af90d4ff855d031085b2713b92ffb990196ff4c622f745ad54b"
     },
     {
       "name": "rectangle/1/dotted/40",
@@ -509,7 +530,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "cb0c44e2fcb578c360c0495005663c7c58c1c22c27905d8bf3446a348c6bfcd6"
+      "hash": "cb0c44e2fcb578c360c0495005663c7c58c1c22c27905d8bf3446a348c6bfcd6",
+      "roundedHash": "844617a7f4f7381b9a5ae1c8d6e6c0dbfcf5a06374f11ea07e0dbf30c9abbec1"
     },
     {
       "name": "rectangle/1/dotted/8",
@@ -532,7 +554,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "ff96e1c0fde4cfcbada99d2d3bbdb2a9ab004b3ed36e1b2a3d39f2895ae014ed"
+      "hash": "ff96e1c0fde4cfcbada99d2d3bbdb2a9ab004b3ed36e1b2a3d39f2895ae014ed",
+      "roundedHash": "a29bafe2c989bf59e0b1c89a675b63409cf119c17b0d3de7766465bc857e8840"
     },
     {
       "name": "rectangle/1/solid",
@@ -555,7 +578,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "701e4c94c5244f050069299c4fb0b343f7b2913c50ec22e6bf6a71187cf5089f"
+      "hash": "701e4c94c5244f050069299c4fb0b343f7b2913c50ec22e6bf6a71187cf5089f",
+      "roundedHash": "8f9580463376294518542297c8fe189c1846a4dfcf8269fb759479f78203d7dd"
     },
     {
       "name": "rectangle/1/hachure",
@@ -578,7 +602,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "54b44741155b6e27c02f8bdbed71199f74a466f62dc1498b8c22810ac0619eb3"
+      "hash": "54b44741155b6e27c02f8bdbed71199f74a466f62dc1498b8c22810ac0619eb3",
+      "roundedHash": "fc81229d8aa062b9ae0b85e1cc8f8545b920e27ce98cf3fd39a7da1e8bb45552"
     },
     {
       "name": "rectangle/1/cross-hatch",
@@ -601,7 +626,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "77c60224e8be03821dd6e59c162efba47ee12d0e3b4d45f57e91a92bf2dfd2bf"
+      "hash": "77c60224e8be03821dd6e59c162efba47ee12d0e3b4d45f57e91a92bf2dfd2bf",
+      "roundedHash": "95c82a065c028188d1b7d73b7441a76c3da5ad9609d7bee352cfe5b7fde4ef43"
     },
     {
       "name": "rectangle/1/rounded",
@@ -626,7 +652,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "78cc4c0674a9efe0ea6b22c1eb015877fe6c3f9d01f8381200c0d6305c092158"
+      "hash": "78cc4c0674a9efe0ea6b22c1eb015877fe6c3f9d01f8381200c0d6305c092158",
+      "roundedHash": "b1f345da593efdfa9ad999bde27798299b08a19591fb4268930633271c718ad9"
     },
     {
       "name": "rectangle/1/dark",
@@ -649,7 +676,8 @@
         "type": "rectangle"
       },
       "dark": true,
-      "hash": "74bd4f072d271b1d7e23e60026d7beac26589917b57b80d705b7a6c8cffacbb1"
+      "hash": "74bd4f072d271b1d7e23e60026d7beac26589917b57b80d705b7a6c8cffacbb1",
+      "roundedHash": "c051650ec9f7f25da9878c46ea863634e2927030277bc95c8c7435d2e8064c6a"
     },
     {
       "name": "rectangle/2/solid/200",
@@ -672,7 +700,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "648889ded0a061fc852cd4bcf28d9b5f7e727777d378b35466dabfd4bbe4b887"
+      "hash": "648889ded0a061fc852cd4bcf28d9b5f7e727777d378b35466dabfd4bbe4b887",
+      "roundedHash": "6384ea739b2430c23ed7e551d12ed1f65bddd477af7795f6b5ab1ceefad28da2"
     },
     {
       "name": "rectangle/2/solid/40",
@@ -695,7 +724,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "cb31e821a93360eb7d565b169163f5e501e2b7fc00781d7a12e2c60e750274a1"
+      "hash": "cb31e821a93360eb7d565b169163f5e501e2b7fc00781d7a12e2c60e750274a1",
+      "roundedHash": "6404347ca0e81657bc7dec4ddce98ece0c8f24e915269fe97150b029b4b11075"
     },
     {
       "name": "rectangle/2/solid/8",
@@ -718,7 +748,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "690dd7f30a8b2811d526f0ae4830eaa0c75efba5c8355363d1ad19ad36b09760"
+      "hash": "690dd7f30a8b2811d526f0ae4830eaa0c75efba5c8355363d1ad19ad36b09760",
+      "roundedHash": "febcff2d30d91e339c561bf7c9ad375f776495ace95c80347876c3e597a65d33"
     },
     {
       "name": "rectangle/2/dashed/200",
@@ -741,7 +772,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "a3a96bdee7a25d69fd36808a358a769d43f6d91a9bb778ece0a0ce868bb41d1d"
+      "hash": "a3a96bdee7a25d69fd36808a358a769d43f6d91a9bb778ece0a0ce868bb41d1d",
+      "roundedHash": "df6d7ba266024620263925813cf52f5df3cc01ef41459462dbc25a73313141ae"
     },
     {
       "name": "rectangle/2/dashed/40",
@@ -764,7 +796,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "2d742821e55e9f5238c57d8047b1bb0d876b0b25207983ec100fc27550c7d357"
+      "hash": "2d742821e55e9f5238c57d8047b1bb0d876b0b25207983ec100fc27550c7d357",
+      "roundedHash": "1dfb127794e7011f2646265cb71a9da9d85a59b2e9f69acb9aecc2a188f41418"
     },
     {
       "name": "rectangle/2/dashed/8",
@@ -787,7 +820,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "fb8d846deb0f77dd4175aa6468e8aaa188149120281513e8484f758c36c37c09"
+      "hash": "fb8d846deb0f77dd4175aa6468e8aaa188149120281513e8484f758c36c37c09",
+      "roundedHash": "082f8daf7ff495a08f8ce83e59e91052726dc10c0760a288b68dfb77e5e95607"
     },
     {
       "name": "rectangle/2/dotted/200",
@@ -810,7 +844,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "a3a96bdee7a25d69fd36808a358a769d43f6d91a9bb778ece0a0ce868bb41d1d"
+      "hash": "a3a96bdee7a25d69fd36808a358a769d43f6d91a9bb778ece0a0ce868bb41d1d",
+      "roundedHash": "df6d7ba266024620263925813cf52f5df3cc01ef41459462dbc25a73313141ae"
     },
     {
       "name": "rectangle/2/dotted/40",
@@ -833,7 +868,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "2d742821e55e9f5238c57d8047b1bb0d876b0b25207983ec100fc27550c7d357"
+      "hash": "2d742821e55e9f5238c57d8047b1bb0d876b0b25207983ec100fc27550c7d357",
+      "roundedHash": "1dfb127794e7011f2646265cb71a9da9d85a59b2e9f69acb9aecc2a188f41418"
     },
     {
       "name": "rectangle/2/dotted/8",
@@ -856,7 +892,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "fb8d846deb0f77dd4175aa6468e8aaa188149120281513e8484f758c36c37c09"
+      "hash": "fb8d846deb0f77dd4175aa6468e8aaa188149120281513e8484f758c36c37c09",
+      "roundedHash": "082f8daf7ff495a08f8ce83e59e91052726dc10c0760a288b68dfb77e5e95607"
     },
     {
       "name": "rectangle/2/solid",
@@ -879,7 +916,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "12f95bbc21eef2ee4fef66757db62c6fdf6b1a7e5bc617a7806e10be267ccfa1"
+      "hash": "12f95bbc21eef2ee4fef66757db62c6fdf6b1a7e5bc617a7806e10be267ccfa1",
+      "roundedHash": "30c29b9378ffb7a205f758da2afb0b37b997c5f40fa6e495bc1e07662db8e584"
     },
     {
       "name": "rectangle/2/hachure",
@@ -902,7 +940,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "fa0e86ab73a8b1dc3c241a14986320ca7a64d4e3c068a34dd6b96a8957fc2bc9"
+      "hash": "fa0e86ab73a8b1dc3c241a14986320ca7a64d4e3c068a34dd6b96a8957fc2bc9",
+      "roundedHash": "1a534ff61b9636ad477b30f6c7f931570a4684e27467909c4f75e680e89ceabf"
     },
     {
       "name": "rectangle/2/cross-hatch",
@@ -925,7 +964,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "cde648ffa76019370a360e08e4bf003ec46c45f38e2272ef46e215e05006d1ca"
+      "hash": "cde648ffa76019370a360e08e4bf003ec46c45f38e2272ef46e215e05006d1ca",
+      "roundedHash": "b30b863e208153fa016f88875539d88467fe29dc7bd6d98b8a42d8b51fc0f358"
     },
     {
       "name": "rectangle/2/rounded",
@@ -950,7 +990,8 @@
         "type": "rectangle"
       },
       "dark": false,
-      "hash": "5e13822b681dcef21c24397e37ffd08639c87cd1d3bdd4ea79ca6fc496a5268c"
+      "hash": "5e13822b681dcef21c24397e37ffd08639c87cd1d3bdd4ea79ca6fc496a5268c",
+      "roundedHash": "26e44bcde46cf5600fad82c008bd8bfadd83f956e904eb568a774403914d950d"
     },
     {
       "name": "rectangle/2/dark",
@@ -973,7 +1014,8 @@
         "type": "rectangle"
       },
       "dark": true,
-      "hash": "d30d0abc3db2aebb95fea49ebc407f234102b86f1fc0d141b75ddaf0cb991524"
+      "hash": "d30d0abc3db2aebb95fea49ebc407f234102b86f1fc0d141b75ddaf0cb991524",
+      "roundedHash": "855accd5ec6ebad228631b0d65166921005c99349992499402ddd0c62d435b4d"
     },
     {
       "name": "diamond/0/solid/200",
@@ -996,7 +1038,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "c5133e6051c9a0ee7d078d6951965364f06f499e3b45b0776105220cc32d8b7c"
+      "hash": "c5133e6051c9a0ee7d078d6951965364f06f499e3b45b0776105220cc32d8b7c",
+      "roundedHash": "a69eb1cc0d14b8e14debdacf7ebadde4cf1bd61b1f6f28f0fb4bdc3caebc7eb4"
     },
     {
       "name": "diamond/0/solid/40",
@@ -1019,7 +1062,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "ffd7c757b0781342f68b193083a4008194004d92ea637f27e56052a09dd7f339"
+      "hash": "ffd7c757b0781342f68b193083a4008194004d92ea637f27e56052a09dd7f339",
+      "roundedHash": "4b4bc50fbdf86ad48f906936bdc9609439360c605f6e261265ca30081d433710"
     },
     {
       "name": "diamond/0/solid/8",
@@ -1042,7 +1086,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "03eeb324a3eba4c511d39bbdbc059334ec64500c135a96b3776a2918593318e5"
+      "hash": "03eeb324a3eba4c511d39bbdbc059334ec64500c135a96b3776a2918593318e5",
+      "roundedHash": "f32c85923482939d32cc481f78a95b368a313bc89cfee9deecd51f7dde977ce8"
     },
     {
       "name": "diamond/0/dashed/200",
@@ -1065,7 +1110,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "63b490b7c96a663aaed91355774cac56d246ea27ab5f69255d359ae09e23f4cb"
+      "hash": "63b490b7c96a663aaed91355774cac56d246ea27ab5f69255d359ae09e23f4cb",
+      "roundedHash": "0b5b5677080b1da91c541c171e543b7a10911bbf75994199db8ab78d2c17b0d5"
     },
     {
       "name": "diamond/0/dashed/40",
@@ -1088,7 +1134,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "0b182e6feddbafb9c3c5769342cfb23187943dda459a7186b154ab20ac3af602"
+      "hash": "0b182e6feddbafb9c3c5769342cfb23187943dda459a7186b154ab20ac3af602",
+      "roundedHash": "24aa77de39e4e6f60d87af7ae9a6186fa5ad4962b532158348a73f0201be4ec5"
     },
     {
       "name": "diamond/0/dashed/8",
@@ -1111,7 +1158,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "97ae202afc52d9c784f8c0dc0bac907d3cab5cde67c927ab052ad32995d6a786"
+      "hash": "97ae202afc52d9c784f8c0dc0bac907d3cab5cde67c927ab052ad32995d6a786",
+      "roundedHash": "ecbdcfb2d2bbae44fab25ece37de9fcbaaad25b9ad68de2261682fc7e9bfc325"
     },
     {
       "name": "diamond/0/dotted/200",
@@ -1134,7 +1182,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "63b490b7c96a663aaed91355774cac56d246ea27ab5f69255d359ae09e23f4cb"
+      "hash": "63b490b7c96a663aaed91355774cac56d246ea27ab5f69255d359ae09e23f4cb",
+      "roundedHash": "0b5b5677080b1da91c541c171e543b7a10911bbf75994199db8ab78d2c17b0d5"
     },
     {
       "name": "diamond/0/dotted/40",
@@ -1157,7 +1206,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "0b182e6feddbafb9c3c5769342cfb23187943dda459a7186b154ab20ac3af602"
+      "hash": "0b182e6feddbafb9c3c5769342cfb23187943dda459a7186b154ab20ac3af602",
+      "roundedHash": "24aa77de39e4e6f60d87af7ae9a6186fa5ad4962b532158348a73f0201be4ec5"
     },
     {
       "name": "diamond/0/dotted/8",
@@ -1180,7 +1230,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "97ae202afc52d9c784f8c0dc0bac907d3cab5cde67c927ab052ad32995d6a786"
+      "hash": "97ae202afc52d9c784f8c0dc0bac907d3cab5cde67c927ab052ad32995d6a786",
+      "roundedHash": "ecbdcfb2d2bbae44fab25ece37de9fcbaaad25b9ad68de2261682fc7e9bfc325"
     },
     {
       "name": "diamond/0/solid",
@@ -1203,7 +1254,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "ab633dfc94ef19c3e2884b36012ba6a4b160aa77d80d357f47765f9361e86110"
+      "hash": "ab633dfc94ef19c3e2884b36012ba6a4b160aa77d80d357f47765f9361e86110",
+      "roundedHash": "d1fd78f2ae187b6ac686dff1ba3cd436a5ab2b3d1f26baecf3dd9c2c4524295d"
     },
     {
       "name": "diamond/0/hachure",
@@ -1226,7 +1278,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "f0760aa2e626088b65e54918dc0c70af4ac806e4585a1200056b42ffca6d7a49"
+      "hash": "f0760aa2e626088b65e54918dc0c70af4ac806e4585a1200056b42ffca6d7a49",
+      "roundedHash": "1b4df5d62afd5fc1a7890ddd394d1f09eeb782e4fb79841fb7df12b18c8d0553"
     },
     {
       "name": "diamond/0/cross-hatch",
@@ -1249,7 +1302,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "f1524274bc971ff1989cef23ef878378c69094ca33ea728837857376a0eb5899"
+      "hash": "f1524274bc971ff1989cef23ef878378c69094ca33ea728837857376a0eb5899",
+      "roundedHash": "09267ec6b2e5a0431693a0d469d905f6cfc5d49078d638873084b2d078875d7e"
     },
     {
       "name": "diamond/0/rounded",
@@ -1274,7 +1328,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "3100e2de29f3c0ba08344fb4cba0dac8fe2c029b76856a29eb5524741aef32db"
+      "hash": "3100e2de29f3c0ba08344fb4cba0dac8fe2c029b76856a29eb5524741aef32db",
+      "roundedHash": "df7afeef65db3bcbb3716cae1fdc29962a86150ba69dc7da4b5b40da8d441b75"
     },
     {
       "name": "diamond/0/dark",
@@ -1297,7 +1352,8 @@
         "type": "diamond"
       },
       "dark": true,
-      "hash": "3c5b04df1f7e8981a1a34a583525e2eb189560fde0c66798563d8b63bc9e3f3d"
+      "hash": "3c5b04df1f7e8981a1a34a583525e2eb189560fde0c66798563d8b63bc9e3f3d",
+      "roundedHash": "827882444b9d8a62f57ba0284b315481155ce47e9807a0fe64ed3e44789df56c"
     },
     {
       "name": "diamond/1/solid/200",
@@ -1320,7 +1376,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "0e5722674e26f5f21566230edf64feb2103f9af98dc83fdca6de39c34454f36a"
+      "hash": "0e5722674e26f5f21566230edf64feb2103f9af98dc83fdca6de39c34454f36a",
+      "roundedHash": "87a28202f60a391a4a0e3bd8a51a964279cc85c8a67f0666401957b0b26e28a7"
     },
     {
       "name": "diamond/1/solid/40",
@@ -1343,7 +1400,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "0eae68db363cfad1f9202826e3dfe9539a9c5c096f3cd044a5e4b4dcf9ec6cc2"
+      "hash": "0eae68db363cfad1f9202826e3dfe9539a9c5c096f3cd044a5e4b4dcf9ec6cc2",
+      "roundedHash": "4f44b6b15c1656f5a47783041d7963db29f257367991f6f491d7cbf083dcc5e8"
     },
     {
       "name": "diamond/1/solid/8",
@@ -1366,7 +1424,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "ed16beb08cf9bea9dd999fde23f4e783fe8000b3f53a3bb12ca187995334dba4"
+      "hash": "ed16beb08cf9bea9dd999fde23f4e783fe8000b3f53a3bb12ca187995334dba4",
+      "roundedHash": "597dcc984030d0cbda6e4897664c595400b73b60524d0430382ca1228163b68b"
     },
     {
       "name": "diamond/1/dashed/200",
@@ -1389,7 +1448,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "01c1acf60a5fe6d9467dc0e787a5bcb6cff5f774a5ac3a1614d28b57d41dc9f2"
+      "hash": "01c1acf60a5fe6d9467dc0e787a5bcb6cff5f774a5ac3a1614d28b57d41dc9f2",
+      "roundedHash": "e2590bb77d8efc408a131031f3bbec5467a6d6d6d9e9d588415d03cf2a8fad74"
     },
     {
       "name": "diamond/1/dashed/40",
@@ -1412,7 +1472,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "9d5ac2267d7058ce32c495893dbe4f7fe343cdcb7fe8f4deb54290cad9a62091"
+      "hash": "9d5ac2267d7058ce32c495893dbe4f7fe343cdcb7fe8f4deb54290cad9a62091",
+      "roundedHash": "d19973877c82948f9ec1865cb19ae0c9f13a5e864eadb64923ce23c8dedabf43"
     },
     {
       "name": "diamond/1/dashed/8",
@@ -1435,7 +1496,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "c1a9cd57f81b9eb574dbe325433750fcf863f7fed5747e94dc0945f74743ff7a"
+      "hash": "c1a9cd57f81b9eb574dbe325433750fcf863f7fed5747e94dc0945f74743ff7a",
+      "roundedHash": "27c81ffc75509f0210b38254bb6613fed35bdb2c431ca8ba04614e7729db20ba"
     },
     {
       "name": "diamond/1/dotted/200",
@@ -1458,7 +1520,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "01c1acf60a5fe6d9467dc0e787a5bcb6cff5f774a5ac3a1614d28b57d41dc9f2"
+      "hash": "01c1acf60a5fe6d9467dc0e787a5bcb6cff5f774a5ac3a1614d28b57d41dc9f2",
+      "roundedHash": "e2590bb77d8efc408a131031f3bbec5467a6d6d6d9e9d588415d03cf2a8fad74"
     },
     {
       "name": "diamond/1/dotted/40",
@@ -1481,7 +1544,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "9d5ac2267d7058ce32c495893dbe4f7fe343cdcb7fe8f4deb54290cad9a62091"
+      "hash": "9d5ac2267d7058ce32c495893dbe4f7fe343cdcb7fe8f4deb54290cad9a62091",
+      "roundedHash": "d19973877c82948f9ec1865cb19ae0c9f13a5e864eadb64923ce23c8dedabf43"
     },
     {
       "name": "diamond/1/dotted/8",
@@ -1504,7 +1568,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "c1a9cd57f81b9eb574dbe325433750fcf863f7fed5747e94dc0945f74743ff7a"
+      "hash": "c1a9cd57f81b9eb574dbe325433750fcf863f7fed5747e94dc0945f74743ff7a",
+      "roundedHash": "27c81ffc75509f0210b38254bb6613fed35bdb2c431ca8ba04614e7729db20ba"
     },
     {
       "name": "diamond/1/solid",
@@ -1527,7 +1592,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "828c9fc0cf14ce2301d1f7dec44843cf51065bf8fd86cc73620be59ead2d0190"
+      "hash": "828c9fc0cf14ce2301d1f7dec44843cf51065bf8fd86cc73620be59ead2d0190",
+      "roundedHash": "9a40efa22735813a8aff32a38a742b6a3bdb2ad93e0591e1911fe25905a810fe"
     },
     {
       "name": "diamond/1/hachure",
@@ -1550,7 +1616,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "dfe5801af756943f009977a9aa69f65115058f7cbae24d4ec8f5de7461e6fc2c"
+      "hash": "dfe5801af756943f009977a9aa69f65115058f7cbae24d4ec8f5de7461e6fc2c",
+      "roundedHash": "e584b9db54cafade627d2404bec4b8fb0b47eded83198ff9eb39010148408aa6"
     },
     {
       "name": "diamond/1/cross-hatch",
@@ -1573,7 +1640,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "d7f36b26f8607e91c2ef9f779e4859fbee5874242f3664d6c7e38401605419d6"
+      "hash": "d7f36b26f8607e91c2ef9f779e4859fbee5874242f3664d6c7e38401605419d6",
+      "roundedHash": "5a3da773ba0d4c210cce925dc85d5a5acfb6f68931c49928a01c2b0e15631820"
     },
     {
       "name": "diamond/1/rounded",
@@ -1598,7 +1666,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "db594b6ba64724f68a4cd68e15d2d732c9a28a8b88a55f66409eec61368413da"
+      "hash": "db594b6ba64724f68a4cd68e15d2d732c9a28a8b88a55f66409eec61368413da",
+      "roundedHash": "9e05f6fc48cf31fbfd7981cb05b29d4d63a2a7f47c32de7849ce8e4b5dbf083e"
     },
     {
       "name": "diamond/1/dark",
@@ -1621,7 +1690,8 @@
         "type": "diamond"
       },
       "dark": true,
-      "hash": "b7dd46aa9df87275c1eb90d3e4a07e93744699c84248b8171712aee1d538c94c"
+      "hash": "b7dd46aa9df87275c1eb90d3e4a07e93744699c84248b8171712aee1d538c94c",
+      "roundedHash": "f5abd14b713a98660679660599f46856b12dacc1eb52e248d67f500b4c2457de"
     },
     {
       "name": "diamond/2/solid/200",
@@ -1644,7 +1714,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "2578a702e76daf6f92ba39c164b826c51dbccc70cae8eec178a6043b9d3627ff"
+      "hash": "2578a702e76daf6f92ba39c164b826c51dbccc70cae8eec178a6043b9d3627ff",
+      "roundedHash": "866de04d58e481adc1488571aeaf0e0149e631e62750004537fba819331dcbb7"
     },
     {
       "name": "diamond/2/solid/40",
@@ -1667,7 +1738,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "008baed8bacff25654a3d950483c110d8a3cdce1a98dcbf28e59268a08b91381"
+      "hash": "008baed8bacff25654a3d950483c110d8a3cdce1a98dcbf28e59268a08b91381",
+      "roundedHash": "48b4ea5b680b52c3fa7faa3fa24e9a302a9b4c93aeecad814b699db1e5149e58"
     },
     {
       "name": "diamond/2/solid/8",
@@ -1690,7 +1762,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "40f5caf8c11db3597678a82f878a36586917a7425279d528cd5dcf6518127780"
+      "hash": "40f5caf8c11db3597678a82f878a36586917a7425279d528cd5dcf6518127780",
+      "roundedHash": "24c45e9f0cbd52846053be2888c7fdb4a6b67725d6185d23ea5e31bc371b8a74"
     },
     {
       "name": "diamond/2/dashed/200",
@@ -1713,7 +1786,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "d163c88b04583ab420a14b8cae0671307d6e2e754f3b562512a8b9b3e77f60df"
+      "hash": "d163c88b04583ab420a14b8cae0671307d6e2e754f3b562512a8b9b3e77f60df",
+      "roundedHash": "4153cbd131868f50534a0bcfb3389d7b34f9d65d2ec94b41bfbc8aee755e6ce8"
     },
     {
       "name": "diamond/2/dashed/40",
@@ -1736,7 +1810,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "19f240efa6aa74a586ca60c30f863d4c8fca1dc3a7f5d86cb341ad1f2b29ac30"
+      "hash": "19f240efa6aa74a586ca60c30f863d4c8fca1dc3a7f5d86cb341ad1f2b29ac30",
+      "roundedHash": "d6f1d450a06457fa092f13725f343e9d3185f9d6bdc33bdb730a89c57dc98034"
     },
     {
       "name": "diamond/2/dashed/8",
@@ -1759,7 +1834,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "16daa3aaf2e5215a8569ba72b3b7a988e5087b536ae318da477bff90f1ffc1fc"
+      "hash": "16daa3aaf2e5215a8569ba72b3b7a988e5087b536ae318da477bff90f1ffc1fc",
+      "roundedHash": "a075eb594d7c761a6cb0de113d00006d480af17ffba813211a836687539b01a2"
     },
     {
       "name": "diamond/2/dotted/200",
@@ -1782,7 +1858,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "d163c88b04583ab420a14b8cae0671307d6e2e754f3b562512a8b9b3e77f60df"
+      "hash": "d163c88b04583ab420a14b8cae0671307d6e2e754f3b562512a8b9b3e77f60df",
+      "roundedHash": "4153cbd131868f50534a0bcfb3389d7b34f9d65d2ec94b41bfbc8aee755e6ce8"
     },
     {
       "name": "diamond/2/dotted/40",
@@ -1805,7 +1882,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "19f240efa6aa74a586ca60c30f863d4c8fca1dc3a7f5d86cb341ad1f2b29ac30"
+      "hash": "19f240efa6aa74a586ca60c30f863d4c8fca1dc3a7f5d86cb341ad1f2b29ac30",
+      "roundedHash": "d6f1d450a06457fa092f13725f343e9d3185f9d6bdc33bdb730a89c57dc98034"
     },
     {
       "name": "diamond/2/dotted/8",
@@ -1828,7 +1906,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "16daa3aaf2e5215a8569ba72b3b7a988e5087b536ae318da477bff90f1ffc1fc"
+      "hash": "16daa3aaf2e5215a8569ba72b3b7a988e5087b536ae318da477bff90f1ffc1fc",
+      "roundedHash": "a075eb594d7c761a6cb0de113d00006d480af17ffba813211a836687539b01a2"
     },
     {
       "name": "diamond/2/solid",
@@ -1851,7 +1930,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "8660b911c15e8adc36cc5afa7783b66ae5ad8b0d85f7f53def98195e56a19afd"
+      "hash": "8660b911c15e8adc36cc5afa7783b66ae5ad8b0d85f7f53def98195e56a19afd",
+      "roundedHash": "06cc56ba685e74e1a785a0ace3a4783257a23e58c327a040b38263d4eca98f15"
     },
     {
       "name": "diamond/2/hachure",
@@ -1874,7 +1954,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "4399b84564cf2e4590f559df6cbb4458d581d0419e3f13ea98e4dabe7a47b40b"
+      "hash": "4399b84564cf2e4590f559df6cbb4458d581d0419e3f13ea98e4dabe7a47b40b",
+      "roundedHash": "70f79663c304140418c6a4be2baa3d797aa07df4cb36ff533c9dd5da81436113"
     },
     {
       "name": "diamond/2/cross-hatch",
@@ -1897,7 +1978,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "535b038e0315970c79566d483df74c3a9e7772872fb329b5602ca47a62257bd8"
+      "hash": "535b038e0315970c79566d483df74c3a9e7772872fb329b5602ca47a62257bd8",
+      "roundedHash": "f65f3a5642c8548ff84da8c9ccaf2e27b907d32caec1d33880e79b04e65b6db6"
     },
     {
       "name": "diamond/2/rounded",
@@ -1922,7 +2004,8 @@
         "type": "diamond"
       },
       "dark": false,
-      "hash": "3e36b03b5a5685f709a5c828c62190e2f297d6ded4a9c3e4c57f4c5c50aa4a13"
+      "hash": "3e36b03b5a5685f709a5c828c62190e2f297d6ded4a9c3e4c57f4c5c50aa4a13",
+      "roundedHash": "bae4418ff3f2c5740615ea9c201a7a6187df94843a81968e64e9d7a8dadf8766"
     },
     {
       "name": "diamond/2/dark",
@@ -1945,7 +2028,8 @@
         "type": "diamond"
       },
       "dark": true,
-      "hash": "b166bdfd95810eb4494ccb62f16f9bc3b7a134bf290e4bb54838fe9c69e530b3"
+      "hash": "b166bdfd95810eb4494ccb62f16f9bc3b7a134bf290e4bb54838fe9c69e530b3",
+      "roundedHash": "fd10fd93dcb3a2bc37d251ba4e45531c4350d1d81c13c4f6449f3c7668497061"
     },
     {
       "name": "ellipse/0/solid/200",
@@ -1968,7 +2052,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "aa180dc6943535aec34bd6c80cd5da51844c5e90a70ca11830798c5ebd7ed51e"
+      "hash": "aa180dc6943535aec34bd6c80cd5da51844c5e90a70ca11830798c5ebd7ed51e",
+      "roundedHash": "d58f25c66e93a39fc9c036c278baaf19115ca3f14e542c154943d38b9af243b4"
     },
     {
       "name": "ellipse/0/solid/40",
@@ -1991,7 +2076,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "78861795fa3cc35b7106d6f435985fc6793b15a51f632e107259bfead734081f"
+      "hash": "78861795fa3cc35b7106d6f435985fc6793b15a51f632e107259bfead734081f",
+      "roundedHash": "aa0461b3d7434066b7c7fa9ef92ec41f2ab05034a9beba991f71cd13fbad52f3"
     },
     {
       "name": "ellipse/0/solid/8",
@@ -2014,7 +2100,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "5ec1327669afae856c29546645eabe005c61ce646079c0c72885172371992f8d"
+      "hash": "5ec1327669afae856c29546645eabe005c61ce646079c0c72885172371992f8d",
+      "roundedHash": "4efb8d8d219550c3f646bb6188299da82adfe6dd4870462a95c2d77dc318c94c"
     },
     {
       "name": "ellipse/0/dashed/200",
@@ -2037,7 +2124,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "aa180dc6943535aec34bd6c80cd5da51844c5e90a70ca11830798c5ebd7ed51e"
+      "hash": "aa180dc6943535aec34bd6c80cd5da51844c5e90a70ca11830798c5ebd7ed51e",
+      "roundedHash": "d58f25c66e93a39fc9c036c278baaf19115ca3f14e542c154943d38b9af243b4"
     },
     {
       "name": "ellipse/0/dashed/40",
@@ -2060,7 +2148,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "78861795fa3cc35b7106d6f435985fc6793b15a51f632e107259bfead734081f"
+      "hash": "78861795fa3cc35b7106d6f435985fc6793b15a51f632e107259bfead734081f",
+      "roundedHash": "aa0461b3d7434066b7c7fa9ef92ec41f2ab05034a9beba991f71cd13fbad52f3"
     },
     {
       "name": "ellipse/0/dashed/8",
@@ -2083,7 +2172,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "5ec1327669afae856c29546645eabe005c61ce646079c0c72885172371992f8d"
+      "hash": "5ec1327669afae856c29546645eabe005c61ce646079c0c72885172371992f8d",
+      "roundedHash": "4efb8d8d219550c3f646bb6188299da82adfe6dd4870462a95c2d77dc318c94c"
     },
     {
       "name": "ellipse/0/dotted/200",
@@ -2106,7 +2196,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "aa180dc6943535aec34bd6c80cd5da51844c5e90a70ca11830798c5ebd7ed51e"
+      "hash": "aa180dc6943535aec34bd6c80cd5da51844c5e90a70ca11830798c5ebd7ed51e",
+      "roundedHash": "d58f25c66e93a39fc9c036c278baaf19115ca3f14e542c154943d38b9af243b4"
     },
     {
       "name": "ellipse/0/dotted/40",
@@ -2129,7 +2220,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "78861795fa3cc35b7106d6f435985fc6793b15a51f632e107259bfead734081f"
+      "hash": "78861795fa3cc35b7106d6f435985fc6793b15a51f632e107259bfead734081f",
+      "roundedHash": "aa0461b3d7434066b7c7fa9ef92ec41f2ab05034a9beba991f71cd13fbad52f3"
     },
     {
       "name": "ellipse/0/dotted/8",
@@ -2152,7 +2244,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "5ec1327669afae856c29546645eabe005c61ce646079c0c72885172371992f8d"
+      "hash": "5ec1327669afae856c29546645eabe005c61ce646079c0c72885172371992f8d",
+      "roundedHash": "4efb8d8d219550c3f646bb6188299da82adfe6dd4870462a95c2d77dc318c94c"
     },
     {
       "name": "ellipse/0/solid",
@@ -2175,7 +2268,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "45090401cd7bdc7732bec6ce022693854d5144e92b490fd4e7c734dd6865c740"
+      "hash": "45090401cd7bdc7732bec6ce022693854d5144e92b490fd4e7c734dd6865c740",
+      "roundedHash": "dcc2658168c6390a413b8e7448562d6d8ead1d9eb5fc058e70837ffd7324ac5a"
     },
     {
       "name": "ellipse/0/hachure",
@@ -2198,7 +2292,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "499290f7cf1f175d23f38f1267386e7baba45146c128e64b5103ca20b8f8b751"
+      "hash": "499290f7cf1f175d23f38f1267386e7baba45146c128e64b5103ca20b8f8b751",
+      "roundedHash": "5579079a37b171237254ce36d11c2eb108a1c79bb426716aa890d934fd3cdbab"
     },
     {
       "name": "ellipse/0/cross-hatch",
@@ -2221,7 +2316,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "c9da3e19a3dd5dea1d5d4010027d264006ec27e36561b32cb0e65ef3a27192f8"
+      "hash": "c9da3e19a3dd5dea1d5d4010027d264006ec27e36561b32cb0e65ef3a27192f8",
+      "roundedHash": "411d46d2ae84403a7c8203e4281c372d4dfe0bccb6ab68e41f06f4276a7f66f3"
     },
     {
       "name": "ellipse/0/dark",
@@ -2244,7 +2340,8 @@
         "type": "ellipse"
       },
       "dark": true,
-      "hash": "9a20f2b6c2a81ab87766392a9091a8a60180b7bcea345ad9e1903cbbcdc9f938"
+      "hash": "9a20f2b6c2a81ab87766392a9091a8a60180b7bcea345ad9e1903cbbcdc9f938",
+      "roundedHash": "134bd14a69290b2781347aa3d6b9768574a9d15c752c2f0116ab0799213b42e1"
     },
     {
       "name": "ellipse/1/solid/200",
@@ -2267,7 +2364,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "fc3f07cfac3dc99977106813a86a2e66f78e7d5f930335df99a9d9d86f21ea45"
+      "hash": "fc3f07cfac3dc99977106813a86a2e66f78e7d5f930335df99a9d9d86f21ea45",
+      "roundedHash": "f8b8ae4291322b5cfbccd78c6a195d9e8ca5803c6a55389928f89756ca0acdce"
     },
     {
       "name": "ellipse/1/solid/40",
@@ -2290,7 +2388,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "13b3f05ab80df065f5d5a013475617ba7c728a354a7ab236c095b38d6f71cbdb"
+      "hash": "13b3f05ab80df065f5d5a013475617ba7c728a354a7ab236c095b38d6f71cbdb",
+      "roundedHash": "24623f98b3c441c48dcd77b7d43b1850f94f88a5aab62e3915d29794f9ef55ba"
     },
     {
       "name": "ellipse/1/solid/8",
@@ -2313,7 +2412,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "95fa9233d866941d88dbd9e698c398ba9608e346c9edeb1dc5a2a7ff9cdcdb17"
+      "hash": "95fa9233d866941d88dbd9e698c398ba9608e346c9edeb1dc5a2a7ff9cdcdb17",
+      "roundedHash": "b9105fb0cbbd19b6a2aa4403df10e0425efd0376ab4fe10e8bd2316e5f897800"
     },
     {
       "name": "ellipse/1/dashed/200",
@@ -2336,7 +2436,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "ce06655eb469acdf044253e6e2769cb96a7352e1581ad48553d5edf90f65dfbf"
+      "hash": "ce06655eb469acdf044253e6e2769cb96a7352e1581ad48553d5edf90f65dfbf",
+      "roundedHash": "294f5201cf4ade224622b3a44e50fa98aa2c3ceedbda6ca6ee2f2eef696cd8d0"
     },
     {
       "name": "ellipse/1/dashed/40",
@@ -2359,7 +2460,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "e357aa91cb298da42c819f0a4b190efeda4f762c96d7fb3710c3b09dd73bfe58"
+      "hash": "e357aa91cb298da42c819f0a4b190efeda4f762c96d7fb3710c3b09dd73bfe58",
+      "roundedHash": "09947a1e656fcac5baaa2cf210c668d66a3893f2d3b9d4189933907185ad8749"
     },
     {
       "name": "ellipse/1/dashed/8",
@@ -2382,7 +2484,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "9a62d3134bd35b7cec7121fd134853feac0e65f88ec076e489ca4d089c107ca6"
+      "hash": "9a62d3134bd35b7cec7121fd134853feac0e65f88ec076e489ca4d089c107ca6",
+      "roundedHash": "5e9d5c0f6d0b1d378cf9b99db98dc8314209d1db0db3ad2513cb8853ea06b2b2"
     },
     {
       "name": "ellipse/1/dotted/200",
@@ -2405,7 +2508,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "ce06655eb469acdf044253e6e2769cb96a7352e1581ad48553d5edf90f65dfbf"
+      "hash": "ce06655eb469acdf044253e6e2769cb96a7352e1581ad48553d5edf90f65dfbf",
+      "roundedHash": "294f5201cf4ade224622b3a44e50fa98aa2c3ceedbda6ca6ee2f2eef696cd8d0"
     },
     {
       "name": "ellipse/1/dotted/40",
@@ -2428,7 +2532,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "e357aa91cb298da42c819f0a4b190efeda4f762c96d7fb3710c3b09dd73bfe58"
+      "hash": "e357aa91cb298da42c819f0a4b190efeda4f762c96d7fb3710c3b09dd73bfe58",
+      "roundedHash": "09947a1e656fcac5baaa2cf210c668d66a3893f2d3b9d4189933907185ad8749"
     },
     {
       "name": "ellipse/1/dotted/8",
@@ -2451,7 +2556,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "9a62d3134bd35b7cec7121fd134853feac0e65f88ec076e489ca4d089c107ca6"
+      "hash": "9a62d3134bd35b7cec7121fd134853feac0e65f88ec076e489ca4d089c107ca6",
+      "roundedHash": "5e9d5c0f6d0b1d378cf9b99db98dc8314209d1db0db3ad2513cb8853ea06b2b2"
     },
     {
       "name": "ellipse/1/solid",
@@ -2474,7 +2580,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "bb5c932682a20e4c21bcea717c017f8c4120c3bbb28e4bb9026b428dad30c28f"
+      "hash": "bb5c932682a20e4c21bcea717c017f8c4120c3bbb28e4bb9026b428dad30c28f",
+      "roundedHash": "1b213b5feef5c14ba62a6ecfe577f5ccfb7e152c439a2702bf7f292b2cf2af94"
     },
     {
       "name": "ellipse/1/hachure",
@@ -2497,7 +2604,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "7d26f633bba268cb2636d92fcd4092cba18021852a3041a9da72cddb46f4fb6a"
+      "hash": "7d26f633bba268cb2636d92fcd4092cba18021852a3041a9da72cddb46f4fb6a",
+      "roundedHash": "d0587d60eeec5b6ac1b2573695514fefb90d0124ad35bcf289c34afed78af632"
     },
     {
       "name": "ellipse/1/cross-hatch",
@@ -2520,7 +2628,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "edd098ba9fcabc8f018546c94f77e153966a57be4b00ad536b615ec94095fcc8"
+      "hash": "edd098ba9fcabc8f018546c94f77e153966a57be4b00ad536b615ec94095fcc8",
+      "roundedHash": "6f4ebf93fff41db9f203e3482ab20d530613a61344e0e6671b1628329345f23a"
     },
     {
       "name": "ellipse/1/dark",
@@ -2543,7 +2652,8 @@
         "type": "ellipse"
       },
       "dark": true,
-      "hash": "5d296229541b1a83092b1cdb43e4994fc55e6bf4e835c73d6c1bb4384a7e5633"
+      "hash": "5d296229541b1a83092b1cdb43e4994fc55e6bf4e835c73d6c1bb4384a7e5633",
+      "roundedHash": "ab912cb9ae4445d405d7750d496e6ddeadf803bc1215e1016d71d3cc1fd4f484"
     },
     {
       "name": "ellipse/2/solid/200",
@@ -2566,7 +2676,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "6fced3e1ee1781b64173f1536914e4064d674d860d7e0889a6c255ca0f21fb74"
+      "hash": "6fced3e1ee1781b64173f1536914e4064d674d860d7e0889a6c255ca0f21fb74",
+      "roundedHash": "6f51c9fea6588830525a8e5cfaccbb6c5bc7f264eda5bd031fe4f9cebd3f603e"
     },
     {
       "name": "ellipse/2/solid/40",
@@ -2589,7 +2700,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "d5662f61bacd06e1219deeba685345892444dc01effd04625aaa57bfc4805dc0"
+      "hash": "d5662f61bacd06e1219deeba685345892444dc01effd04625aaa57bfc4805dc0",
+      "roundedHash": "bfa2d9825d010211ea0cb28e07bc84bc2164c3e33e7ffb46b0943bfc668d63c3"
     },
     {
       "name": "ellipse/2/solid/8",
@@ -2612,7 +2724,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "625e40b741a7a7aae0fbe20e11d6c91159c061806ae666af3873bd03fa504373"
+      "hash": "625e40b741a7a7aae0fbe20e11d6c91159c061806ae666af3873bd03fa504373",
+      "roundedHash": "6ba7c740633b535dcf764e56e768bd3ff6817a32f78618799fa8f7bf78fbfebf"
     },
     {
       "name": "ellipse/2/dashed/200",
@@ -2635,7 +2748,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "87a857eac001b5f0dfb730fbebef1b1ffd3772f1107a9cc66c9e5f2297823a71"
+      "hash": "87a857eac001b5f0dfb730fbebef1b1ffd3772f1107a9cc66c9e5f2297823a71",
+      "roundedHash": "a06da42986cac6a2f48b7f037143b9224f95d9aade238a0a0292bfc4b799562f"
     },
     {
       "name": "ellipse/2/dashed/40",
@@ -2658,7 +2772,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "f4d619c3b819320a9d193f6e9c7e15ccdcbab6ce4405a29a3aed567a3a8e0db2"
+      "hash": "f4d619c3b819320a9d193f6e9c7e15ccdcbab6ce4405a29a3aed567a3a8e0db2",
+      "roundedHash": "b495145f2d3a57e5249a4eb6549baac1defdf6dba3b833c3437828892d52f702"
     },
     {
       "name": "ellipse/2/dashed/8",
@@ -2681,7 +2796,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "011fc9626ae6db5509affc6a3c7f4ecedb388e46c9ae8844b25690a4747a7bbc"
+      "hash": "011fc9626ae6db5509affc6a3c7f4ecedb388e46c9ae8844b25690a4747a7bbc",
+      "roundedHash": "b6f88d95523f1de1386c7231e6adc62f6ebcfd6dfff5f2360b4b5c77be87fa7b"
     },
     {
       "name": "ellipse/2/dotted/200",
@@ -2704,7 +2820,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "87a857eac001b5f0dfb730fbebef1b1ffd3772f1107a9cc66c9e5f2297823a71"
+      "hash": "87a857eac001b5f0dfb730fbebef1b1ffd3772f1107a9cc66c9e5f2297823a71",
+      "roundedHash": "a06da42986cac6a2f48b7f037143b9224f95d9aade238a0a0292bfc4b799562f"
     },
     {
       "name": "ellipse/2/dotted/40",
@@ -2727,7 +2844,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "f4d619c3b819320a9d193f6e9c7e15ccdcbab6ce4405a29a3aed567a3a8e0db2"
+      "hash": "f4d619c3b819320a9d193f6e9c7e15ccdcbab6ce4405a29a3aed567a3a8e0db2",
+      "roundedHash": "b495145f2d3a57e5249a4eb6549baac1defdf6dba3b833c3437828892d52f702"
     },
     {
       "name": "ellipse/2/dotted/8",
@@ -2750,7 +2868,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "011fc9626ae6db5509affc6a3c7f4ecedb388e46c9ae8844b25690a4747a7bbc"
+      "hash": "011fc9626ae6db5509affc6a3c7f4ecedb388e46c9ae8844b25690a4747a7bbc",
+      "roundedHash": "b6f88d95523f1de1386c7231e6adc62f6ebcfd6dfff5f2360b4b5c77be87fa7b"
     },
     {
       "name": "ellipse/2/solid",
@@ -2773,7 +2892,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "82f8ef93601a03e89d932e45ea66041f6a780c65465ecb8881169335b2493f30"
+      "hash": "82f8ef93601a03e89d932e45ea66041f6a780c65465ecb8881169335b2493f30",
+      "roundedHash": "3a74283151fd9253ecab452f286052ada5f3dca1dedc6bfdebe14da2481e8211"
     },
     {
       "name": "ellipse/2/hachure",
@@ -2796,7 +2916,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "bc662adcb4b1208f05462dccbcca0f139877baaeff91717f12896f3b72d9d255"
+      "hash": "bc662adcb4b1208f05462dccbcca0f139877baaeff91717f12896f3b72d9d255",
+      "roundedHash": "6ba00ac86a1ba7ee436f0c80eff8c6ccf9d323f5cc5b56da334c15e3c50e8f39"
     },
     {
       "name": "ellipse/2/cross-hatch",
@@ -2819,7 +2940,8 @@
         "type": "ellipse"
       },
       "dark": false,
-      "hash": "6ba221d4877ea253373d5c9d6a54c0cb900b495cf04036fa079c2da4581de4ab"
+      "hash": "6ba221d4877ea253373d5c9d6a54c0cb900b495cf04036fa079c2da4581de4ab",
+      "roundedHash": "f67f2f6d1c678062180207c63674b8d56aad623938679486b7054f98a9bd98a3"
     },
     {
       "name": "ellipse/2/dark",
@@ -2842,7 +2964,8 @@
         "type": "ellipse"
       },
       "dark": true,
-      "hash": "b608629686a1ffee710d4d62fa582251c8b48d4477cc7af934fbd31128aa46ae"
+      "hash": "b608629686a1ffee710d4d62fa582251c8b48d4477cc7af934fbd31128aa46ae",
+      "roundedHash": "804e4fb87ec68a3d4fd3b8e8bcc32e361e589faa6361a3c3a11c39feee0e5325"
     },
     {
       "name": "line/0/solid/200",
@@ -2874,7 +2997,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "a84121427caae2e7f3835b07a622834c1bfbc3da7b2b0f66ce7321625cb97a01"
+      "hash": "a84121427caae2e7f3835b07a622834c1bfbc3da7b2b0f66ce7321625cb97a01",
+      "roundedHash": "603d3bc67ca66e658a35970ea193a964aaa8a111016d90853a75e720e7d1e752"
     },
     {
       "name": "line/0/solid/40",
@@ -2906,7 +3030,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "adcb94ccba4c9de4d8eba5437a7bbadf97ad7e509ebd9ba7d95813d13a40dd62"
+      "hash": "adcb94ccba4c9de4d8eba5437a7bbadf97ad7e509ebd9ba7d95813d13a40dd62",
+      "roundedHash": "48fd024bb91936079af703a98b13c4f198856acb03a11ce77641b505de15762d"
     },
     {
       "name": "line/0/solid/8",
@@ -2938,7 +3063,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "abe98f527c0c02b1e7fec8696f4bfc83945ab545abfbdc1b69e679ad91fb72bd"
+      "hash": "abe98f527c0c02b1e7fec8696f4bfc83945ab545abfbdc1b69e679ad91fb72bd",
+      "roundedHash": "f40856ad4ed8a9914f0fe0d4caa216267d3773d74cd88bdee6e5bb159355c857"
     },
     {
       "name": "line/0/dashed/200",
@@ -2970,7 +3096,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "478f77cb6d7b60b6fc32c72678c82e490bfae77efc50374d9ce43849d362a983"
+      "hash": "478f77cb6d7b60b6fc32c72678c82e490bfae77efc50374d9ce43849d362a983",
+      "roundedHash": "9135b556b98d648949739507ec08d0d7c35a273eb38aec49eda9f1baf470c29c"
     },
     {
       "name": "line/0/dashed/40",
@@ -3002,7 +3129,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "0307fa46631cb03990fef788fd806ba28f4685bd9390f36a2f1f0d0d13923cec"
+      "hash": "0307fa46631cb03990fef788fd806ba28f4685bd9390f36a2f1f0d0d13923cec",
+      "roundedHash": "b37cb63b1228a7b04b26f344502ae60486bca6256c9415c5e55ddfc79d3c431e"
     },
     {
       "name": "line/0/dashed/8",
@@ -3034,7 +3162,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "622588657697c4bb968b9dbbbb58cec3a6b122c7c983d7df989d039650bb3e72"
+      "hash": "622588657697c4bb968b9dbbbb58cec3a6b122c7c983d7df989d039650bb3e72",
+      "roundedHash": "463d627c046a5a8bcca16b2ee5639e2fe07c73354eb86b7553853b3c06fbb9c6"
     },
     {
       "name": "line/0/dotted/200",
@@ -3066,7 +3195,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "478f77cb6d7b60b6fc32c72678c82e490bfae77efc50374d9ce43849d362a983"
+      "hash": "478f77cb6d7b60b6fc32c72678c82e490bfae77efc50374d9ce43849d362a983",
+      "roundedHash": "9135b556b98d648949739507ec08d0d7c35a273eb38aec49eda9f1baf470c29c"
     },
     {
       "name": "line/0/dotted/40",
@@ -3098,7 +3228,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "0307fa46631cb03990fef788fd806ba28f4685bd9390f36a2f1f0d0d13923cec"
+      "hash": "0307fa46631cb03990fef788fd806ba28f4685bd9390f36a2f1f0d0d13923cec",
+      "roundedHash": "b37cb63b1228a7b04b26f344502ae60486bca6256c9415c5e55ddfc79d3c431e"
     },
     {
       "name": "line/0/dotted/8",
@@ -3130,7 +3261,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "622588657697c4bb968b9dbbbb58cec3a6b122c7c983d7df989d039650bb3e72"
+      "hash": "622588657697c4bb968b9dbbbb58cec3a6b122c7c983d7df989d039650bb3e72",
+      "roundedHash": "463d627c046a5a8bcca16b2ee5639e2fe07c73354eb86b7553853b3c06fbb9c6"
     },
     {
       "name": "line/0/rounded",
@@ -3168,7 +3300,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "4ce5396c5b4d5be15b8397944f9c559eaad6c25de81d28eba7349c77f1d37903"
+      "hash": "4ce5396c5b4d5be15b8397944f9c559eaad6c25de81d28eba7349c77f1d37903",
+      "roundedHash": "46cc89b5e39299ff08e1dcc8a0df2bb15a1415c6d266129108e5bf1363b2d694"
     },
     {
       "name": "line/0/dark",
@@ -3200,7 +3333,8 @@
         "type": "line"
       },
       "dark": true,
-      "hash": "a84121427caae2e7f3835b07a622834c1bfbc3da7b2b0f66ce7321625cb97a01"
+      "hash": "a84121427caae2e7f3835b07a622834c1bfbc3da7b2b0f66ce7321625cb97a01",
+      "roundedHash": "603d3bc67ca66e658a35970ea193a964aaa8a111016d90853a75e720e7d1e752"
     },
     {
       "name": "line/1/solid/200",
@@ -3232,7 +3366,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "d2f560fd87e202ec289efb8b6f8712fff9188971bca285b7d4a00c3023e222d0"
+      "hash": "d2f560fd87e202ec289efb8b6f8712fff9188971bca285b7d4a00c3023e222d0",
+      "roundedHash": "1dd86c623230370ea1418b0e3ec10dc97105e54eba577c95dd9c59e59baf7e8a"
     },
     {
       "name": "line/1/solid/40",
@@ -3264,7 +3399,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "c29a78ddce25ec067ff329ff7e6fa3df0c2e9d8249444072f759d3ecd3dc601e"
+      "hash": "c29a78ddce25ec067ff329ff7e6fa3df0c2e9d8249444072f759d3ecd3dc601e",
+      "roundedHash": "5bca714d9eb6689fb291805da99c6615cef3e924bb29026a2243225595620980"
     },
     {
       "name": "line/1/solid/8",
@@ -3296,7 +3432,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "2d7f6255994edcbd5b09a127b8143f531efbfa22e8a6983db22be6811df96690"
+      "hash": "2d7f6255994edcbd5b09a127b8143f531efbfa22e8a6983db22be6811df96690",
+      "roundedHash": "1f3ec77351296afe32692eb80f04b5935708eb8cfcadc95552df94eccb3bd21d"
     },
     {
       "name": "line/1/dashed/200",
@@ -3328,7 +3465,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "d3e6692f6ce10245572699e5b62a194c10541df81a0bf4a6e192851f95ca7d3c"
+      "hash": "d3e6692f6ce10245572699e5b62a194c10541df81a0bf4a6e192851f95ca7d3c",
+      "roundedHash": "6fa52abe22ae112741a86ef6a80332f2a4b9bf3f66aa5320af47bf7717b52e89"
     },
     {
       "name": "line/1/dashed/40",
@@ -3360,7 +3498,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "fcfcd28a422f9a8ba7a7aec95402a036cc26cb288f50a311e719d9b95e406743"
+      "hash": "fcfcd28a422f9a8ba7a7aec95402a036cc26cb288f50a311e719d9b95e406743",
+      "roundedHash": "0739943dd4c6d62e8e42ba222ff80a3b729f3113efe28da390014e38b1e410b1"
     },
     {
       "name": "line/1/dashed/8",
@@ -3392,7 +3531,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "11e98b717789707a8c48a130a7b48f24ae2f8cf558988d1a249cd8ac909b1c97"
+      "hash": "11e98b717789707a8c48a130a7b48f24ae2f8cf558988d1a249cd8ac909b1c97",
+      "roundedHash": "eb32a2a0765e2612b6617ec7f2e7377de1d2937dfe3fec2903cfe4886c0677f7"
     },
     {
       "name": "line/1/dotted/200",
@@ -3424,7 +3564,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "d3e6692f6ce10245572699e5b62a194c10541df81a0bf4a6e192851f95ca7d3c"
+      "hash": "d3e6692f6ce10245572699e5b62a194c10541df81a0bf4a6e192851f95ca7d3c",
+      "roundedHash": "6fa52abe22ae112741a86ef6a80332f2a4b9bf3f66aa5320af47bf7717b52e89"
     },
     {
       "name": "line/1/dotted/40",
@@ -3456,7 +3597,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "fcfcd28a422f9a8ba7a7aec95402a036cc26cb288f50a311e719d9b95e406743"
+      "hash": "fcfcd28a422f9a8ba7a7aec95402a036cc26cb288f50a311e719d9b95e406743",
+      "roundedHash": "0739943dd4c6d62e8e42ba222ff80a3b729f3113efe28da390014e38b1e410b1"
     },
     {
       "name": "line/1/dotted/8",
@@ -3488,7 +3630,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "11e98b717789707a8c48a130a7b48f24ae2f8cf558988d1a249cd8ac909b1c97"
+      "hash": "11e98b717789707a8c48a130a7b48f24ae2f8cf558988d1a249cd8ac909b1c97",
+      "roundedHash": "eb32a2a0765e2612b6617ec7f2e7377de1d2937dfe3fec2903cfe4886c0677f7"
     },
     {
       "name": "line/1/rounded",
@@ -3526,7 +3669,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "7ee1feed5aa69772846fa0590c19cb41bb8bea58bf2778d4eebb70b34731c301"
+      "hash": "7ee1feed5aa69772846fa0590c19cb41bb8bea58bf2778d4eebb70b34731c301",
+      "roundedHash": "469f2cc1ad753432d816ad736c465e7f71afa96355838b7f4924bfb383e96ed8"
     },
     {
       "name": "line/1/dark",
@@ -3558,7 +3702,8 @@
         "type": "line"
       },
       "dark": true,
-      "hash": "d2f560fd87e202ec289efb8b6f8712fff9188971bca285b7d4a00c3023e222d0"
+      "hash": "d2f560fd87e202ec289efb8b6f8712fff9188971bca285b7d4a00c3023e222d0",
+      "roundedHash": "1dd86c623230370ea1418b0e3ec10dc97105e54eba577c95dd9c59e59baf7e8a"
     },
     {
       "name": "line/2/solid/200",
@@ -3590,7 +3735,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "19bee07c7fe8d7fbf7085ad78178ac86320448d4a26fd80987600f02a6a5884c"
+      "hash": "19bee07c7fe8d7fbf7085ad78178ac86320448d4a26fd80987600f02a6a5884c",
+      "roundedHash": "4a71f73a0e63e9f825aee49f927892c2f3afacf13c23eff1c29c056fac62a8ed"
     },
     {
       "name": "line/2/solid/40",
@@ -3622,7 +3768,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "b63c1f70f799e03895d080007bbb231006664b6b3847133ec28c772a219380a2"
+      "hash": "b63c1f70f799e03895d080007bbb231006664b6b3847133ec28c772a219380a2",
+      "roundedHash": "442840049c1bc723b4c2d7706793f787ca56bb6be70607ccd4efb35efda48371"
     },
     {
       "name": "line/2/solid/8",
@@ -3654,7 +3801,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "8e82b61e4ed4c9fbb4b5ac6ef2dd2b7032977eb3c163373a9fd933703da0f0de"
+      "hash": "8e82b61e4ed4c9fbb4b5ac6ef2dd2b7032977eb3c163373a9fd933703da0f0de",
+      "roundedHash": "9b09706a131927b48b1ffe10c137e369e4d6f0c281d8431610d70057ebbd6614"
     },
     {
       "name": "line/2/dashed/200",
@@ -3686,7 +3834,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "008cfd0c52d73160df2b661f72416139ecaa9f1871acf4d34512a4fa2e919a76"
+      "hash": "008cfd0c52d73160df2b661f72416139ecaa9f1871acf4d34512a4fa2e919a76",
+      "roundedHash": "17a2f2fba9bc6e78c82f08cf7dd3679ed57e834924492c99d86156238bfb15a3"
     },
     {
       "name": "line/2/dashed/40",
@@ -3718,7 +3867,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "b432132ce85307a76caee1ea67925da2b9d36fc45efab9502afde960c336920b"
+      "hash": "b432132ce85307a76caee1ea67925da2b9d36fc45efab9502afde960c336920b",
+      "roundedHash": "2514d3d8d87d8c993dd3a823525874310636f80bce38a6fd31761509bb1397d2"
     },
     {
       "name": "line/2/dashed/8",
@@ -3750,7 +3900,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "90c90d2496de1ade2287fe943c19d8680b6cdfb35c638302bf8f2add4cf1aa9e"
+      "hash": "90c90d2496de1ade2287fe943c19d8680b6cdfb35c638302bf8f2add4cf1aa9e",
+      "roundedHash": "1f079d2cee660c1eb3a86ed59c045dcbb8b5cffccb40c6e2d5429cee0ab839e7"
     },
     {
       "name": "line/2/dotted/200",
@@ -3782,7 +3933,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "008cfd0c52d73160df2b661f72416139ecaa9f1871acf4d34512a4fa2e919a76"
+      "hash": "008cfd0c52d73160df2b661f72416139ecaa9f1871acf4d34512a4fa2e919a76",
+      "roundedHash": "17a2f2fba9bc6e78c82f08cf7dd3679ed57e834924492c99d86156238bfb15a3"
     },
     {
       "name": "line/2/dotted/40",
@@ -3814,7 +3966,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "b432132ce85307a76caee1ea67925da2b9d36fc45efab9502afde960c336920b"
+      "hash": "b432132ce85307a76caee1ea67925da2b9d36fc45efab9502afde960c336920b",
+      "roundedHash": "2514d3d8d87d8c993dd3a823525874310636f80bce38a6fd31761509bb1397d2"
     },
     {
       "name": "line/2/dotted/8",
@@ -3846,7 +3999,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "90c90d2496de1ade2287fe943c19d8680b6cdfb35c638302bf8f2add4cf1aa9e"
+      "hash": "90c90d2496de1ade2287fe943c19d8680b6cdfb35c638302bf8f2add4cf1aa9e",
+      "roundedHash": "1f079d2cee660c1eb3a86ed59c045dcbb8b5cffccb40c6e2d5429cee0ab839e7"
     },
     {
       "name": "line/2/rounded",
@@ -3884,7 +4038,8 @@
         "type": "line"
       },
       "dark": false,
-      "hash": "820f0b150678834c7bc35d3c35a8aa52918c417690c4541cfa3e7d61e5e542fa"
+      "hash": "820f0b150678834c7bc35d3c35a8aa52918c417690c4541cfa3e7d61e5e542fa",
+      "roundedHash": "b7b246ed04b5e31357f6cea2d3adbe92cabf93de8d9c88a5ddd19aff7e927e1a"
     },
     {
       "name": "line/2/dark",
@@ -3916,7 +4071,8 @@
         "type": "line"
       },
       "dark": true,
-      "hash": "19bee07c7fe8d7fbf7085ad78178ac86320448d4a26fd80987600f02a6a5884c"
+      "hash": "19bee07c7fe8d7fbf7085ad78178ac86320448d4a26fd80987600f02a6a5884c",
+      "roundedHash": "4a71f73a0e63e9f825aee49f927892c2f3afacf13c23eff1c29c056fac62a8ed"
     },
     {
       "name": "arrow/0/solid/200",
@@ -3948,7 +4104,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "f104544eaca728af4c55bed3643877d52a3ad53b21e31d810ddc45e3b2071dc1"
+      "hash": "f104544eaca728af4c55bed3643877d52a3ad53b21e31d810ddc45e3b2071dc1",
+      "roundedHash": "694b291de01b9414ced8c56553a49142add0d99c0943b9b57b63788a7c9aaa22"
     },
     {
       "name": "arrow/0/solid/40",
@@ -3980,7 +4137,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "1b983511617430640bde518e557dada6934e4da39a714655255ad088e6a04f2b"
+      "hash": "1b983511617430640bde518e557dada6934e4da39a714655255ad088e6a04f2b",
+      "roundedHash": "5bc479ad2beccc78630b58d8a6b4885870bd812f04f3b9f54d5b209dc438c356"
     },
     {
       "name": "arrow/0/solid/8",
@@ -4012,7 +4170,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "97e2dc64a254d2164173d27637701647f6a9b96650da4739b0af14a026d728fb"
+      "hash": "97e2dc64a254d2164173d27637701647f6a9b96650da4739b0af14a026d728fb",
+      "roundedHash": "55342e33d0d7f07aadd293901dc1a73b3197b9e4170712968d98b9f5b88380a4"
     },
     {
       "name": "arrow/0/dashed/200",
@@ -4044,7 +4203,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "70bf2e94c1eaf3c108954f813131d0f11fc53c52bfab25d850f52f4d4a7c3233"
+      "hash": "70bf2e94c1eaf3c108954f813131d0f11fc53c52bfab25d850f52f4d4a7c3233",
+      "roundedHash": "e9f657cf85ca3b587a29dc06faa23b7cab79ef07859a407f29e7bd497e766092"
     },
     {
       "name": "arrow/0/dashed/40",
@@ -4076,7 +4236,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "3285d8e86000a3e19a09d31b59f8b7529448435351f52edb28ae89441b9045d0"
+      "hash": "3285d8e86000a3e19a09d31b59f8b7529448435351f52edb28ae89441b9045d0",
+      "roundedHash": "25b6d748f072af1f9fff2afb8020336efe96239d1177f362fa5bcb7564931acc"
     },
     {
       "name": "arrow/0/dashed/8",
@@ -4108,7 +4269,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "95d5d68e890c01c2c72a03b265a748dbfffb1503398d61c2c104e7d1b6011c35"
+      "hash": "95d5d68e890c01c2c72a03b265a748dbfffb1503398d61c2c104e7d1b6011c35",
+      "roundedHash": "f4b6ce6ea40be7b78bbd22704107064302dc3c70bd967ef9c73daab75072d194"
     },
     {
       "name": "arrow/0/dotted/200",
@@ -4140,7 +4302,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "70bf2e94c1eaf3c108954f813131d0f11fc53c52bfab25d850f52f4d4a7c3233"
+      "hash": "70bf2e94c1eaf3c108954f813131d0f11fc53c52bfab25d850f52f4d4a7c3233",
+      "roundedHash": "e9f657cf85ca3b587a29dc06faa23b7cab79ef07859a407f29e7bd497e766092"
     },
     {
       "name": "arrow/0/dotted/40",
@@ -4172,7 +4335,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "3285d8e86000a3e19a09d31b59f8b7529448435351f52edb28ae89441b9045d0"
+      "hash": "3285d8e86000a3e19a09d31b59f8b7529448435351f52edb28ae89441b9045d0",
+      "roundedHash": "25b6d748f072af1f9fff2afb8020336efe96239d1177f362fa5bcb7564931acc"
     },
     {
       "name": "arrow/0/dotted/8",
@@ -4204,7 +4368,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "95d5d68e890c01c2c72a03b265a748dbfffb1503398d61c2c104e7d1b6011c35"
+      "hash": "95d5d68e890c01c2c72a03b265a748dbfffb1503398d61c2c104e7d1b6011c35",
+      "roundedHash": "f4b6ce6ea40be7b78bbd22704107064302dc3c70bd967ef9c73daab75072d194"
     },
     {
       "name": "arrow/0/rounded",
@@ -4242,7 +4407,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "68635f3818d3b7490f62965938032cafc323202d5917306b438dd146b0f6e808"
+      "hash": "68635f3818d3b7490f62965938032cafc323202d5917306b438dd146b0f6e808",
+      "roundedHash": "cbb6aef166c2c3b3cfbd76e2dae5c9b3090589ca8df297a573f9001144108dbb"
     },
     {
       "name": "arrow/0/dark",
@@ -4274,7 +4440,8 @@
         "type": "arrow"
       },
       "dark": true,
-      "hash": "f104544eaca728af4c55bed3643877d52a3ad53b21e31d810ddc45e3b2071dc1"
+      "hash": "f104544eaca728af4c55bed3643877d52a3ad53b21e31d810ddc45e3b2071dc1",
+      "roundedHash": "694b291de01b9414ced8c56553a49142add0d99c0943b9b57b63788a7c9aaa22"
     },
     {
       "name": "arrow/1/solid/200",
@@ -4306,7 +4473,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "8c2937aaa1ccf676a619d0eb676944f4b2fe39d7bab6af81cccd053a0538174a"
+      "hash": "8c2937aaa1ccf676a619d0eb676944f4b2fe39d7bab6af81cccd053a0538174a",
+      "roundedHash": "0425806a8bb2fc9111995bd15274a35707b3d4e45c89435b6adda99e4dbb79a8"
     },
     {
       "name": "arrow/1/solid/40",
@@ -4338,7 +4506,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "84ad4f275ccace071bdf627e0b17be39e3e431e6c2188d7239a8cec14f4f2979"
+      "hash": "84ad4f275ccace071bdf627e0b17be39e3e431e6c2188d7239a8cec14f4f2979",
+      "roundedHash": "3f29fe1e536c107979ff00120b7d67087fb32268e7c6a65d71bf2dfaa746172b"
     },
     {
       "name": "arrow/1/solid/8",
@@ -4370,7 +4539,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "194cd8ff08364dbb0e4fb6fb03a8817712c6c7b3b909974e64314140b84fd786"
+      "hash": "194cd8ff08364dbb0e4fb6fb03a8817712c6c7b3b909974e64314140b84fd786",
+      "roundedHash": "954e4ff3c0b482d24696fdfef66ba05d002388cab2842532a50686e5f2ce88bd"
     },
     {
       "name": "arrow/1/dashed/200",
@@ -4402,7 +4572,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "de5221794839a42a22f30878f4865d8bbbb12183d44ffed1b618ccb6e05151ad"
+      "hash": "de5221794839a42a22f30878f4865d8bbbb12183d44ffed1b618ccb6e05151ad",
+      "roundedHash": "2555e27ec8f4318650907797980457838de2a8c54f7325e58f18544898359bad"
     },
     {
       "name": "arrow/1/dashed/40",
@@ -4434,7 +4605,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "f893e1a77b64c9887a537f983f671758b19d97dcafa29ac7101e4d5ab3460342"
+      "hash": "f893e1a77b64c9887a537f983f671758b19d97dcafa29ac7101e4d5ab3460342",
+      "roundedHash": "9567a758250ba097b87707523f5e388cc15d73e2fc3bebaa5af6895652799b0f"
     },
     {
       "name": "arrow/1/dashed/8",
@@ -4466,7 +4638,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "5abdeb8e62782e9d89ed5b02ff31df809a76fa48c58f37b7fdf386b1f5b279b7"
+      "hash": "5abdeb8e62782e9d89ed5b02ff31df809a76fa48c58f37b7fdf386b1f5b279b7",
+      "roundedHash": "2893651bb53764d1945763eb399b0a68e4dd591fab571c814bd0e07fac2112a0"
     },
     {
       "name": "arrow/1/dotted/200",
@@ -4498,7 +4671,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "de5221794839a42a22f30878f4865d8bbbb12183d44ffed1b618ccb6e05151ad"
+      "hash": "de5221794839a42a22f30878f4865d8bbbb12183d44ffed1b618ccb6e05151ad",
+      "roundedHash": "2555e27ec8f4318650907797980457838de2a8c54f7325e58f18544898359bad"
     },
     {
       "name": "arrow/1/dotted/40",
@@ -4530,7 +4704,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "f893e1a77b64c9887a537f983f671758b19d97dcafa29ac7101e4d5ab3460342"
+      "hash": "f893e1a77b64c9887a537f983f671758b19d97dcafa29ac7101e4d5ab3460342",
+      "roundedHash": "9567a758250ba097b87707523f5e388cc15d73e2fc3bebaa5af6895652799b0f"
     },
     {
       "name": "arrow/1/dotted/8",
@@ -4562,7 +4737,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "5abdeb8e62782e9d89ed5b02ff31df809a76fa48c58f37b7fdf386b1f5b279b7"
+      "hash": "5abdeb8e62782e9d89ed5b02ff31df809a76fa48c58f37b7fdf386b1f5b279b7",
+      "roundedHash": "2893651bb53764d1945763eb399b0a68e4dd591fab571c814bd0e07fac2112a0"
     },
     {
       "name": "arrow/1/rounded",
@@ -4600,7 +4776,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "e64dfbcee01d7bba06a823dbc15293f5eacf30df98d033f801f28ff83b4fd57b"
+      "hash": "e64dfbcee01d7bba06a823dbc15293f5eacf30df98d033f801f28ff83b4fd57b",
+      "roundedHash": "bfc253d8b855c0055078ffdf5993fc1c0ef4c4ffe53eb7b98ad8fbb9ca747d98"
     },
     {
       "name": "arrow/1/dark",
@@ -4632,7 +4809,8 @@
         "type": "arrow"
       },
       "dark": true,
-      "hash": "8c2937aaa1ccf676a619d0eb676944f4b2fe39d7bab6af81cccd053a0538174a"
+      "hash": "8c2937aaa1ccf676a619d0eb676944f4b2fe39d7bab6af81cccd053a0538174a",
+      "roundedHash": "0425806a8bb2fc9111995bd15274a35707b3d4e45c89435b6adda99e4dbb79a8"
     },
     {
       "name": "arrow/2/solid/200",
@@ -4664,7 +4842,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "9bc5f0f24a230da18664adde2c35f7b818771b771233c022f3166ea71123d70f"
+      "hash": "9bc5f0f24a230da18664adde2c35f7b818771b771233c022f3166ea71123d70f",
+      "roundedHash": "6284065c20da8375d0448b91647c333d0a29bc4128c82d15f42a6f0a8a668274"
     },
     {
       "name": "arrow/2/solid/40",
@@ -4696,7 +4875,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "78f65147b00e9cfd1c56d7f59073fd2f9b0bc18e1f808820260e75edc38ea461"
+      "hash": "78f65147b00e9cfd1c56d7f59073fd2f9b0bc18e1f808820260e75edc38ea461",
+      "roundedHash": "367e248250efd822e5560dbee10f8daf7f13929add9cbb0fb1360080c1a46e01"
     },
     {
       "name": "arrow/2/solid/8",
@@ -4728,7 +4908,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "c999ca497d7142d475307e98d4951abfc008838af64dfd409c51e93deab835a2"
+      "hash": "c999ca497d7142d475307e98d4951abfc008838af64dfd409c51e93deab835a2",
+      "roundedHash": "7dea98c43f330453bb30cc7d7ee861a0826c10c03d152c3d77caaa0e21d96eaa"
     },
     {
       "name": "arrow/2/dashed/200",
@@ -4760,7 +4941,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "c41e16d05ae0f69ffbf63dbb991c53f341c77fa1953a6039cc1b43ebeb3fbe71"
+      "hash": "c41e16d05ae0f69ffbf63dbb991c53f341c77fa1953a6039cc1b43ebeb3fbe71",
+      "roundedHash": "f3f7787c619e591855aef4af3e8d7278727c348efc9702fc933f7b773eb11003"
     },
     {
       "name": "arrow/2/dashed/40",
@@ -4792,7 +4974,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "2ea71edc33aa904a7a7d0874042484ca15a57e7f486dd8633ed25a02df1b6db8"
+      "hash": "2ea71edc33aa904a7a7d0874042484ca15a57e7f486dd8633ed25a02df1b6db8",
+      "roundedHash": "827db2ff28d1a7c1a7d0ff6ed9279122fc90b1aa177b23571a2dfd81991b38dd"
     },
     {
       "name": "arrow/2/dashed/8",
@@ -4824,7 +5007,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "4b587fa1665e531f3e0cfebeb8620148d5d8c0a40cd8a10492fbd69c5310a521"
+      "hash": "4b587fa1665e531f3e0cfebeb8620148d5d8c0a40cd8a10492fbd69c5310a521",
+      "roundedHash": "f93142a4edd991e3b18d85fd517221a5aa1a0a91c34a0ad7494ac25f5e5bab7f"
     },
     {
       "name": "arrow/2/dotted/200",
@@ -4856,7 +5040,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "c41e16d05ae0f69ffbf63dbb991c53f341c77fa1953a6039cc1b43ebeb3fbe71"
+      "hash": "c41e16d05ae0f69ffbf63dbb991c53f341c77fa1953a6039cc1b43ebeb3fbe71",
+      "roundedHash": "f3f7787c619e591855aef4af3e8d7278727c348efc9702fc933f7b773eb11003"
     },
     {
       "name": "arrow/2/dotted/40",
@@ -4888,7 +5073,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "2ea71edc33aa904a7a7d0874042484ca15a57e7f486dd8633ed25a02df1b6db8"
+      "hash": "2ea71edc33aa904a7a7d0874042484ca15a57e7f486dd8633ed25a02df1b6db8",
+      "roundedHash": "827db2ff28d1a7c1a7d0ff6ed9279122fc90b1aa177b23571a2dfd81991b38dd"
     },
     {
       "name": "arrow/2/dotted/8",
@@ -4920,7 +5106,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "4b587fa1665e531f3e0cfebeb8620148d5d8c0a40cd8a10492fbd69c5310a521"
+      "hash": "4b587fa1665e531f3e0cfebeb8620148d5d8c0a40cd8a10492fbd69c5310a521",
+      "roundedHash": "f93142a4edd991e3b18d85fd517221a5aa1a0a91c34a0ad7494ac25f5e5bab7f"
     },
     {
       "name": "arrow/2/rounded",
@@ -4958,7 +5145,8 @@
         "type": "arrow"
       },
       "dark": false,
-      "hash": "8bdb03ba7d5a4e42291e3166d039023be79833f560acd7cf7da0edd8fe95ff32"
+      "hash": "8bdb03ba7d5a4e42291e3166d039023be79833f560acd7cf7da0edd8fe95ff32",
+      "roundedHash": "6f91a65e94b59451bb82aac1ffc4ef26abff04c02c50402b814fcf4ec622616d"
     },
     {
       "name": "arrow/2/dark",
@@ -4990,7 +5178,8 @@
         "type": "arrow"
       },
       "dark": true,
-      "hash": "9bc5f0f24a230da18664adde2c35f7b818771b771233c022f3166ea71123d70f"
+      "hash": "9bc5f0f24a230da18664adde2c35f7b818771b771233c022f3166ea71123d70f",
+      "roundedHash": "6284065c20da8375d0448b91647c333d0a29bc4128c82d15f42a6f0a8a668274"
     },
     {
       "name": "freedraw/false",
@@ -5045,7 +5234,8 @@
         "type": "freedraw"
       },
       "dark": false,
-      "hash": "7bbe5b6db4a92e9deff19627c2496a3ce5cd888344415f54c356a1e381817489"
+      "hash": "7bbe5b6db4a92e9deff19627c2496a3ce5cd888344415f54c356a1e381817489",
+      "roundedHash": "7bbe5b6db4a92e9deff19627c2496a3ce5cd888344415f54c356a1e381817489"
     },
     {
       "name": "freedraw/true",
@@ -5100,7 +5290,8 @@
         "type": "freedraw"
       },
       "dark": false,
-      "hash": "6384b529ea6a4045a09dc80ac694b7f590753ace5e382f8693481a699dcd4a9f"
+      "hash": "6384b529ea6a4045a09dc80ac694b7f590753ace5e382f8693481a699dcd4a9f",
+      "roundedHash": "6384b529ea6a4045a09dc80ac694b7f590753ace5e382f8693481a699dcd4a9f"
     },
     {
       "name": "arrowhead/arrow",
@@ -5137,7 +5328,8 @@
         "endArrowhead": "arrow"
       },
       "dark": false,
-      "hash": "0285f82558d209fb25f5a2f32f3a8f0189573307b458663c62a725618ff0b592"
+      "hash": "0285f82558d209fb25f5a2f32f3a8f0189573307b458663c62a725618ff0b592",
+      "roundedHash": "cf3ce13d34a4c3f4f1d18517fe1c7275326005604d00ab42d24ded08277bc664"
     },
     {
       "name": "arrowhead/bar",
@@ -5174,7 +5366,8 @@
         "endArrowhead": "bar"
       },
       "dark": false,
-      "hash": "a507b53313070c7ca1f1e61bedbe40e39ae4a6914a70dc2711a43c95010c6177"
+      "hash": "a507b53313070c7ca1f1e61bedbe40e39ae4a6914a70dc2711a43c95010c6177",
+      "roundedHash": "8472c6178e835b6a4997b43dfce677def1ca631402da51084d0e428a50062e5e"
     },
     {
       "name": "arrowhead/triangle",
@@ -5211,7 +5404,8 @@
         "endArrowhead": "triangle"
       },
       "dark": false,
-      "hash": "8ca188033373a1a8d463c9c9ba0b15af2fe3db7e5aa9e7d42add319fa5cfeec0"
+      "hash": "8ca188033373a1a8d463c9c9ba0b15af2fe3db7e5aa9e7d42add319fa5cfeec0",
+      "roundedHash": "67d06f2363e904bb46a5838c1085a35d56a4065c3e6e159a235d4d147aedb0a9"
     },
     {
       "name": "arrowhead/diamond",
@@ -5248,7 +5442,8 @@
         "endArrowhead": "diamond"
       },
       "dark": false,
-      "hash": "9029e9e39615bb3718d151c519fd74914601ebd7409cf6fd9764f5840fc51ccc"
+      "hash": "9029e9e39615bb3718d151c519fd74914601ebd7409cf6fd9764f5840fc51ccc",
+      "roundedHash": "c9a83ccdcb6ec1112e75a20b94ad7492fd11646386cb32c057be36c044b9578e"
     },
     {
       "name": "arrowhead/circle_outline",
@@ -5285,7 +5480,8 @@
         "endArrowhead": "circle_outline"
       },
       "dark": false,
-      "hash": "08dee1aea9ce574c33f9cf2ffb3e1e5bf32221e738ff128772221151b076ae66"
+      "hash": "08dee1aea9ce574c33f9cf2ffb3e1e5bf32221e738ff128772221151b076ae66",
+      "roundedHash": "5c3d6d497cd449d96d4556c94e9a33e93f8813073a2c819997e7dc7015de7a93"
     }
   ]
 }

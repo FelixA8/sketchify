@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { seedStorage } from './storage';
 
 for (const width of [375, 820, 1440]) for (const theme of ['light', 'dark']) test(`project name editing fits and persists at ${width}px in ${theme}`, async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
-  await page.setViewportSize({ width, height: 900 }); await page.goto('/');
-  await page.evaluate(theme => localStorage.setItem('sketchify.scene.v1', JSON.stringify({ elements: [], local: { theme, iconTextSize: 'large' } })), theme);
-  await page.reload();
+  await page.setViewportSize({ width, height: 900 });
+  await seedStorage(page, { elements: [], local: { theme, iconTextSize: 'large' } });
+  await page.goto('/');
   const label = page.locator('#project-name-button'), input = page.getByRole('textbox', { name: 'Project name', exact: true });
   await expect(label).toBeVisible(); await expect(label).toHaveText('Sketchify');
   await expect(page.locator('#save-state')).toHaveText('Saved on this device');
@@ -27,7 +28,7 @@ for (const width of [375, 820, 1440]) for (const theme of ['light', 'dark']) tes
   if (width > 760) expect(field.x + field.width).toBeLessThan((await page.locator('#toolbar').boundingBox())!.x);
   else expect(field.height).toBeGreaterThanOrEqual(44);
   await page.screenshot({ path: `artifacts/project-name-${width}-${theme}-editing.png` });
-  await page.locator('#canvas').click({ position: { x: width - 30, y: 400 } });
+  await page.locator('#canvas').click({ position: { x: 10, y: 400 } });
   await expect(input).toBeHidden();
   await expect(page.locator('#save-state')).toHaveText('Saved on this device');
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);

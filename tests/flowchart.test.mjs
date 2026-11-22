@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createApp } from './helpers/app.mjs';
 import { connectorPoints } from '../src/connectors.ts';
 import { exportScene, importScene } from '../src/scene.ts';
-import { writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 
 const source = (type = 'rectangle', extra = {}) => ({ id: 'source', type, x: 350, y: 250, width: 160, height: 100, ...extra });
 function select(app) { app.canvas.focus(); app.key('a', { ctrlKey: true }); }
@@ -144,6 +144,8 @@ for (const theme of ['light', 'dark']) test(`pending siblings render on the ${th
   const before = await pixels();
   app.key('ArrowRight', { ctrlKey: true }); app.key('ArrowRight', { ctrlKey: true }); app.key('ArrowRight', { ctrlKey: true });
   const preview = await pixels(); assert.notDeepEqual(preview, before); assert.deepEqual(app.scene(), original);
-  await writeFile(new URL(`../artifacts/flowchart-${theme}-native.png`, import.meta.url), preview);
+  const artifacts = new URL('../artifacts/', import.meta.url);
+  await mkdir(artifacts, { recursive: true });
+  await writeFile(new URL(`flowchart-${theme}-native.png`, artifacts), preview);
   app.key('Escape', { ctrlKey: true }); assert.deepEqual(await pixels(), before);
 });

@@ -71,7 +71,7 @@ export class Controller {
     this.listen(document, 'pointerdown', event => {
       this.cancelLayerNavigation();
       const target = event.target as HTMLElement;
-      if (!target.closest('#canvas, #text-editor, #properties, #text-formatting')) this.text.finish();
+      if (!target.closest('#canvas, #text-editor, #properties, #text-formatting, #style-toggle')) this.text.finish();
       if (!target.closest('#menu, #menu-button')) this.state.menu = false;
       if (!target.closest('#object-context-menu')) this.state.contextMenu = null;
     });

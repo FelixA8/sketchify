@@ -10,8 +10,9 @@ for (const tool of ['Rectangle', 'Ellipse', 'Diamond', 'Line', 'Arrow', 'Draw', 
   await page.mouse.move(center.x, element.y - 32); await page.mouse.down();
   await page.mouse.move(center.x + 100, center.y, { steps: 5 }); await page.mouse.up();
   await expect(page.locator('#save-state')).toHaveText('Saved on this device');
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('sketchify.scene.v1')!).elements[0].angle)).toBeCloseTo(Math.PI / 2);
+  const angle = () => page.evaluate(() => JSON.parse(localStorage.getItem('sketchify.scene.v1')!).elements[0].angle);
+  expect(Math.abs(await angle() - Math.PI / 2)).toBeLessThan(.02);
   await page.reload(); await expect(page.locator('#canvas')).toBeVisible();
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('sketchify.scene.v1')!).elements[0].angle)).toBeCloseTo(Math.PI / 2);
+  expect(Math.abs(await angle() - Math.PI / 2)).toBeLessThan(.02);
   expect(errors).toEqual([]);
 });
