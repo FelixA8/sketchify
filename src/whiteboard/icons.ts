@@ -18,6 +18,8 @@ export const icons: Record<string, string> = {
   diamond: '<path d="m12 3 9 9-9 9-9-9Z"/>',
   ellipse: '<circle cx="12" cy="12" r="9"/>',
   arrow: '<path d="M4 19 20 5M10 5h10v10"/>',
+  arrowCurved: '<path d="M4 19C4 12 10 7 19 7m-4-4 4 4-4 4"/>',
+  arrowRightAngle: '<path d="M3 19h8V7h10m-4-4 4 4-4 4"/>',
   line: '<path d="M4 19 20 5"/>',
   freedraw: '<path d="m4 17 11-12 4 4L8 21H3l1-4Zm9-10 4 4"/>',
   text: '<path d="M4 5h16M12 5v15M8 20h8M4 5v3M20 5v3"/>',

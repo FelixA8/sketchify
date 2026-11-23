@@ -162,8 +162,10 @@ test('layer drag/drop reparents and reorders; destination menus provide a keyboa
   assert.equal(app.scene().find(e => e.id === 'a').frameId, 'f');
   assert.ok(app.document.querySelector('[data-layer-key="e:f"] [data-layer-key="e:a"]'));
   app.click(rows('e:a').querySelector('[aria-label="Actions for Rectangle"]'));
-  const destination = app.document.querySelector('select[aria-label="Move Rectangle to"]');
-  assert.ok(destination); destination.value = 'root'; app.dispatch(destination, 'change');
+  const destination = app.document.querySelector('[role="combobox"][aria-label^="Move Rectangle to"]');
+  assert.ok(destination);
+  app.click(destination);
+  app.key('Home'); app.key('Enter');
   assert.equal(app.scene().find(e => e.id === 'a').frameId, null);
   app.click(app.get('undo-button')); assert.equal(app.scene().find(e => e.id === 'a').frameId, 'f');
   app.click(app.get('undo-button')); assert.equal(app.scene().find(e => e.id === 'a').frameId ?? null, null);

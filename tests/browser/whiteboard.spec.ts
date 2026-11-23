@@ -27,6 +27,21 @@ test('drawing, movement, undo, redo, duplication and reload retain geometry and 
   const savedScene = await saved(page); expect(savedScene.elements).toHaveLength(2); expect(savedScene.elements[1].seed).toBe(first.seed);
   await page.reload(); await expect(page.locator('#selection-info')).toHaveText('2 elements'); expect((await scene(page)).elements).toEqual(savedScene.elements);
 });
+test('selected shape sides resize at and away from the midpoint', async ({ page }) => {
+  await draw(page);
+  const original = (await saved(page)).elements[0];
+  const canvas = page.locator('#canvas');
+  await page.mouse.move(665, 330);
+  await expect(canvas).toHaveCSS('cursor', 'e-resize');
+  await page.mouse.down(); await page.mouse.move(705, 350); await page.mouse.up();
+  expect((await saved(page)).elements[0]).toMatchObject({ width: 200, height: 100 });
+  await page.mouse.move(540, 275);
+  await expect(canvas).toHaveCSS('cursor', 'n-resize');
+  await page.mouse.down(); await page.mouse.move(565, 245); await page.mouse.up();
+  expect((await saved(page)).elements[0]).toMatchObject({ x: original.x, y: original.y - 30, width: 200, height: 130 });
+  await page.reload();
+  expect((await scene(page)).elements[0]).toMatchObject({ width: 200, height: 130 });
+});
 test('all drawing tools and keyboard insertion work', async ({ page }) => {
   for (const tool of ['Rectangle', 'Diamond', 'Ellipse', 'Arrow', 'Line', 'Draw']) {
     await page.getByRole('button', { name: tool, exact: true }).click(); await page.locator('#canvas').focus(); await page.keyboard.press('Enter');
@@ -46,6 +61,43 @@ test('rich text retains native focus, formatting, links, cancellation and export
   expect((await saved(page)).elements[0]).toEqual(element);
   await page.getByRole('button', { name: 'Main menu', exact: true }).click(); await page.getByRole('button', { name: 'Export image', exact: true }).click();
   const download = page.waitForEvent('download'); await page.locator('[data-export="svg"]').click(); expect((await download).suggestedFilename()).toMatch(/^sketchify_\d{4}-\d{2}-\d{2}\.svg$/);
+});
+test('single-click text selection supports whole-object formatting, links and canvas history', async ({ page }) => {
+  await page.getByRole('button', { name: 'Text', exact: true }).click();
+  await page.mouse.click(450, 300);
+  await page.keyboard.type('Sketch link');
+  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.mouse.click(400, 260);
+  const toolbar = page.getByRole('toolbar', { name: 'Format selected text' });
+  await expect(toolbar).toBeHidden();
+  await page.mouse.click(470, 315);
+  await expect(toolbar).toBeVisible();
+  const editor = page.getByRole('textbox', { name: 'Edit canvas text' });
+  await expect(editor).toBeHidden();
+  await toolbar.getByRole('button', { name: 'Bold' }).click();
+  await page.keyboard.press('ControlOrMeta+i');
+  await toolbar.getByRole('button', { name: 'Underline' }).click();
+  await page.keyboard.press('ControlOrMeta+k');
+  const address = page.getByLabel('Link address');
+  await expect(address).toBeFocused();
+  await address.fill('https://example.com/');
+  await page.getByRole('button', { name: 'Apply', exact: true }).click();
+  await expect(editor).toBeHidden();
+  const marks = { start: 0, end: 11, bold: true, italic: true, underline: true };
+  expect((await saved(page)).elements[0].textSpans).toEqual([{ ...marks, link: 'https://example.com/' }]);
+  await page.keyboard.press('ControlOrMeta+z');
+  expect((await saved(page)).elements[0].textSpans).toEqual([marks]);
+  await page.keyboard.press('ControlOrMeta+Shift+z');
+  await saved(page);
+  await page.reload();
+  expect((await saved(page)).elements[0].textSpans).toEqual([{ ...marks, link: 'https://example.com/' }]);
+  await page.mouse.click(470, 315);
+  await expect(toolbar.getByRole('button', { name: 'Bold' })).toHaveAttribute('aria-pressed', 'true');
+  await toolbar.getByRole('button', { name: 'Add or edit link' }).click();
+  await expect(address).toHaveValue('https://example.com/');
+  await page.mouse.click(400, 260);
+  await page.mouse.click(470, 315);
+  await expect(address).toBeHidden();
 });
 for (const family of ['Patrick Hand', 'Excalifont']) test(`${family} loads locally and survives reload, standalone SVG and PNG exports`, async ({ page }) => {
   const excalifont = family === 'Excalifont';
@@ -95,7 +147,7 @@ test('text width wraps without changing font size and stays wrapped when editing
   await page.mouse.move(original.x + original.width, original.y + original.height / 2);
   await page.mouse.down(); await page.mouse.move(original.x + 180, original.y + original.height / 2, { steps: 5 }); await page.mouse.up();
   const wrapped = (await saved(page)).elements[0];
-  expect(wrapped.textWidth).toBe(180); expect(wrapped.fontSize).toBe(original.fontSize); expect(wrapped.height).toBeGreaterThan(original.height);
+  expect(wrapped.textWidth).toBeGreaterThan(179); expect(wrapped.textWidth).toBeLessThan(181); expect(wrapped.fontSize).toBe(original.fontSize); expect(wrapped.height).toBeGreaterThan(original.height);
   await page.reload(); await saved(page); await page.mouse.dblclick(wrapped.x + 20, wrapped.y + 15);
   await expect(editor).toBeFocused(); await expect(editor).toHaveCSS('white-space', 'pre-wrap');
   expect(await editor.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true);

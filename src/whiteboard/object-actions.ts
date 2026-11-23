@@ -186,7 +186,7 @@ export class ObjectActions {
   pasteStyles() {
     const a = this.app, style = a.state.styleClipboard; if (!style) return;
     for (const element of this.editable()) {
-      Object.assign(element, snapshot(style), { roundness: element.type === 'rectangle' ? snapshot(style.roundness) : null });
+      Object.assign(element, snapshot(style), { roundness: element.type === 'rectangle' ? snapshot(style.roundness) : element.type === 'arrow' ? snapshot(element.roundness) : null });
       if (element.type === 'stickynote') Object.assign(element, { backgroundColor: style.backgroundColor === 'transparent' ? NOTE_BACKGROUND : style.backgroundColor, fillStyle: 'solid', roughness: 0, fontSize: Math.max(16, style.fontSize) });
       if (element.type === 'text') a.measure(element);
     }

@@ -1,6 +1,7 @@
 import type { Style, Element, Point, Box, Marks, TextSpan, ImportResult } from './types';
 import { isImageData } from './images';
 import { NOTE_SIZE, NOTE_MIN_SIZE, NOTE_BACKGROUND, NOTE_INK } from './notes';
+import { pointsOnBezierCurves } from 'points-on-curve';
 const TOOLS: Element['type'][] = ['selection', 'hand', 'rectangle', 'diamond', 'ellipse', 'arrow', 'line', 'freedraw', 'text', 'stickynote', 'eraser', 'frame', 'image'];
 const DEFAULT_STYLE: Style = { strokeColor: '#1b1b1f', backgroundColor: 'transparent', strokeWidth: 2, strokeStyle: 'solid', fillStyle: 'hachure', roughness: 1, roundness: null, opacity: 100, fontSize: 32, fontFamily: 5 };
 const STROKE_VARIATION_SEEDS = Object.freeze([17, 142, 741, 2027, 8191]);
@@ -77,8 +78,27 @@ function rotatePoint(point: Point, center: Point, angle: number): Point {
   return { x: center.x + x * cos - y * sin, y: center.y + x * sin + y * cos };
 }
 
+function curvedArrowPoints(element: Element) {
+  if (element.type !== 'arrow' || element.arrowType !== 'curved' || element.points.length !== 3) return element.points;
+  const [start, middle, end] = element.points;
+  const tangent = (point: number[], from: number[], to: number[]): [number, number] =>
+    [point[0] + (to[0] - from[0]) / 6, point[1] + (to[1] - from[1]) / 6];
+  return pointsOnBezierCurves([
+    [start[0], start[1]], tangent(start, start, middle), tangent(middle, end, start),
+    [middle[0], middle[1]], tangent(middle, start, end), tangent(end, end, middle), [end[0], end[1]],
+  ]);
+}
+
 function bounds(element: Element): Box {
   const box = unrotatedBounds(element);
+  if (element.type === 'arrow' && element.arrowType === 'curved') {
+    const center = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+    const points = curvedArrowPoints(element).map(([x, y]) => rotatePoint({ x: element.x + x, y: element.y + y }, center, element.angle));
+    if (points.length) {
+      const xs = points.map(p => p.x), ys = points.map(p => p.y);
+      return { x: Math.min(...xs), y: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) };
+    }
+  }
   if (!element.angle) return box;
   const cos = Math.abs(Math.cos(element.angle)), sin = Math.abs(Math.sin(element.angle));
   const width = box.width * cos + box.height * sin, height = box.width * sin + box.height * cos;
@@ -103,7 +123,7 @@ function hitTest(element: Element, p: Point, tolerance = 7) {
   const b = unrotatedBounds(element);
   p = rotatePoint(p, { x: b.x + b.width / 2, y: b.y + b.height / 2 }, -element.angle);
   if (['line', 'arrow', 'freedraw'].includes(element.type)) {
-    return element.points.some((pt, i, pts) => i > 0 && segmentDistance(p, { x: pts[i - 1][0] + element.x, y: pts[i - 1][1] + element.y }, { x: pt[0] + element.x, y: pt[1] + element.y }) <= tolerance + element.strokeWidth / 2);
+    return curvedArrowPoints(element).some((pt, i, pts) => i > 0 && segmentDistance(p, { x: pts[i - 1][0] + element.x, y: pts[i - 1][1] + element.y }, { x: pt[0] + element.x, y: pt[1] + element.y }) <= tolerance + element.strokeWidth / 2);
   }
   if (p.x < b.x - tolerance || p.x > b.x + b.width + tolerance || p.y < b.y - tolerance || p.y > b.y + b.height + tolerance) return false;
   if (element.type === 'text' || element.type === 'image' || element.type === 'stickynote') return true;
@@ -223,6 +243,14 @@ function importScene(raw: unknown): ImportResult {
     }
   }
   for (const element of elements) if (['line', 'arrow'].includes(element.type)) {
+    const minimumBendPoints = element.elbowed || element.arrowType === 'right-angle' ? 4 : 3;
+    if (element.type !== 'arrow' || element.points.length < minimumBendPoints || element.manualBend !== true) delete element.manualBend;
+    if (element.arrowType !== undefined) {
+      if (element.type === 'arrow' && ['straight', 'curved', 'right-angle'].includes(element.arrowType)) {
+        element.roundness = element.arrowType === 'curved' ? { type: 2 } : null;
+        element.elbowed = false;
+      } else delete element.arrowType;
+    }
     for (const key of ['startBinding', 'endBinding'] as const) {
       const binding = element[key]; if (binding === undefined) continue;
       const target = elements.find(target => target.id === binding?.elementId);

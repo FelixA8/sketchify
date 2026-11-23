@@ -5,6 +5,7 @@ import { tools } from './tools';
 import { IMAGE_TYPES } from '../images';
 import { expandGroups } from './groups';
 import { finishFlowchart, isFlowchartDirection, previewFlowchart } from './flowchart';
+import { selectedText } from './text-session';
 export function mountKeyboard(a: Controller) {
   const typing = (target = document.activeElement) => target instanceof HTMLElement && (target === a.get('text-editor') || target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
   for (const type of ['copy', 'cut'] as const) a.listen(document, type, event => {
@@ -52,13 +53,17 @@ export function mountKeyboard(a: Controller) {
       a.finishGesture(true); s.tool = 'selection'; if (!a.objects.exitGroup()) s.selected.clear(); return;
     }
     if (command) {
+      const mark = { b: 'bold', i: 'italic', u: 'underline' } as const;
+      if (!event.shiftKey && !event.altKey && (key === 'b' || key === 'i' || key === 'u') && selectedText(s)) {
+        event.preventDefault(); a.text.toggleMark(mark[key]); return;
+      }
       if (key === 'z') { event.preventDefault(); a.history(event.shiftKey ? 'redo' : 'undo'); }
       else if (key === 'y') { event.preventDefault(); a.history('redo'); }
       else if (key === 'a') { event.preventDefault(); s.tool = 'selection'; s.selected = expandGroups(a.visible(), new Set(a.interactive().filter(e => !s.editingGroup || e.groupIds.includes(s.editingGroup)).map(e => e.id)), s.editingGroup); if (innerWidth > 760) s.panel = true; }
       else if (event.altKey && ['c', 'v'].includes(shortcut)) { event.preventDefault(); a.objects.execute(shortcut === 'c' ? 'copy-styles' : 'paste-styles'); }
       else if (shortcut === '[' || shortcut === ']') { event.preventDefault(); a.objects.execute(shortcut === '[' ? event.altKey ? 'back' : 'backward' : event.altKey ? 'front' : 'forward'); }
       else if (key === 'l' && event.shiftKey) { event.preventDefault(); a.objects.execute('lock'); }
-      else if (key === 'k') { event.preventDefault(); a.objects.execute('object-link'); }
+      else if (key === 'k') { event.preventDefault(); if (selectedText(s)) a.text.openLink(); else a.objects.execute('object-link'); }
       else if (key === 'd') { event.preventDefault(); a.duplicate(); }
       else if (key === 'g' && !event.altKey) { event.preventDefault(); if (!event.repeat) a.objects.execute(event.shiftKey ? 'ungroup' : 'group'); }
       else if (key === 's') { event.preventDefault(); a.files.save(); }

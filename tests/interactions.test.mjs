@@ -36,6 +36,43 @@ test('move, resize, cancellation and nudge preserve seeds and history', () => {
   app.key('ArrowRight', { shiftKey: true }); assert.equal(app.scene()[0].x, original.x + 40);
   app.click(app.get('undo-button')); assert.equal(app.scene()[0].x, original.x + 30);
 });
+test('dragging a selected shape from the middle or along a side resizes only that axis', () => {
+  const app = createApp(); draw(app, 'rectangle');
+  const drag = (x, y, dx, dy, cursor) => {
+    app.dispatch(app.canvas, 'pointermove', { clientX: x, clientY: y });
+    assert.equal(app.canvas.style.cursor, cursor);
+    app.dispatch(app.canvas, 'pointerdown', { clientX: x, clientY: y });
+    app.dispatch(app.canvas, 'pointermove', { clientX: x + dx, clientY: y + dy });
+    app.dispatch(app.canvas, 'pointerup');
+  };
+  const box = () => {
+    const { x, y, width, height } = app.scene()[0];
+    return [x, y, width, height];
+  };
+  drag(565, 300, 30, 15, 'e-resize');
+  assert.deepEqual(box(), [400, 250, 190, 100]);
+  drag(435, 245, 15, -25, 'n-resize');
+  assert.deepEqual(box(), [400, 225, 190, 125]);
+  drag(395, 255, -20, 10, 'w-resize');
+  assert.deepEqual(box(), [380, 225, 210, 125]);
+  drag(485, 355, -10, 20, 's-resize');
+  assert.deepEqual(box(), [380, 225, 210, 145]);
+  app.click(app.get('undo-button')); assert.deepEqual(box(), [380, 225, 210, 125]);
+  app.click(app.get('redo-button')); assert.deepEqual(box(), [380, 225, 210, 145]);
+});
+test('rotated shapes resize along the local side axis', () => {
+  const app = createApp({ savedElements: [
+    { id: 'rotated', type: 'rectangle', x: 400, y: 250, width: 160, height: 100, angle: Math.PI / 2 },
+  ] });
+  app.canvas.focus(); app.key('a', { ctrlKey: true });
+  app.dispatch(app.canvas, 'pointermove', { clientX: 445, clientY: 385 });
+  assert.equal(app.canvas.style.cursor, 's-resize');
+  app.dispatch(app.canvas, 'pointerdown', { clientX: 445, clientY: 385 });
+  app.dispatch(app.canvas, 'pointermove', { clientX: 435, clientY: 415 });
+  app.dispatch(app.canvas, 'pointerup');
+  const { x, y, width, height } = app.scene()[0];
+  assert.deepEqual([x, y, width, height].map(Math.round), [385, 265, 190, 100]);
+});
 for (const type of ['rectangle', 'ellipse', 'diamond', 'line', 'arrow']) {
   for (const pressed of [true, false]) test(`Shift ${pressed ? 'press' : 'release'} immediately updates a stationary ${type} drawing`, () => {
     const app = createApp(); app.tool(type);
@@ -230,6 +267,21 @@ test('numeric rounding previews edits, clamps invalid limits and restores an emp
   }
   commit('999', 100); commit('', 100); commit('-4', 0);
   assert.deepEqual(app.scene()[0].roundness, { type: 3, value: 0 });
+});
+test('numeric opacity updates the slider and commits one undo step', () => {
+  const app = createApp(); draw(app, 'rectangle');
+  const input = app.document.querySelector('[aria-label="Opacity value"]');
+  const edit = value => {
+    Object.getOwnPropertyDescriptor(app.window.HTMLInputElement.prototype, 'value').set.call(input, value);
+    app.dispatch(input, 'input');
+  };
+  app.click(input); edit('5'); edit('55');
+  assert.equal(app.get('opacity').value, '55');
+  app.key('Enter'); assert.equal(app.scene()[0].opacity, 55);
+  app.click(app.get('undo-button')); assert.equal(app.scene()[0].opacity, 100);
+  app.click(app.get('redo-button')); assert.equal(app.scene()[0].opacity, 55);
+  app.click(input); edit('999'); app.key('Enter'); assert.equal(input.value, '100');
+  app.click(input); edit(''); app.key('Enter'); assert.equal(input.value, '100');
 });
 test('custom colors and every shape-style control update selected geometry without changing its seed', () => {
   const app = createApp(); draw(app, 'rectangle'); const seed = app.scene()[0].seed;

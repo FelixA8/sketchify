@@ -1,11 +1,12 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
-import type { Element, Style } from '../types';
+import type { ArrowType, Element, Style } from '../types';
 import { selectedElements } from './canvas';
 import { useBoard } from './context';
 import { Icon, Sloppiness, StrokeWidth } from './Icon';
 import { HANDWRITING_FONT, EXCALIFONT } from '../fonts';
 import { layerModel } from './layers';
 import { NOTE_COLORS } from '../notes';
+import { arrowType } from '../connectors';
 function Section({ label, children }: { label: string; children: ReactNode }) { return <div className="prop-section"><span className="prop-label">{label}</span>{children}</div>; }
 function Swatches({ property, colors, value }: { property: 'strokeColor' | 'backgroundColor'; colors: string[]; value: string }) {
   const { run } = useBoard();
@@ -30,6 +31,18 @@ function TextAlignment({ targets, rectangle }: { targets: Element[]; rectangle: 
     {rectangle && <div className="prop-row" role="group" aria-label="Vertical text alignment">{(['top', 'middle', 'bottom'] as const).map(value => <button key={value} type="button" className="choice" data-prop="verticalAlign" data-value={value} aria-label={`Align text ${value}`} title={`Align text ${value}`} aria-pressed={vertical.every(current => current === value)} disabled={disabled} onClick={() => run(a => a.setTextAlignment('verticalAlign', value))}><Icon name={`align${value[0].toUpperCase()}${value.slice(1)}`} /></button>)}</div>}
   </div></Section>;
 }
+const arrowChoices: [ArrowType, string, string][] = [
+  ['straight', 'Straight', 'arrow'], ['curved', 'Curved', 'arrowCurved'], ['right-angle', 'Right angle', 'arrowRightAngle'],
+];
+function ArrowTypes({ selected }: { selected: Element[] }) {
+  const { state: s, run } = useBoard();
+  const arrows = selected.filter(element => element.type === 'arrow');
+  const types = arrows.length ? arrows.map(arrowType) : [s.arrowType];
+  const locked = layerModel(s.elements, s.layers).locked;
+  return <Section label="Arrow type"><div className="prop-row" role="group" aria-label="Arrow type">
+    {arrowChoices.map(([type, label, icon]) => <button key={type} type="button" className="choice" aria-label={label} title={label} aria-pressed={types.every(value => value === type)} disabled={selected.some(element => locked.has(element.id))} onClick={() => run(a => a.changeArrowType(type))}><Icon name={icon} /></button>)}
+  </div></Section>;
+}
 function CornerRounding({ value }: { value: number | undefined }) {
   const { run } = useBoard();
   const [draft, setDraft] = useState<string | null>(null);
@@ -47,6 +60,19 @@ function CornerRounding({ value }: { value: number | undefined }) {
       if (draft !== null) {
         run(a => a.commit()); setDraft(null);
       }
+    }} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); event.currentTarget.blur(); } }} />
+  </div></Section>;
+}
+function Opacity({ value }: { value: number }) {
+  const { run } = useBoard();
+  const [draft, setDraft] = useState<string | null>(null);
+  return <Section label="Opacity"><div className="corner-rounding">
+    <input type="range" min="10" max="100" value={value} id="opacity" aria-label="Opacity" style={{ '--rounding-fill': `${(value - 10) / 90 * 100}%` } as CSSProperties} onChange={() => {}} />
+    <input type="number" min="10" max="100" step="1" aria-label="Opacity value" value={draft ?? value} onChange={event => {
+      const input = event.currentTarget.value; setDraft(input);
+      if (input !== '' && Number.isFinite(Number(input))) run(a => a.applyStyle('opacity', Math.max(10, Math.min(100, Math.round(Number(input)))), false));
+    }} onBlur={() => {
+      if (draft !== null) { run(a => a.commit()); setDraft(null); }
     }} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); event.currentTarget.blur(); } }} />
   </div></Section>;
 }
@@ -68,6 +94,7 @@ export function Properties() {
   const rectangleText = alignmentSelection.length > 0 && alignmentSelection.every(element => ['rectangle', 'stickynote'].includes(element.type) || element.type === 'text' && (['rectangle', 'stickynote'].includes(s.editing?.container?.type ?? '') || s.elements.some(parent => parent.id === element.containerId && ['rectangle', 'stickynote'].includes(parent.type))));
   const standaloneText = alignmentSelection.length ? alignmentSelection.every(element => element.type === 'text' && !element.containerId) : s.tool === 'text';
   return <section id="properties" className="surface properties" aria-label="Shape properties" hidden={!show}>
+    {!s.editing && (selected.some(e => e.type === 'arrow') || !selected.length && s.tool === 'arrow') && <ArrowTypes selected={selected} />}
     {!images && <Section label={notes ? 'Text color' : 'Stroke'}><Swatches property="strokeColor" colors={['#1b1b1f', '#c92a2a', '#2b8a3e', '#1971c2', '#e67700']} value={style.strokeColor} /></Section>}
     {notes && <Section label="Note color"><Swatches property="backgroundColor" colors={[...NOTE_COLORS]} value={style.backgroundColor} /></Section>}
     {!images && (!text && !notes ? <>
@@ -85,7 +112,7 @@ export function Properties() {
       <Section label="Font family"><Choices property="fontFamily" items={[[1, 'Hand drawn', <span key="1" style={{ fontFamily: HANDWRITING_FONT }}>Aa</span>], [5, 'Excalifont', <span key="5" style={{ fontFamily: EXCALIFONT }}>Aa</span>], [2, 'Normal', 'Aa'], [3, 'Code', <span key="3" style={{ fontFamily: 'monospace' }}>Aa</span>]]} value={style.fontFamily} /></Section>
     </>)}
     {(standaloneText || rectangleText) && <TextAlignment targets={alignmentTargets} rectangle={rectangleText} />}
-    <Section label="Opacity"><div className="range-row"><input type="range" min="10" max="100" value={style.opacity} id="opacity" aria-label="Opacity" onChange={() => {}} /><output id="opacity-output">{style.opacity}</output></div></Section>
+    <Opacity value={style.opacity} />
     {!!selected.length && <><Section label="Layers"><div className="prop-row">{[['back', 'Send to back'], ['front', 'Bring to front']].map(([action, label]) => <button key={action} className="choice" data-action={action} aria-label={label} title={label} onClick={() => run(a => a.action(action))}><Icon name={action} /></button>)}</div></Section><div className="properties-footer">{[['duplicate', 'Duplicate selection', 'duplicate', 'Duplicate'], ['delete', 'Delete selection', 'trash', 'Delete']].map(([action, label, icon, title]) => <button key={action} className="choice" data-action={action} aria-label={label} title={title} onClick={() => run(a => a.action(action))}><Icon name={icon} /></button>)}</div></>}
   </section>;
 }

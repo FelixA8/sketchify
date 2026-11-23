@@ -7,6 +7,7 @@ export function storedScene(s: State) {
   return { elements: s.elements, project: projectData(s), local: {
     pan: s.pan, zoom: s.zoom, background: s.background, theme: s.theme,
     grid: s.grid, name: s.name, rectangleRoundness: s.style.roundness,
+    ...(s.arrowType !== 'straight' ? { arrowType: s.arrowType } : {}),
     ...(JSON.stringify(s.noteStyle) !== JSON.stringify(DEFAULT_NOTE_STYLE) ? { noteStyle: s.noteStyle } : {}),
     sidebar: s.sidebar,
     ...(s.sidebarWidth !== null ? { sidebarWidth: s.sidebarWidth } : {}),
@@ -34,6 +35,7 @@ export function loadStorage(store: Store, storage: Storage) {
           s.background = data.local.background || '#ffffff';
           s.theme = data.local.theme === 'dark' ? 'dark' : 'light'; s.grid = Boolean(data.local.grid);
           s.sidebar = data.local.sidebar === true;
+          if (data.local.arrowType === 'curved' || data.local.arrowType === 'right-angle') s.arrowType = data.local.arrowType;
           if (typeof data.local.sidebarWidth === 'number' && Number.isFinite(data.local.sidebarWidth) && data.local.sidebarWidth > 0) s.sidebarWidth = data.local.sidebarWidth;
           if (data.local.noteStyle && typeof data.local.noteStyle === 'object') {
             const note = importScene({ elements: [{ ...data.local.noteStyle, type: 'stickynote', width: 250, height: 250 }] }).elements[0];

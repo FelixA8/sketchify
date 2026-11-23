@@ -31,6 +31,25 @@ test('selected words combine bold, italic and underline without formatting surro
   assert.deepEqual(finish(app).textSpans, [{ start: 6, end: 12, bold: true, italic: true, underline: true }]);
 });
 
+test('formatting a selected text object covers its entire text and preserves other marks', () => {
+  const app = start();
+  app.select(6, 12); format(app, 'bold');
+  finish(app);
+  const bold = app.document.querySelector('[data-text-format="bold"]');
+  assert.equal(bold.getAttribute('aria-pressed'), 'false');
+  format(app, 'bold');
+  assert.equal(bold.getAttribute('aria-pressed'), 'true');
+  app.key('i', { ctrlKey: true });
+  format(app, 'underline');
+  link(app, 'example.com');
+  assert.equal(app.editor.hidden, true);
+  assert.deepEqual(app.scene()[0].textSpans, [{ start: 0, end: 19, bold: true, italic: true, underline: true, link: 'https://example.com/' }]);
+  app.click(app.get('text-link-button'));
+  assert.equal(app.get('text-link-url').value, 'https://example.com/');
+  app.click(app.get('text-unlink'));
+  assert.deepEqual(app.scene()[0].textSpans, [{ start: 0, end: 19, bold: true, italic: true, underline: true }]);
+});
+
 test('a selected phrase can have a styled embedded link and reopen without losing its range', () => {
   const app = start(); app.select(13, 19);
   format(app, 'bold'); format(app, 'italic'); format(app, 'underline');

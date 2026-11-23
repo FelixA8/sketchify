@@ -1,5 +1,5 @@
 import { createElement, pointInElementBounds, sceneBounds } from '../scene';
-import type { Element, Point, Style, Tool } from '../types';
+import type { ArrowType, Element, Point, Style, Tool } from '../types';
 import { selectedElements, screenToWorld, measureText } from './canvas';
 import { createPersistence, loadStorage } from './persistence';
 import { snapshot, type Store, type State, type Preference } from './store';
@@ -10,7 +10,7 @@ import { mountKeyboard } from './keyboard';
 import { copyElements, ObjectActions, selectionWithChildren } from './object-actions';
 import { ImageActions } from './image-actions';
 import { fitBoundLabels, textContainer } from '../bound-text';
-import { bindEndpoint, bindingKeys, connectorPoints, isConnector, syncConnectors } from '../connectors';
+import { bindEndpoint, bindingKeys, connectorPoints, isConnector, setArrowType, setConnectorRoute, syncConnectors } from '../connectors';
 import { HANDWRITING_FONT, EXCALIFONT } from '../fonts';
 import { selectionGroup } from './groups';
 import { WorkspaceActions } from './workspace-actions';
@@ -140,6 +140,7 @@ export class Controller {
   createDrawingElement(tool: Tool, point: Point, anchor = point) {
     if (tool === 'frame') return { ...createElement(tool, point.x, point.y, { roughness: 0, strokeWidth: 1, strokeColor: '#73737d' }), name: 'Frame' };
     const element = createElement(tool, point.x, point.y, snapshot(tool === 'stickynote' ? this.state.noteStyle : this.state.style));
+    if (tool === 'arrow' && this.state.arrowType !== 'straight') setArrowType(element, this.state.arrowType);
     const frameId = this.frameAt(anchor);
     if (frameId) element.frameId = frameId;
     return element;
@@ -190,6 +191,19 @@ export class Controller {
   duplicate() {
     const copies = this.objects.copies({ x: 20, y: 20 });
     this.state.elements.push(...copies); this.state.selected = new Set(copies.map(e => e.id)); this.commit();
+  }
+  changeArrowType(type: ArrowType) {
+    const s = this.state;
+    if (s.tool === 'arrow' && !s.selected.size) {
+      if (s.arrowType === type) return;
+      s.arrowType = type;
+      this.persistence.schedule();
+      return;
+    }
+    const arrows = this.objects.editable().filter(element => element.type === 'arrow');
+    if (!arrows.length) return;
+    for (const arrow of arrows) setArrowType(arrow, type);
+    this.commit();
   }
   setTextAlignment<K extends 'textAlign' | 'verticalAlign'>(property: K, value: NonNullable<Element[K]>) {
     const s = this.state;
@@ -385,6 +399,10 @@ export class Controller {
     if (cancel) {
       if (gesture.kind === 'draw') s.elements = s.elements.filter(e => e.id !== gesture.id);
       else if (gesture.kind === 'erase') s.elements = snapshot(gesture.snapshot);
+      else if (gesture.kind === 'bend') {
+        const { original } = gesture, index = s.elements.findIndex(element => element.id === original.id);
+        s.elements[index] = snapshot(original);
+      }
       else if ('originals' in gesture) for (const original of [...gesture.originals, ...('followers' in gesture ? gesture.followers : [])]) {
         const element = s.elements.find(e => e.id === original.id)!;
         Object.assign(element, snapshot(original));
@@ -420,7 +438,8 @@ export class Controller {
     }
     else if (!['selection', 'hand', 'eraser'].includes(s.tool)) {
       const element = { ...this.createDrawingElement(s.tool, { x: p.x - 80, y: p.y - 50 }, p), width: 160, height: 100 };
-      if (['line', 'arrow', 'freedraw'].includes(s.tool)) element.points = [[0, 0], [160, 100]];
+      if (isConnector(element)) setConnectorRoute(element, [{ x: element.x, y: element.y }, { x: element.x + element.width, y: element.y + element.height }]);
+      else if (s.tool === 'freedraw') element.points = [[0, 0], [160, 100]];
       s.elements.push(element); s.selected = new Set([element.id]); if (!s.locked) s.tool = 'selection'; this.commit();
     } else if (group && selected.every(element => selectionGroup(element, s.editingGroup) === group)) this.objects.enterGroup(selected[0].id);
     else if (s.selected.size === 1 && this.selected()[0].type === 'frame') this.editFrameName(this.selected()[0].id);
