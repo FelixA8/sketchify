@@ -61,6 +61,10 @@ export function selectionHandles(state: State): SelectionHandle[] {
       { key: 'startBinding', ...points[0] },
       ...middle,
       { key: 'endBinding', ...points.at(-1)! },
+      ...(() => {
+        const { box, angle } = selectionGeometry(state), center = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+        return [{ key: 'rotate', ...rotatePoint({ x: center.x, y: box.y - 32 / state.zoom }, center, angle) }];
+      })(),
     ];
   }
   const { box: b, angle } = selectionGeometry(state), center = { x: b.x + b.width / 2, y: b.y + b.height / 2 };

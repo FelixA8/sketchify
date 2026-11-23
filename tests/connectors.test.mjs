@@ -87,15 +87,16 @@ test('the Arrow tool remembers its type across reload and leaves the Line tool s
   assert.deepEqual(reloaded.scene()[2].points, [[0, 0], [80, 0], [80, 100], [160, 100]]);
 });
 
-test('a rotated arrow shows its endpoints and existing bend as its only handles', () => {
+test('a rotated arrow shows its endpoints, bend and rotation handle', () => {
   const wire = connector('arrow', { points: [[0, 0], [0, 100], [250, 100]], angle: Math.PI / 4 });
   const [tail, bend, head] = connectorPoints(wire);
   const state = { ...initialState(), elements: [wire], selected: new Set([wire.id]), zoom: 2 };
   const handles = selectionHandles(state);
-  assert.deepEqual(handles.map(handle => handle.key), ['startBinding', 'bend', 'endBinding']);
-  handles.forEach((handle, index) => pointClose(handle, [tail, bend, head][index]));
+  assert.deepEqual(handles.map(handle => handle.key), ['startBinding', 'bend', 'endBinding', 'rotate']);
+  handles.slice(0, 3).forEach((handle, index) => pointClose(handle, [tail, bend, head][index]));
   assert.equal(pickHandle(state, { x: bend.x + 4, y: bend.y }).key, 'bend');
   const box = unrotatedBounds(wire), center = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  pointClose(handles[3], rotatePoint({ x: center.x, y: box.y - 32 / state.zoom }, center, wire.angle));
   const oldCorner = rotatePoint({ x: box.x + box.width, y: box.y }, center, wire.angle);
   assert.equal(pickHandle(state, oldCorner), undefined);
 });

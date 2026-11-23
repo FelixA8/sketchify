@@ -84,7 +84,8 @@ for (const mobile of [false, true]) for (const theme of ['light', 'dark']) test(
   await expect.poll(pixels).not.toEqual(selected);
   const deselected = await pixels();
   selected.slice(0, 3).forEach((pixel, index) => expect(pixel).not.toEqual(deselected[index]));
-  expect(selected.slice(3)).toEqual(deselected.slice(3));
+  expect(selected[3]).toEqual(deselected[3]);
+  expect(selected[4]).not.toEqual(deselected[4]);
   await page.mouse.click(middle.x, middle.y);
   await page.mouse.click(middle.x, middle.y);
   expect((await saved(page))[0]).toEqual(original);

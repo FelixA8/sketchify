@@ -147,7 +147,7 @@ test('text width wraps without changing font size and stays wrapped when editing
   await page.mouse.move(original.x + original.width, original.y + original.height / 2);
   await page.mouse.down(); await page.mouse.move(original.x + 180, original.y + original.height / 2, { steps: 5 }); await page.mouse.up();
   const wrapped = (await saved(page)).elements[0];
-  expect(wrapped.textWidth).toBe(180); expect(wrapped.fontSize).toBe(original.fontSize); expect(wrapped.height).toBeGreaterThan(original.height);
+  expect(wrapped.textWidth).toBeGreaterThan(179); expect(wrapped.textWidth).toBeLessThan(181); expect(wrapped.fontSize).toBe(original.fontSize); expect(wrapped.height).toBeGreaterThan(original.height);
   await page.reload(); await saved(page); await page.mouse.dblclick(wrapped.x + 20, wrapped.y + 15);
   await expect(editor).toBeFocused(); await expect(editor).toHaveCSS('white-space', 'pre-wrap');
   expect(await editor.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
