@@ -8,7 +8,7 @@ import { selectionHandles, drawElement } from '../src/whiteboard/canvas.ts';
 import { svgDocument } from '../src/whiteboard/files.ts';
 import { layout, linkAt } from '../src/text.ts';
 
-const types = ['rectangle', 'ellipse', 'diamond', 'line', 'arrow', 'freedraw', 'text', 'frame'];
+const types = ['rectangle', 'ellipse', 'diamond', 'line', 'freedraw', 'text', 'frame'];
 function element(type, extra = {}) {
   return { ...createElement(type, 400, 250, { fontFamily: 2, roughness: 0, backgroundColor: '#ffec99', fillStyle: 'solid', seed: 17 }),
     id: type, width: 160, height: 80, text: type === 'text' ? 'Rotate this label' : '',

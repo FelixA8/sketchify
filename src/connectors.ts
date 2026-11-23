@@ -1,9 +1,23 @@
 import { bounds, rotatePoint, segmentDistance, unrotatedBounds } from './scene';
-import type { Element, EndpointBinding, Point } from './types';
+import type { ArrowType, Element, EndpointBinding, Point } from './types';
 
 export const isConnector = (element: Element) => element.type === 'line' || element.type === 'arrow';
 const isTarget = (element: Element) => ['rectangle', 'ellipse', 'diamond', 'stickynote'].includes(element.type) || element.type === 'text' && !element.containerId;
 export const bindingKeys = ['startBinding', 'endBinding'] as const;
+
+export function arrowType(element: Element): ArrowType {
+  return element.arrowType ?? (element.elbowed ? 'right-angle' : element.roundness ? 'curved' : 'straight');
+}
+
+export function setArrowType(element: Element, type: ArrowType) {
+  if (element.arrowType === type) return;
+  const points = connectorPoints(element);
+  element.arrowType = type;
+  delete element.manualBend;
+  element.elbowed = false;
+  element.roundness = type === 'curved' ? { type: 2 } : null;
+  setConnectorRoute(element, points);
+}
 
 export function elbowPoints(start: Point, end: Point, horizontal: boolean): Point[] {
   if (Math.abs(start.x - end.x) < 1e-8 || Math.abs(start.y - end.y) < 1e-8) return [start, end];
@@ -28,6 +42,60 @@ export function setConnectorPoints(element: Element, points: Point[]) {
   element.points = local.map(point => [point.x - local[0].x, point.y - local[0].y]);
   element.width = Math.max(...local.map(p => p.x)) - Math.min(...local.map(p => p.x));
   element.height = Math.max(...local.map(p => p.y)) - Math.min(...local.map(p => p.y));
+}
+
+function segmentAxis(from: number[], to: number[], next?: number[]): 'x' | 'y' {
+  const dx = Math.abs(to[0] - from[0]), dy = Math.abs(to[1] - from[1]);
+  if (dx < 1e-8 && dy < 1e-8 && next) return segmentAxis(to, next) === 'x' ? 'y' : 'x';
+  return dx >= dy ? 'x' : 'y';
+}
+
+export function moveElbowSegment(original: Element, index: number, from: Point, to: Point) {
+  const points = connectorPoints(original), axis = segmentAxis(original.points[index], original.points[index + 1], original.points[index + 2]);
+  const local = rotatePoint(to, from, -original.angle);
+  const offset = axis === 'x' ? { x: 0, y: local.y - from.y } : { x: local.x - from.x, y: 0 };
+  if (Math.hypot(offset.x, offset.y) < 1e-8) return;
+  const delta = rotatePoint(offset, { x: 0, y: 0 }, original.angle);
+  const start = points[index], end = points[index + 1];
+  return [
+    ...points.slice(0, Math.max(1, index)),
+    { x: start.x + delta.x, y: start.y + delta.y },
+    { x: end.x + delta.x, y: end.y + delta.y },
+    ...points.slice(Math.min(index + 2, points.length - 1)),
+  ];
+}
+
+export function setConnectorRoute(element: Element, points: Point[]) {
+  if (points.length < 2) return;
+  const type = element.type === 'arrow' && element.arrowType;
+  if (element.manualBend && points.length >= 4 && arrowType(element) === 'right-angle') {
+    const start = points[0], local = points.map(point => rotatePoint(point, start, -element.angle));
+    const old = element.points, last = old.length - 1;
+    const startAxis = segmentAxis(old[0], old[1], old[2]);
+    const endAxis = segmentAxis(old[last], old[last - 1], old[last - 2]);
+    local[1][startAxis === 'x' ? 'y' : 'x'] = local[0][startAxis === 'x' ? 'y' : 'x'];
+    local[last - 1][endAxis === 'x' ? 'y' : 'x'] = local[last][endAxis === 'x' ? 'y' : 'x'];
+    setConnectorPoints(element, local.map(point => rotatePoint(point, start, element.angle)));
+    return;
+  }
+  if (!type || element.manualBend) { setConnectorPoints(element, points); return; }
+  const start = points[0], end = points.at(-1)!;
+  if (type === 'straight') { setConnectorPoints(element, [start, end]); return; }
+  const delta = rotatePoint(end, start, -element.angle);
+  const dx = delta.x - start.x, dy = delta.y - start.y;
+  const bends = type === 'right-angle'
+    ? elbowPoints(start, delta, Math.abs(dx) >= Math.abs(dy)).slice(1, -1)
+    : [{ x: start.x + dx / 2 - dy / 4, y: start.y + dy / 2 + dx / 4 }];
+  setConnectorPoints(element, [start, ...bends.map(point => rotatePoint(point, start, element.angle)), end]);
+}
+
+export function moveConnectorEndpoint(element: Element, end: typeof bindingKeys[number], next: Point) {
+  const points = connectorPoints(element), index = end === 'startBinding' ? 0 : points.length - 1;
+  if (points.length < 2) return;
+  if (Math.hypot(points[index].x - next.x, points[index].y - next.y) > 1e-8) {
+    points[index] = next;
+    setConnectorRoute(element, points);
+  }
 }
 
 function edgePoint(target: Element, point: Point): Point {
@@ -98,12 +166,9 @@ export function snapEndpoint(elements: Element[], point: Point, zoom = 1) {
 }
 
 export function bindEndpoint(element: Element, end: 'startBinding' | 'endBinding', point: Point, elements: Element[], zoom = 1) {
-  const snapped = snapEndpoint(elements, point, zoom), points = connectorPoints(element);
+  const snapped = snapEndpoint(elements, point, zoom);
   if (snapped || element[end] !== undefined) element[end] = snapped?.binding ?? null;
-  const index = end === 'startBinding' ? 0 : points.length - 1, next = snapped?.point ?? point;
-  if (Math.hypot(points[index].x - next.x, points[index].y - next.y) > 1e-8) {
-    points[index] = next; setConnectorPoints(element, points);
-  }
+  moveConnectorEndpoint(element, end, snapped?.point ?? point);
   return snapped;
 }
 
@@ -132,7 +197,7 @@ export function syncConnectors(elements: Element[]) {
     }
     if (changed) {
       const horizontal = Math.abs(element.points[1][0] - element.points[0][0]) > Math.abs(element.points[1][1] - element.points[0][1]);
-      setConnectorPoints(element, element.elbowed && !element.angle ? elbowPoints(points[0], points.at(-1)!, horizontal) : points);
+      setConnectorRoute(element, element.elbowed && !element.angle && !element.manualBend ? elbowPoints(points[0], points.at(-1)!, horizontal) : points);
     }
   }
   for (const target of elements) if (isTarget(target)) {

@@ -2,6 +2,7 @@ export type Tool = 'selection' | 'hand' | 'rectangle' | 'diamond' | 'ellipse' | 
 export interface Point { x: number; y: number }
 export interface Box extends Point { width: number; height: number }
 export interface Roundness { type: number; value?: number }
+export type ArrowType = 'straight' | 'curved' | 'right-angle';
 export interface EndpointBinding { elementId: string; fixedPoint?: [number, number]; focus: number; gap: number }
 export interface Marks { bold?: boolean; italic?: boolean; underline?: boolean; link?: string }
 export type Mark = keyof Marks;
@@ -26,7 +27,7 @@ export interface Element extends Box, Style, TextModel {
   version: number; versionNonce: number; isDeleted: boolean; groupIds: string[];
   boundElements: unknown; updated: number;
   pressures?: number[]; simulatePressure?: boolean; startArrowhead?: string | null;
-  endArrowhead?: string | null; elbowed?: boolean; strokeOptions?: unknown;
+  endArrowhead?: string | null; elbowed?: boolean; arrowType?: ArrowType; manualBend?: true; strokeOptions?: unknown;
   startBinding?: EndpointBinding | null; endBinding?: EndpointBinding | null;
 }
 export interface ImportResult { elements: Element[]; skipped: number; appState: Record<string, unknown> }

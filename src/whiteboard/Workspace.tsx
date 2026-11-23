@@ -1,6 +1,7 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useBoard } from './context';
 import { Icon } from './Icon';
+import { SelectDropdown } from './SelectDropdown';
 import { WorkspaceResize } from './WorkspaceResize';
 import { elementKey, layerAncestors, layerMembers, layerModel, type LayerNode } from './layers';
 
@@ -122,7 +123,20 @@ function WorkspacePanel() {
         <button disabled={locked} onClick={rename}>Rename</button>
         <button disabled={locked || !index} onClick={() => run(a => a.workspace.moveLayer(node.key, siblings[index - 1].key, 'before'))}>Move up</button>
         <button disabled={locked || index === siblings.length - 1} onClick={() => run(a => a.workspace.moveLayer(node.key, siblings[index + 1].key, 'after'))}>Move down</button>
-        <label>Move to<select aria-label={`Move ${node.name} to`} disabled={locked || !!node.element?.containerId} value="" onChange={event => { const target = event.currentTarget.value; if (target) run(a => a.workspace.moveLayer(node.key, target === 'root' ? null : target, 'inside')); setMenu(null); }}><option value="">Choose destination</option><option value="root">Page root</option>{[...model.nodes.values()].filter(target => target.key !== node.key && (target.group || target.element?.type === 'frame') && !layerAncestors(model, target.key).some(parent => parent.key === node.key)).map(target => <option key={target.key} value={target.key}>{target.name}</option>)}</select></label>
+        <div className="workspace-move-to"><span>Move to</span>
+          <SelectDropdown label={`Move ${node.name} to`} value={null} placeholder="Choose destination" disabled={locked || !!node.element?.containerId}
+            options={[
+              { value: 'root', label: 'Page root', icon: 'sidebar' },
+              ...[...model.nodes.values()]
+                .filter(target => target.key !== node.key && (target.group || target.element?.type === 'frame') && !layerAncestors(model, target.key).some(parent => parent.key === node.key))
+                .map(target => ({ value: target.key, label: target.name, icon: target.group ? 'group' : 'frame' })),
+            ]}
+            onChange={target => {
+              run(a => a.workspace.moveLayer(node.key, target === 'root' ? null : target, 'inside'));
+              setMenu(null);
+              queueMicrotask(() => focusLayer(node.key));
+            }} />
+        </div>
       </div>}
       {node.children.length > 0 && !collapsed.has(node.key) && renderLayers(node.children, depth + 1)}
     </li>;

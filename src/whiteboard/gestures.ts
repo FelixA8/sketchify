@@ -6,8 +6,10 @@ import { pickHandle, selectionGeometry } from './canvas';
 import { snapshot } from './store';
 import { expandGroups } from './groups';
 import { boundLabel, textContainer } from '../bound-text';
-import { bindEndpoint, connectorPoints, isConnector, setConnectorPoints, snapEndpoint } from '../connectors';
+import { arrowType, bindEndpoint, connectorPoints, isConnector, moveConnectorEndpoint, moveElbowSegment, setConnectorPoints, setConnectorRoute, snapEndpoint } from '../connectors';
 import { NOTE_MIN_SIZE } from '../notes';
+const resizeDirections = ['e', 'se', 's', 'sw', 'w', 'nw', 'n', 'ne'];
+
 export function mountGestures(a: Controller) {
   const pick = (p: Point) => [...a.interactive()].reverse().find(e => hitTest(e, p, 7 / a.state.zoom));
   const textTarget = (p: Point) => [...a.visible()].reverse().find(element => hitTest(textContainer(element) ? { ...element, backgroundColor: '#ffffff' } : element, p, 7 / a.state.zoom));
@@ -53,16 +55,25 @@ export function mountGestures(a: Controller) {
       if (handle?.key === 'startBinding' || handle?.key === 'endBinding') {
         s.gesture = { kind: 'endpoint', end: handle.key, originals: snapshot(a.objects.editable()) }; return;
       }
+      if (handle?.pointIndex !== undefined) {
+        s.gesture = { kind: 'bend', start: p, anchor: { x: handle.x, y: handle.y }, index: handle.pointIndex, original: snapshot(a.selected()[0]) };
+        return;
+      }
       if (handle?.key === 'rotate') {
         const { box, angle } = selectionGeometry(s), center = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
         s.gesture = { kind: 'rotate', center, box, initialAngle: angle, delta: 0, startAngle: Math.atan2(p.y - center.y, p.x - center.x), originals: snapshot(a.objects.editable()), followers: followers() }; return;
       }
-      if (handle) { const { box, angle } = selectionGeometry(s); s.gesture = { kind: 'resize', start: p, handle: handle.key, box, angle, originals: resizeOriginals(), followers: followers() }; return; }
+      if (handle) {
+        const { box, angle } = selectionGeometry(s);
+        const sideAnchor = handle.key.length === 1 ? { x: handle.x, y: handle.y } : undefined;
+        s.gesture = { kind: 'resize', start: p, sideAnchor, handle: handle.key, box, angle, originals: resizeOriginals(), followers: followers() };
+        return;
+      }
       let element = clicked && boundLabel(clicked) ? s.elements.find(parent => parent.id === clicked.containerId) ?? clicked : clicked;
       if (element && a.isLocked(element)) return;
       if (!element && s.selected.size) {
         const selected = a.selected(), box = sceneBounds(selected);
-        if (selected.length === 1 ? pointInElementBounds(selected[0], p) : p.x >= box.x && p.x <= box.x + box.width && p.y >= box.y && p.y <= box.y + box.height) element = selected[0];
+        if (selected.length === 1 ? selected[0].type !== 'arrow' && pointInElementBounds(selected[0], p) : p.x >= box.x && p.x <= box.x + box.width && p.y >= box.y && p.y <= box.y + box.height) element = selected[0];
       }
       if (element) {
         if (event.shiftKey || !s.selected.has(element.id)) a.objects.select(element.id, event.shiftKey);
@@ -90,7 +101,18 @@ export function mountGestures(a: Controller) {
     if (!gesture) {
       if (['arrow', 'line'].includes(s.tool) && !s.space) snapWithHint(p);
       else s.connectorHint = null;
-      if (s.tool === 'selection') { const element = pick(p), handle = pickHandle(s, p); s.cursor = (event.metaKey || event.ctrlKey) && element && (element.link || element.type === 'text' && linkAt(element, p, a.ctx)) ? 'pointer' : handle?.key === 'rotate' ? 'grab' : handle?.key.endsWith('Binding') ? 'crosshair' : handle ? `${handle.key}-resize` : element ? 'move' : 'default'; } return;
+      if (s.tool === 'selection') {
+        const element = pick(p), handle = pickHandle(s, p);
+        if ((event.metaKey || event.ctrlKey) && element && (element.link || element.type === 'text' && linkAt(element, p, a.ctx))) s.cursor = 'pointer';
+        else if (handle?.key === 'rotate') s.cursor = 'grab';
+        else if (handle && (handle.key.endsWith('Binding') || handle.pointIndex !== undefined)) s.cursor = 'crosshair';
+        else if (handle) {
+          const step = Math.round(selectionGeometry(s).angle / (Math.PI / 4));
+          const direction = resizeDirections.at((resizeDirections.indexOf(handle.key) + step) % resizeDirections.length);
+          s.cursor = `${direction}-resize`;
+        } else s.cursor = element ? 'move' : 'default';
+      }
+      return;
     }
     if (gesture.kind === 'pan') s.pan = { x: gesture.pan.x + event.clientX - gesture.start.x, y: gesture.pan.y + event.clientY - gesture.start.y };
     else if (gesture.kind === 'draw') {
@@ -103,7 +125,7 @@ export function mountGestures(a: Controller) {
       element.width = dx; element.height = dy;
       if (element.type === 'freedraw') { const last = element.points.at(-1)!; if (Math.hypot(dx - last[0], dy - last[1]) > 1 / s.zoom) element.points.push([dx, dy]); }
       else if (isConnector(element)) {
-        setConnectorPoints(element, [gesture.start, { x: gesture.start.x + dx, y: gesture.start.y + dy }]);
+        setConnectorRoute(element, [gesture.start, { x: gesture.start.x + dx, y: gesture.start.y + dy }]);
         if (s.preferences.arrowBinding) {
           const endpoint = snapWithHint(shiftKey ? { x: gesture.start.x + dx, y: gesture.start.y + dy } : p)?.point;
           showSnapHint(bindEndpoint(element, 'endBinding', endpoint ?? { x: gesture.start.x + dx, y: gesture.start.y + dy }, a.interactive(), s.zoom));
@@ -122,9 +144,29 @@ export function mountGestures(a: Controller) {
       if (s.preferences.arrowBinding) showSnapHint(bindEndpoint(element, gesture.end, end, a.interactive(), s.zoom));
       else {
         element[gesture.end] = null;
-        const points = connectorPoints(element); points[gesture.end === 'startBinding' ? 0 : points.length - 1] = end;
-        setConnectorPoints(element, points);
+        moveConnectorEndpoint(element, gesture.end, end);
       }
+    } else if (gesture.kind === 'bend') {
+      const { original } = gesture, element = s.elements.find(element => element.id === original.id)!;
+      const dx = p.x - gesture.start.x, dy = p.y - gesture.start.y;
+      if (element.points.length === 2 && Math.hypot(dx, dy) < 4 / s.zoom) return;
+      const bend = a.snap({ x: gesture.anchor.x + dx, y: gesture.anchor.y + dy });
+      if (arrowType(original) === 'right-angle') {
+        const points = moveElbowSegment(original, gesture.index, gesture.anchor, bend);
+        if (points) {
+          element.manualBend = true;
+          setConnectorPoints(element, points);
+        } else {
+          Object.assign(element, snapshot(original));
+          if (!original.manualBend) delete element.manualBend;
+        }
+        return;
+      }
+      const points = connectorPoints(original);
+      if (points.length === 2) points.splice(gesture.index, 0, bend);
+      else points[gesture.index] = bend;
+      element.manualBend = true;
+      setConnectorPoints(element, points);
     } else if (gesture.kind === 'move') {
       let dx = p.x - gesture.start.x, dy = p.y - gesture.start.y;
       if (s.grid) { dx = Math.round(dx / 20) * 20; dy = Math.round(dy / 20) * 20; }
@@ -145,7 +187,9 @@ export function mountGestures(a: Controller) {
         Object.assign(s.elements.find(element => element.id === original.id)!, snapshot(original), { x: original.x + nextCenter.x - oldCenter.x, y: original.y + nextCenter.y - oldCenter.y, angle: normalizeAngle(original.angle + gesture.delta) });
       }
     } else if (gesture.kind === 'resize') {
-      const box = gesture.box, pointer = a.snap(p), center = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+      const { box, sideAnchor, start, handle } = gesture;
+      const pointer = a.snap(sideAnchor ? { x: sideAnchor.x + p.x - start.x, y: sideAnchor.y + p.y - start.y } : p);
+      const center = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
       const end = rotatePoint(pointer, center, -gesture.angle); let x1 = box.x, y1 = box.y, x2 = box.x + box.width, y2 = box.y + box.height;
       if (gesture.originals.length === 1 && gesture.originals[0].type === 'stickynote') {
         const original = gesture.originals[0], handle = gesture.handle, corner = handle.length === 2;
@@ -167,7 +211,7 @@ export function mountGestures(a: Controller) {
           fontSize: corner && !shiftKey ? Math.max(16, original.fontSize * width / box.width) : original.fontSize,
         }); return;
       }
-      if (gesture.originals.length === 1 && (gesture.originals[0].type === 'image' || gesture.originals[0].angle)) {
+      if (gesture.originals.length === 1 && (gesture.originals[0].type === 'image' || gesture.originals[0].angle) && (!sideAnchor || gesture.originals[0].type === 'text')) {
         const original = gesture.originals[0], b = unrotatedBounds(original), center = { x: b.x + b.width / 2, y: b.y + b.height / 2 };
         const sx = gesture.handle.includes('w') ? -1 : 1, sy = gesture.handle.includes('n') ? -1 : 1;
         if (original.type === 'text' && ['w', 'e'].includes(gesture.handle)) {
@@ -198,16 +242,24 @@ export function mountGestures(a: Controller) {
         Object.assign(element, snapshot(gesture.originals[0]), { textWidth: width, x: gesture.handle === 'w' ? x2 - width : x1 });
         a.measure(element); return;
       }
-      if (gesture.handle.includes('w')) x1 = Math.min(end.x, x2 - 2); else x2 = Math.max(end.x, x1 + 2);
-      if (gesture.handle.includes('n')) y1 = Math.min(end.y, y2 - 2); else y2 = Math.max(end.y, y1 + 2);
+      if (handle.includes('w')) x1 = Math.min(end.x, x2 - 2);
+      if (handle.includes('e')) x2 = Math.max(end.x, x1 + 2);
+      if (handle.includes('n')) y1 = Math.min(end.y, y2 - 2);
+      if (handle.includes('s')) y2 = Math.max(end.y, y1 + 2);
       let w = x2 - x1, h = y2 - y1;
       const text = gesture.originals.filter(element => element.type === 'text');
-      if (text.length) {
+      if (sideAnchor && (shiftKey || text.length || gesture.originals.some(element => element.type === 'image') && box.width && box.height)) {
+        const horizontal = handle === 'w' || handle === 'e';
+        const scale = Math.max(horizontal ? w / (box.width || 1) : h / (box.height || 1), ...text.map(element => 8 / element.fontSize));
+        w = box.width * scale; h = box.height * scale;
+        if (horizontal) { x1 = handle === 'w' ? x2 - w : x1; y1 = center.y - h / 2; }
+        else { x1 = center.x - w / 2; y1 = handle === 'n' ? y2 - h : y1; }
+      } else if (text.length) {
         const scale = Math.max(...text.map(element => 8 / element.fontSize), (w * box.width + h * box.height) / (box.width ** 2 + box.height ** 2 || 1));
         w = box.width * scale; h = box.height * scale;
         if (gesture.handle.includes('w')) x1 = x2 - w;
         if (gesture.handle.includes('n')) y1 = y2 - h;
-      } else if (shiftKey || gesture.originals.some(element => element.type === 'image' || element.angle)) { const ratio = box.width / (box.height || 1); h = w / ratio; if (gesture.handle.includes('n')) y1 = y2 - h; }
+      } else if (!sideAnchor && (shiftKey || gesture.originals.some(element => element.type === 'image' || element.angle))) { const ratio = box.width / (box.height || 1); h = w / ratio; if (gesture.handle.includes('n')) y1 = y2 - h; }
       for (const original of gesture.originals) {
         if (gesture.angle) {
           const local = unrotatedBounds(original), oldCenter = rotatePoint({ x: local.x + local.width / 2, y: local.y + local.height / 2 }, center, -gesture.angle);

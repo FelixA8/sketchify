@@ -5,7 +5,7 @@ import { exportDimensions } from './files';
 import { visibleElements } from './layers';
 import { selectionWithChildren } from './object-actions';
 import { imagesReady, loadImages } from '../images';
-import { ExportScope } from './ExportScope';
+import { SelectDropdown } from './SelectDropdown';
 
 export function ExportDialog() {
   const { state: s, run } = useBoard();
@@ -57,7 +57,12 @@ export function ExportDialog() {
       <figcaption id="export-dimensions" aria-live="polite">{elements.length ? `${dimensions.width} × ${dimensions.height} px · PNG & clipboard` : 'Nothing to export'}{elements.length > 0 && dimensions.limited && <span>PNG limited to 8192 px on its longest side. SVG keeps the selected scale.</span>}</figcaption>
     </figure>
     <div className="export-settings">
-      <div className="field-label export-scope"><span id="export-scope-label">Include</span><ExportScope selected={selected} hasSelection={s.selected.size > 0} onChange={value => { setSelected(value); setFeedback(false); }} /></div>
+      <div className="field-label export-scope"><span>Include</span>
+        <SelectDropdown id="export-scope" label="Include" value={selected ? 'selected' : 'all'} options={[
+          { value: 'all', label: 'Entire page', icon: 'image' },
+          ...(s.selected.size ? [{ value: 'selected', label: 'Selected elements', icon: 'selection' }] : []),
+        ]} onChange={value => { setSelected(value === 'selected'); setFeedback(false); }} />
+      </div>
       <label className="export-toggle" htmlFor="export-background"><span>Background</span><input ref={backgroundInput} id="export-background" type="checkbox" role="switch" checked={background} onChange={event => { setBackground(event.target.checked); setFeedback(false); }} /><span className="export-toggle-track" aria-hidden="true"><span /></span></label>
       <label className="export-toggle" htmlFor="export-dark"><span>Dark mode</span><input id="export-dark" type="checkbox" role="switch" checked={dark} onChange={event => { setDark(event.target.checked); setFeedback(false); }} /><span className="export-toggle-track" aria-hidden="true"><span /></span></label>
       <div className="export-scale-row"><span id="export-scale-label">Scale</span><div className="export-scale" role="group" aria-labelledby="export-scale-label">{[1, 2, 3].map(value => <button key={value} type="button" data-scale={value} aria-pressed={scale === value} onClick={() => { setScale(value); setFeedback(false); }}>{value}×</button>)}</div></div>

@@ -1,11 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createApp } from './helpers/app.mjs';
-import { createElement, exportScene, importScene, rotatePoint, unrotatedBounds } from '../src/scene.ts';
+import { createElement, exportScene, hitTest, importScene, rotatePoint, unrotatedBounds } from '../src/scene.ts';
 import { bindEndpoint, connectorPoints, setConnectorPoints, snapEndpoint, syncConnectors } from '../src/connectors.ts';
 import { copyElements } from '../src/whiteboard/object-actions.ts';
-import { selectionHandles } from '../src/whiteboard/canvas.ts';
+import { pickHandle, selectionHandles } from '../src/whiteboard/canvas.ts';
 import { initialState } from '../src/whiteboard/store.ts';
+import { renderPaths } from '../src/strokes.ts';
 
 const close = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} should equal ${b}`);
 const pointClose = (a, b) => { close(a.x, b.x); close(a.y, b.y); };
@@ -23,6 +24,145 @@ function connected(type = 'rectangle', line = 'arrow', extra = {}) {
   syncConnectors([target, wire]);
   return [target, wire];
 }
+
+const arrowChoice = (app, label) => app.document.querySelector(`[role="group"][aria-label="Arrow type"] [aria-label="${label}"]`);
+
+test('arrow type changes preserve bindings, reroute on drag, and survive undo, redo and import', () => {
+  const target = shape(), wire = connector('arrow', { startBinding: { elementId: target.id, fixedPoint: [1, .5], focus: 0, gap: 0 } });
+  const app = createApp({ savedElements: [target, wire] });
+  drag(app, { x: 635, y: 350 }, { x: 635, y: 350 });
+  assert.equal(arrowChoice(app, 'Straight').getAttribute('aria-pressed'), 'true');
+  app.click(arrowChoice(app, 'Curved'));
+  const curved = app.scene()[1];
+  assert.equal(curved.arrowType, 'curved');
+  assert.deepEqual(curved.points, [[0, 0], [100, 112.5], [250, 100]]);
+  assert.equal(curved.startBinding.elementId, target.id);
+  assert.match(renderPaths(curved)[0].d, /C/);
+  assert.ok(hitTest(curved, { x: 691.25, y: 412.03 }, 2));
+  assert.equal(hitTest(curved, { x: 635, y: 350 }, 2), false);
+  app.click(arrowChoice(app, 'Right angle'));
+  const right = app.scene()[1];
+  assert.deepEqual(right.points, [[0, 0], [125, 0], [125, 100], [250, 100]]);
+  assert.equal(right.roundness, null);
+  app.click(app.get('undo-button')); assert.deepEqual(app.scene()[1], curved);
+  app.click(app.get('redo-button')); assert.deepEqual(app.scene()[1], right);
+  const imported = importScene(exportScene([target, right])).elements[1];
+  assert.equal(imported.arrowType, right.arrowType);
+  assert.deepEqual(imported.points, right.points);
+  assert.deepEqual(imported.startBinding, right.startBinding);
+  const reloaded = createApp({ savedElements: [target, right] });
+  drag(reloaded, { x: 635, y: 350 }, { x: 635, y: 350 });
+  drag(reloaded, { x: 760, y: 400 }, { x: 800, y: 470 });
+  assert.deepEqual(reloaded.scene()[1].points, [[0, 0], [145, 0], [145, 170], [290, 170]]);
+  drag(reloaded, { x: 430, y: 250 }, { x: 450, y: 290 });
+  const moved = reloaded.scene()[1];
+  assert.deepEqual(moved.points, [[0, 0], [135, 0], [135, 130], [270, 130]]);
+  pointClose(end(moved), { x: 800, y: 470 });
+  drag(reloaded, { x: 665, y: 400 }, { x: 665, y: 400 });
+  reloaded.click(arrowChoice(reloaded, 'Straight'));
+  assert.deepEqual(reloaded.scene()[1].points, [[0, 0], [270, 130]]);
+});
+
+test('the Arrow tool remembers its type across reload and leaves the Line tool straight', () => {
+  const app = createApp({ savedLocal: { preferences: { arrowBinding: false } } });
+  app.tool('arrow');
+  app.click(arrowChoice(app, 'Curved'));
+  app.scene();
+  const { local } = JSON.parse(app.window.localStorage.getItem('sketchify.scene.v1'));
+  const reloaded = createApp({ savedLocal: local });
+  reloaded.tool('arrow');
+  assert.equal(arrowChoice(reloaded, 'Curved').getAttribute('aria-pressed'), 'true');
+  drag(reloaded, { x: 500, y: 320 }, { x: 700, y: 320 });
+  assert.deepEqual(reloaded.scene()[0].points, [[0, 0], [100, 50], [200, 0]]);
+  drag(reloaded, { x: 700, y: 320 }, { x: 700, y: 400 });
+  assert.deepEqual(reloaded.scene()[0].points, [[0, 0], [80, 90], [200, 80]]);
+  reloaded.tool('line');
+  assert.equal(arrowChoice(reloaded, 'Curved'), null);
+  drag(reloaded, { x: 500, y: 520 }, { x: 700, y: 570 });
+  assert.deepEqual(reloaded.scene()[1].points, [[0, 0], [200, 50]]);
+  reloaded.tool('arrow');
+  reloaded.click(arrowChoice(reloaded, 'Right angle'));
+  reloaded.canvas.focus();
+  reloaded.key('Enter');
+  assert.deepEqual(reloaded.scene()[2].points, [[0, 0], [80, 0], [80, 100], [160, 100]]);
+});
+
+test('a rotated arrow shows its endpoints and existing bend as its only handles', () => {
+  const wire = connector('arrow', { points: [[0, 0], [0, 100], [250, 100]], angle: Math.PI / 4 });
+  const [tail, bend, head] = connectorPoints(wire);
+  const state = { ...initialState(), elements: [wire], selected: new Set([wire.id]), zoom: 2 };
+  const handles = selectionHandles(state);
+  assert.deepEqual(handles.map(handle => handle.key), ['startBinding', 'bend', 'endBinding']);
+  handles.forEach((handle, index) => pointClose(handle, [tail, bend, head][index]));
+  assert.equal(pickHandle(state, { x: bend.x + 4, y: bend.y }).key, 'bend');
+  const box = unrotatedBounds(wire), center = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  const oldCorner = rotatePoint({ x: box.x + box.width, y: box.y }, center, wire.angle);
+  assert.equal(pickHandle(state, oldCorner), undefined);
+});
+
+test('moving a right-angle segment keeps both bound endpoints and stays orthogonal when a target moves', () => {
+  const first = shape(), second = shape('rectangle', { id: 'second', x: 760, y: 350 });
+  const wire = connector('arrow', { arrowType: 'right-angle', points: [[0, 0], [125, 0], [125, 100], [250, 100]] });
+  bindEndpoint(wire, 'startBinding', { x: 510, y: 300 }, [first, second]);
+  bindEndpoint(wire, 'endBinding', { x: 760, y: 400 }, [first, second]);
+  const app = createApp({ savedElements: [first, second, wire] });
+  const original = app.scene();
+  const middle = { x: 635, y: 350 };
+  app.click(app.canvas, { clientX: middle.x, clientY: middle.y });
+  drag(app, middle, { x: 680, y: 380 }, 'pointercancel');
+  assert.deepEqual(app.scene(), original);
+  drag(app, middle, { x: 680, y: 380 });
+  const bent = app.scene();
+  assert.deepEqual(bent[2].points, [[0, 0], [170, 0], [170, 100], [250, 100]]);
+  assert.deepEqual(bent[2].startBinding, original[2].startBinding);
+  assert.deepEqual(bent[2].endBinding, original[2].endBinding);
+  const restored = importScene(exportScene(bent)).elements;
+  assert.equal(restored[2].manualBend, true);
+  const reloaded = createApp({ savedElements: restored });
+  drag(reloaded, { x: 840, y: 350 }, { x: 860, y: 380 });
+  assert.deepEqual(reloaded.scene()[2].points, [[0, 0], [170, 0], [170, 130], [270, 130]]);
+});
+
+for (const { wire, middle, to, points } of [
+  { wire: connector('arrow', { arrowType: 'right-angle', points: [[0, 0], [250, 0]] }),
+    middle: { x: 635, y: 300 }, to: { x: 670, y: 365 }, points: [[0, 0], [0, 65], [250, 65], [250, 0]] },
+  { wire: connector('arrow', { elbowed: true, points: [[0, 0], [0, 100], [250, 100]] }),
+    middle: { x: 510, y: 350 }, to: { x: 560, y: 380 }, points: [[0, 0], [50, 0], [50, 100], [250, 100]] },
+]) test(`dragging the midpoint bends an ${wire.elbowed ? 'imported L-shaped' : 'aligned'} right-angle arrow`, () => {
+  const app = createApp({ savedElements: [wire] });
+  app.click(app.canvas, { clientX: middle.x, clientY: middle.y });
+  drag(app, middle, to);
+  assert.deepEqual(app.scene()[0].points, points);
+});
+
+for (const type of ['straight', 'curved']) test(`a ${type} arrow bend keeps both attachments and survives endpoint changes and export`, () => {
+  const first = shape(), second = shape('rectangle', { id: 'second', x: 760, y: 350 });
+  const wire = connector('arrow', { arrowType: type, angle: Math.PI / 8 });
+  setConnectorPoints(wire, [{ x: 510, y: 300 }, ...(type === 'curved' ? [{ x: 615, y: 390 }] : []), { x: 760, y: 400 }]);
+  bindEndpoint(wire, 'startBinding', { x: 510, y: 300 }, [first, second]);
+  bindEndpoint(wire, 'endBinding', { x: 760, y: 400 }, [first, second]);
+  const app = createApp({ savedElements: [first, second, wire] });
+  const original = app.scene();
+  const center = type === 'curved' ? { x: 615, y: 390 } : { x: 635, y: 350 };
+  app.click(app.canvas, { clientX: center.x, clientY: center.y });
+  const bend = { x: 620, y: 470 };
+  drag(app, center, { x: center.x + 1, y: center.y + 1 }, 'pointercancel');
+  assert.deepEqual(app.scene(), original);
+  drag(app, center, bend, 'pointercancel');
+  assert.deepEqual(app.scene(), original);
+  drag(app, center, bend);
+  const bent = app.scene()[2];
+  const [tail, vertex, head] = connectorPoints(bent);
+  pointClose(tail, { x: 510, y: 300 }); pointClose(vertex, bend); pointClose(head, { x: 760, y: 400 });
+  assert.deepEqual(bent.startBinding, original[2].startBinding);
+  assert.deepEqual(bent.endBinding, original[2].endBinding);
+  const restored = importScene(exportScene(app.scene())).elements;
+  assert.equal(restored[2].manualBend, true);
+  const reloaded = createApp({ savedElements: restored });
+  drag(reloaded, { x: 840, y: 350 }, { x: 860, y: 380 });
+  const points = connectorPoints(reloaded.scene()[2]);
+  pointClose(points[1], bend); pointClose(points[2], { x: 780, y: 430 });
+});
 
 for (const type of ['rectangle', 'ellipse', 'diamond']) for (const line of ['line', 'arrow']) test(`${line} snaps both endpoints to ${type} edges and follows dragging and keyboard nudges`, () => {
   const first = shape(type), second = shape(type, { id: 'second', x: 750 });
@@ -169,10 +309,10 @@ test('connector dragging uses the original path on each pointer update', () => {
   bindEndpoint(elements[1], 'endBinding', { x: 760, y: 400 }, [target]); elements.push(target); syncConnectors(elements);
   const move = intermediate => {
     const app = createApp({ savedElements: elements });
-    app.click(app.canvas, { clientX: 635, clientY: 350 });
-    app.dispatch(app.canvas, 'pointerdown', { clientX: 635, clientY: 350 });
-    if (intermediate) app.dispatch(app.canvas, 'pointermove', { clientX: 643, clientY: 354 });
-    app.dispatch(app.canvas, 'pointermove', { clientX: 675, clientY: 370 });
+    app.click(app.canvas, { clientX: 585, clientY: 330 });
+    app.dispatch(app.canvas, 'pointerdown', { clientX: 585, clientY: 330 });
+    if (intermediate) app.dispatch(app.canvas, 'pointermove', { clientX: 593, clientY: 334 });
+    app.dispatch(app.canvas, 'pointermove', { clientX: 625, clientY: 350 });
     app.dispatch(app.canvas, 'pointerup'); return app.scene()[1];
   };
   const direct = move(false), stepped = move(true);

@@ -9,6 +9,103 @@ async function drag(page: Page, from: { x: number; y: number }, to: { x: number;
   await page.mouse.move(to.x, to.y, { steps: 5 }); await page.mouse.up();
 }
 
+for (const mobile of [false, true]) for (const theme of ['light', 'dark']) test(`arrow type controls on ${mobile ? 'mobile' : 'desktop'} in ${theme}`, async ({ page }) => {
+  await page.setViewportSize(mobile ? { width: 390, height: 844 } : { width: 1280, height: 900 });
+  await page.addInitScript(theme => {
+    if (!localStorage.getItem('sketchify.scene.v1')) localStorage.setItem('sketchify.scene.v1', JSON.stringify({ elements: [], local: { theme } }));
+  }, theme);
+  await page.goto('/');
+  await page.locator('[data-tool="arrow"]').click();
+  if (mobile) await page.locator('#style-toggle').click();
+  const types = page.getByRole('group', { name: 'Arrow type' });
+  const straight = types.getByRole('button', { name: 'Straight', exact: true });
+  const curved = types.getByRole('button', { name: 'Curved', exact: true });
+  const rightAngle = types.getByRole('button', { name: 'Right angle', exact: true });
+  await expect(straight).toHaveAttribute('aria-pressed', 'true');
+  await curved.focus();
+  await page.keyboard.press('Space');
+  await expect(curved).toHaveAttribute('aria-pressed', 'true');
+  if (mobile) {
+    const box = (await curved.boundingBox())!;
+    expect(box.width).toBeGreaterThanOrEqual(44);
+    expect(box.height).toBeGreaterThanOrEqual(44);
+  }
+  const x = mobile ? 22 : 400, width = mobile ? 110 : 200;
+  await drag(page, { x, y: 420 }, { x: x + width, y: 510 });
+  expect((await saved(page))[0]).toMatchObject({ arrowType: 'curved', roundness: { type: 2 } });
+  await rightAngle.click();
+  await expect(rightAngle).toHaveAttribute('aria-pressed', 'true');
+  const right = (await saved(page))[0];
+  expect(right.points).toEqual([[0, 0], [width / 2, 0], [width / 2, 90], [width, 90]]);
+  await page.screenshot({ path: `artifacts/arrow-type-${mobile ? 'mobile' : 'desktop'}-${theme}-${test.info().project.name}.png` });
+  const middle = { x: x + width / 2, y: 465 };
+  await drag(page, middle, { x: middle.x + 24, y: middle.y + 12 });
+  const rerouted = (await saved(page))[0];
+  expect(rerouted).toMatchObject({ x, y: 420, points: [[0, 0], [width / 2 + 24, 0], [width / 2 + 24, 90], [width, 90]] });
+  await page.screenshot({ path: `artifacts/arrow-elbow-${mobile ? 'mobile' : 'desktop'}-${theme}-${test.info().project.name}.png` });
+  await page.locator('#undo-button').click();
+  expect((await saved(page))[0]).toEqual(right);
+  await page.locator('#undo-button').click();
+  expect((await saved(page))[0].arrowType).toBe('curved');
+  await page.locator('#redo-button').click();
+  expect((await saved(page))[0]).toEqual(right);
+  await page.locator('#redo-button').click();
+  expect((await saved(page))[0]).toEqual(rerouted);
+  await page.reload();
+  expect((await saved(page))[0]).toEqual(rerouted);
+  await page.locator('[data-tool="arrow"]').click();
+  if (mobile) await page.locator('#style-toggle').click();
+  await expect(curved).toHaveAttribute('aria-pressed', 'true');
+});
+
+for (const mobile of [false, true]) for (const theme of ['light', 'dark']) test(`an arrow midpoint creates an editable bend on ${mobile ? 'mobile' : 'desktop'} in ${theme}`, async ({ page }) => {
+  await page.setViewportSize(mobile ? { width: 390, height: 844 } : { width: 1280, height: 900 });
+  await page.goto('/');
+  if (theme === 'dark') {
+    await page.getByRole('button', { name: 'Main menu', exact: true }).click();
+    await page.getByRole('button', { name: 'Dark', exact: true }).click();
+    await page.keyboard.press('Escape');
+  }
+  const tail = { x: mobile ? 80 : 460, y: 480 };
+  const head = { x: tail.x + 200, y: 280 };
+  const middle = { x: tail.x + 100, y: 380 };
+  const canvas = page.locator('#canvas');
+  const pixels = () => canvas.evaluate((node: HTMLCanvasElement, points) => points.map(({ x, y }) =>
+    Array.from(node.getContext('2d')!.getImageData(x * devicePixelRatio, y * devicePixelRatio, 1, 1).data)),
+  [tail, middle, head, { x: middle.x, y: head.y - 5 }, { x: middle.x, y: head.y - 32 }]);
+  await page.locator('[data-tool="arrow"]').click();
+  await drag(page, tail, head);
+  const original = (await saved(page))[0];
+  await page.mouse.move(middle.x, middle.y);
+  await expect(canvas).toHaveCSS('cursor', 'crosshair');
+  const selected = await pixels();
+  await page.screenshot({ path: `artifacts/arrow-handles-${mobile ? 'mobile' : 'desktop'}-${theme}-${test.info().project.name}.png` });
+  await page.keyboard.press('Escape');
+  await expect.poll(pixels).not.toEqual(selected);
+  const deselected = await pixels();
+  selected.slice(0, 3).forEach((pixel, index) => expect(pixel).not.toEqual(deselected[index]));
+  expect(selected.slice(3)).toEqual(deselected.slice(3));
+  await page.mouse.click(middle.x, middle.y);
+  await page.mouse.click(middle.x, middle.y);
+  expect((await saved(page))[0]).toEqual(original);
+  const bend = { x: middle.x - 40, y: middle.y - 20 };
+  await drag(page, middle, bend);
+  const bent = (await saved(page))[0];
+  expect(bent).toMatchObject({ x: original.x, y: original.y, points: [[0, 0], [60, -120], original.points[1]] });
+  await page.screenshot({ path: `artifacts/arrow-bend-${mobile ? 'mobile' : 'desktop'}-${theme}-${test.info().project.name}.png` });
+  await drag(page, bend, { x: bend.x + 20, y: bend.y + 40 });
+  const adjusted = (await saved(page))[0];
+  expect(adjusted.points).toEqual([[0, 0], [80, -80], original.points[1]]);
+  await page.keyboard.press('ControlOrMeta+z');
+  expect((await saved(page))[0]).toEqual(bent);
+  await page.keyboard.press('ControlOrMeta+z');
+  expect((await saved(page))[0]).toEqual(original);
+  await page.keyboard.press('ControlOrMeta+Shift+z');
+  expect((await saved(page))[0]).toEqual(bent);
+  await page.reload();
+  expect((await saved(page))[0]).toEqual(bent);
+});
+
 for (const type of ['arrow', 'line']) test(`${type} binds two shapes, follows transforms, detaches, undoes and reloads`, async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.setViewportSize({ width: 1280, height: 900 }); await page.goto('/');

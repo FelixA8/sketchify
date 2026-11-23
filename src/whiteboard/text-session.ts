@@ -1,11 +1,23 @@
 import { bounds, createElement, safeTextLink } from '../scene';
 import { TextEditor } from '../text-editor';
-import { font, layout } from '../text';
-import type { Element, Point } from '../types';
+import { font, layout, markRange, rangeMarks } from '../text';
+import type { Element, Mark, Point } from '../types';
 import type { Controller } from './controller';
-import { snapshot } from './store';
-import { ink } from './canvas';
+import { snapshot, type State } from './store';
+import { ink, selectionHandles } from './canvas';
 import { fitBoundText, textContainer } from '../bound-text';
+import { layerModel } from './layers';
+
+export function selectedText(s: State) {
+  if (s.editing || s.selected.size !== 1 || s.gesture || s.preferences.zenMode || s.dialog) return;
+  const element = s.elements.find(element => s.selected.has(element.id));
+  if (element?.type !== 'text' || !element.text.length) return;
+  const { hidden, locked } = layerModel(s.elements, s.layers);
+  if (!hidden.has(element.id) && !locked.has(element.id)) return element;
+}
+
+export const wholeTextMarks = (element: Element) => rangeMarks(element.text, element.textSpans, 0, element.text.length);
+
 export class TextSession {
   readonly editor: TextEditor;
   private baselineOffsets = new Map<string, number>();
@@ -26,7 +38,7 @@ export class TextSession {
     if (parent?.type === 'stickynote') Object.assign(element, { strokeColor: parent.strokeColor, opacity: parent.opacity, fontSize: parent.fontSize, fontFamily: parent.fontFamily, baseFontSize: parent.fontSize });
     if (parent && textContainer(parent)) Object.assign(element, { containerId: parent.id, textAlign: label?.textAlign ?? parent.textAlign ?? 'center', verticalAlign: label?.verticalAlign ?? parent.verticalAlign ?? 'middle' });
     s.editing = { id: element.id, element, fresh: !label, ...(parent && textContainer(parent) ? { container: snapshot(parent) } : {}) }; s.selected.clear();
-    a.get('text-editor').hidden = false; s.linkOpen = false;
+    a.get('text-editor').hidden = false; s.linkTarget = null;
     this.editor.load(element); if (innerWidth > 760) s.panel = true;
     this.resize(); a.get('text-editor').focus({ preventScroll: true });
   }
@@ -80,44 +92,80 @@ export class TextSession {
   formatting() {
     const a = this.app, s = a.state; if (!s.editing) return;
     s.marks = this.editor.activeMarks();
-    const toolbar = a.get('text-formatting'), element = s.editing.element, b = bounds(element);
+    this.positionFormatting();
+  }
+  positionFormatting() {
+    const a = this.app, s = a.state, element = s.editing?.element ?? selectedText(s);
+    if (!element) return;
+    const toolbar = a.get('text-formatting'), b = bounds(element);
     const x = b.x * s.zoom + s.pan.x, y = b.y * s.zoom + s.pan.y;
-    const toolbarHeight = toolbar.offsetHeight || (s.linkOpen ? 260 : 54);
-    toolbar.style.left = `${Math.max(12, Math.min(x, a.width - 284))}px`;
-    toolbar.style.top = `${Math.max(12, Math.min(y >= toolbarHeight + 12 ? y - toolbarHeight - 8 : y + b.height * s.zoom + 8, a.height - toolbarHeight - 12))}px`;
+    const height = toolbar.offsetHeight || (s.linkTarget === element.id ? 260 : 54);
+    const width = toolbar.offsetWidth || 272;
+    const rotationHandle = s.editing ? undefined : selectionHandles(s).find(handle => handle.key === 'rotate');
+    const rotationY = rotationHandle ? rotationHandle.y * s.zoom + s.pan.y : y;
+    const gap = s.editing ? 8 : 14;
+    const above = Math.min(y, rotationY) - height - gap;
+    const below = Math.max(y + b.height * s.zoom, rotationY) + gap;
+    const mobileToolbarTop = !s.editing && innerWidth <= 760 ? a.get('toolbar').getBoundingClientRect().top : 0;
+    const bottom = (mobileToolbarTop || a.height) - 12;
+    const top = s.editing ? (above >= 12 ? above : below) : (below + height <= bottom ? below : above);
+    toolbar.style.left = `${Math.max(12, Math.min(x, a.width - width - 12))}px`;
+    toolbar.style.top = `${Math.max(12, Math.min(top, bottom - height))}px`;
+  }
+  toggleMark(mark: Exclude<Mark, 'link'>) {
+    const s = this.app.state;
+    if (s.editing) { this.editor.toggle(mark); return; }
+    const element = selectedText(s);
+    if (element) this.formatWholeText(element, mark, !wholeTextMarks(element)[mark]);
+  }
+  private formatWholeText(element: Element, mark: Mark, value: string | boolean) {
+    element.textSpans = markRange(element.text, element.textSpans, 0, element.text.length, mark, value);
+    this.app.measure(element);
+    this.app.commit();
   }
   closeLink() {
-    this.app.state.linkOpen = false; this.app.get('text-editor').focus({ preventScroll: true });
+    const a = this.app;
+    a.state.linkTarget = null;
+    if (!a.state.editing) { a.canvas.focus({ preventScroll: true }); return; }
+    a.get('text-editor').focus({ preventScroll: true });
     this.editor.select(this.editor.savedSelection.start, this.editor.savedSelection.end); this.formatting();
   }
   openLink() {
-    const a = this.app, s = a.state; if (!s.editing) return;
-    const marks = this.editor.activeMarks(); let { start, end } = this.editor.captureSelection();
-    if (start === end && marks.link) {
+    const a = this.app, s = a.state, element = s.editing?.element ?? selectedText(s);
+    if (!element) return;
+    const marks = s.editing ? this.editor.activeMarks() : wholeTextMarks(element);
+    const caret = this.editor.savedSelection;
+    if (s.editing && caret.start === caret.end && marks.link) {
       const spans = this.editor.model.textSpans.filter(span => span.link === marks.link);
-      const containing = spans.findIndex(span => span.start <= start && span.end >= start);
+      const containing = spans.findIndex(span => span.start <= caret.start && span.end >= caret.start);
       if (containing >= 0) {
         let first = containing, last = containing;
         while (first > 0 && spans[first - 1].end === spans[first].start) first--;
         while (last + 1 < spans.length && spans[last].end === spans[last + 1].start) last++;
-        start = spans[first].start; end = spans[last].end; this.editor.select(start, end);
+        this.editor.select(spans[first].start, spans[last].end);
       }
     }
-    s.linkURL = marks.link || ''; s.linkError = ''; s.linkOpen = true;
-    a.get<HTMLInputElement>('text-link-url').value = s.linkURL; this.formatting();
+    s.linkURL = marks.link || ''; s.linkError = ''; s.linkTarget = element.id;
+    const input = a.get<HTMLInputElement>('text-link-url');
+    input.value = s.linkURL;
+    input.focus({ preventScroll: true });
+    this.formatting();
   }
-  applyLink() {
-    const a = this.app, link = safeTextLink(a.get<HTMLInputElement>('text-link-url').value);
-    if (!link) { a.state.linkError = 'Enter a valid web or email link.'; a.get('text-link-url').focus(); return; }
-    const { start, end } = this.editor.savedSelection;
-    if (start === end) this.editor.insert(link, { ...this.editor.activeMarks(), link }); else this.editor.apply('link', link);
+  applyLink(remove = false) {
+    const a = this.app, s = a.state, element = s.editing?.element ?? selectedText(s);
+    if (!element || s.linkTarget !== element.id) return;
+    const link = remove ? '' : safeTextLink(a.get<HTMLInputElement>('text-link-url').value);
+    if (!remove && !link) { s.linkError = 'Enter a valid web or email link.'; a.get('text-link-url').focus(); return; }
+    if (!s.editing) this.formatWholeText(element, 'link', link);
+    else if (link && this.editor.savedSelection.start === this.editor.savedSelection.end) this.editor.insert(link, { ...this.editor.activeMarks(), link });
+    else this.editor.apply('link', link);
     this.closeLink();
   }
   finish(cancel = false) {
     const a = this.app, s = a.state, editing = s.editing; if (!editing) return;
     // Materialize before removing the draft; editor callbacks may update the store again.
     const element = snapshot(editing.element), id = editing.id, fresh = editing.fresh, container = editing.container && snapshot(editing.container);
-    s.editing = null; s.linkOpen = false;
+    s.editing = null; s.linkTarget = null;
     a.get('text-editor').hidden = true; if (!s.locked) s.tool = 'selection';
     if (!cancel) {
       Object.assign(element, this.editor.model);
@@ -151,14 +199,19 @@ export class TextSession {
       else if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) { event.preventDefault(); this.finish(); a.canvas.focus(); }
     });
     a.listen(a.get('text-formatting'), 'pointerdown', event => {
-      if ((event.target as HTMLElement).closest('button')) { event.preventDefault(); this.editor.captureSelection(); }
+      if (a.state.editing && (event.target as HTMLElement).closest('button')) { event.preventDefault(); this.editor.captureSelection(); }
     });
     a.listen(a.get('text-formatting'), 'keydown', event => {
+      if (!a.state.editing) return;
       event.stopPropagation(); if (event.isComposing) return;
       if (event.key === 'Escape') { event.preventDefault(); this.finish(true); a.canvas.focus(); }
       else if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) { event.preventDefault(); this.finish(); a.canvas.focus(); }
     });
     a.listen(a.get('text-link-form'), 'keydown', event => { if (event.key === 'Escape') { event.stopPropagation(); event.preventDefault(); this.closeLink(); } });
+    a.listen(document, 'pointerdown', event => {
+      if (!a.state.editing && !(event.target as HTMLElement).closest('#text-formatting')) a.state.linkTarget = null;
+    });
+    a.listen(window, 'resize', () => this.positionFormatting());
     a.listen(a.get('properties'), 'pointerdown', event => { if (a.state.editing && (event.target as HTMLElement).closest('button')) event.preventDefault(); });
     a.listen(a.get('style-toggle'), 'pointerdown', event => { if (a.state.editing) event.preventDefault(); });
   }

@@ -4,25 +4,65 @@ import { renderPaths } from '../strokes';
 import type { Box, Element, Point } from '../types';
 import type { State, Store } from './store';
 import { imageRecord, subscribeImages } from '../images';
-import { bindingKeys, connectorPoints, isConnector } from '../connectors';
+import { arrowType, bindingKeys, connectorPoints, isConnector } from '../connectors';
 import { selectionGroup } from './groups';
 import { layerModel, visibleElements } from './layers';
 import { noteDate } from '../notes';
+type SelectionHandle = Point & { key: string; pointIndex?: number };
+
 export const selectedElements = (state: State) => visibleElements(state.elements, state.layers).filter(e => state.selected.has(e.id));
 export const screenToWorld = (state: State, x: number, y: number): Point => ({ x: (x - state.pan.x) / state.zoom, y: (y - state.pan.y) / state.zoom });
 export const ink = (state: State, color: string) => state.theme === 'dark' && ['#1b1b1f', '#1e1e1e', '#000000'].includes(color) ? '#eeeeef' : color;
 export function handleLocations(box: Box, text = false, note = false) {
   return [{ key: 'nw', x: box.x, y: box.y }, { key: 'ne', x: box.x + box.width, y: box.y }, { key: 'se', x: box.x + box.width, y: box.y + box.height }, { key: 'sw', x: box.x, y: box.y + box.height }, ...(text || note ? [{ key: 'w', x: box.x, y: box.y + box.height / 2 }, { key: 'e', x: box.x + box.width, y: box.y + box.height / 2 }] : []), ...(note ? [{ key: 'n', x: box.x + box.width / 2, y: box.y }, { key: 's', x: box.x + box.width / 2, y: box.y + box.height }] : [])];
 }
-export function pickHandle(state: State, p: Point) {
+export function pickHandle(state: State, p: Point): SelectionHandle | undefined {
   const selected = selectedElements(state);
-  return selected.length && !selected.some(element => layerModel(state.elements, state.layers).locked.has(element.id)) ? selectionHandles(state)
+  if (!selected.length || selected.some(element => layerModel(state.elements, state.layers).locked.has(element.id))) return;
+  const tolerance = 9 / state.zoom;
+  const handle = selectionHandles(state)
     .map(handle => ({ handle, distance: Math.hypot(handle.x - p.x, handle.y - p.y) }))
-    .filter(candidate => candidate.distance < 9 / state.zoom).sort((a, b) => a.distance - b.distance || Number(b.handle.key.endsWith('Binding')) - Number(a.handle.key.endsWith('Binding')))[0]?.handle : undefined;
+    .filter(candidate => candidate.distance < tolerance).sort((a, b) => a.distance - b.distance || Number(b.handle.key.endsWith('Binding')) - Number(a.handle.key.endsWith('Binding')))[0]?.handle;
+  if (handle) return handle;
+  if (selected.length === 1 && isConnector(selected[0])) return;
+  const { box, angle } = selectionGeometry(state);
+  const center = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  const local = rotatePoint(p, center, -angle);
+  const pad = selectionPadding(state, selected);
+  const edgeTolerance = pad && (selected.length > 1 || selected[0].type === 'frame') ? pad : tolerance;
+  const horizontal = local.x >= box.x - pad && local.x <= box.x + box.width + pad;
+  const vertical = local.y >= box.y - pad && local.y <= box.y + box.height + pad;
+  const sides = [
+    { key: 'w', x: box.x, y: center.y, distance: vertical ? Math.abs(local.x - (box.x - pad)) : Infinity },
+    { key: 'e', x: box.x + box.width, y: center.y, distance: vertical ? Math.abs(local.x - (box.x + box.width + pad)) : Infinity },
+  ];
+  if (!selected.every(element => element.type === 'text')) sides.push(
+    { key: 'n', x: center.x, y: box.y, distance: horizontal ? Math.abs(local.y - (box.y - pad)) : Infinity },
+    { key: 's', x: center.x, y: box.y + box.height, distance: horizontal ? Math.abs(local.y - (box.y + box.height + pad)) : Infinity },
+  );
+  const side = sides.sort((a, b) => a.distance - b.distance)[0];
+  if (side.distance < edgeTolerance) return { key: side.key, ...rotatePoint(side, center, angle) };
 }
-export function selectionHandles(state: State) {
+function selectionPadding(state: State, selected: Element[]) {
+  return (selected.length === 1 && selected[0].type === 'image') || selected.every(element => element.type === 'text') ? 0 : 5 / state.zoom;
+}
+const midpoint = (a: Point, b: Point) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+export function selectionHandles(state: State): SelectionHandle[] {
   const selected = selectedElements(state);
   if (!selected.length) return [];
+  if (selected.length === 1 && selected[0].type === 'arrow') {
+    const arrow = selected[0], points = connectorPoints(arrow);
+    if (points.length < 2) return [];
+    const segment = Math.floor((points.length - 2) / 2);
+    const middle = arrowType(arrow) === 'right-angle' ? [{ key: 'midpoint', pointIndex: segment, ...midpoint(points[segment], points[segment + 1]) }]
+      : points.length === 2 ? [{ key: 'midpoint', pointIndex: 1, ...midpoint(points[0], points[1]) }]
+      : points.slice(1, -1).map((point, i) => ({ key: 'bend', pointIndex: i + 1, ...point }));
+    return [
+      { key: 'startBinding', ...points[0] },
+      ...middle,
+      { key: 'endBinding', ...points.at(-1)! },
+    ];
+  }
   const { box: b, angle } = selectionGeometry(state), center = { x: b.x + b.width / 2, y: b.y + b.height / 2 };
   const primary = selected.filter(element => !element.containerId || !state.selected.has(element.containerId));
   const handles = [...handleLocations(b, selected.length === 1 && selected[0].type === 'text', primary.length === 1 && primary[0].type === 'stickynote'), { key: 'rotate', x: center.x, y: b.y - 32 / state.zoom }].map(handle => ({ ...handle, ...rotatePoint(handle, center, angle) }));
@@ -139,15 +179,22 @@ export function drawCanvas(canvas: HTMLCanvasElement, state: State) {
   }
   if (selectedElements(state).length && !state.editing) {
     const selected = selectedElements(state), image = selected.length === 1 && selected[0].type === 'image' ? selected[0] : null;
-    const { box: b, angle } = selectionGeometry(state), pad = image || selected.every(element => element.type === 'text') ? 0 : 5 / state.zoom;
     ctx.strokeStyle = state.theme === 'dark' ? '#b4afff' : '#6965db'; ctx.lineWidth = 1 / state.zoom;
-    const boxes = individualSelectionBoxes(state, selected);
-    if (boxes.length > 1) for (const { box, angle, pad } of boxes) drawSelectionBox(ctx, box, angle, pad);
-    drawSelectionBox(ctx, b, angle, pad);
+    if (selected.length !== 1 || selected[0].type !== 'arrow') {
+      const { box, angle } = selectionGeometry(state), pad = selectionPadding(state, selected);
+      const boxes = individualSelectionBoxes(state, selected);
+      if (boxes.length > 1) for (const { box, angle, pad } of boxes) drawSelectionBox(ctx, box, angle, pad);
+      drawSelectionBox(ctx, box, angle, pad);
+    }
     for (const h of selected.some(element => layerModel(state.elements, state.layers).locked.has(element.id)) ? [] : selectionHandles(state)) {
+      if (h.key === 'midpoint') {
+        ctx.fillStyle = state.theme === 'dark' ? '#b4afff80' : '#6965db80';
+        ctx.beginPath(); ctx.arc(h.x, h.y, 5 / state.zoom, 0, Math.PI * 2); ctx.fill();
+        continue;
+      }
       ctx.fillStyle = state.theme === 'dark' ? '#232329' : '#ffffff';
       ctx.beginPath();
-      if (h.key === 'rotate' || h.key.endsWith('Binding')) ctx.arc(h.x, h.y, 5 / state.zoom, 0, Math.PI * 2);
+      if (h.key === 'rotate' || h.key === 'bend' || h.key.endsWith('Binding')) ctx.arc(h.x, h.y, 5 / state.zoom, 0, Math.PI * 2);
       else ctx.roundRect(h.x - 4 / state.zoom, h.y - 4 / state.zoom, 8 / state.zoom, 8 / state.zoom, image ? 2 / state.zoom : 0);
       ctx.fill(); ctx.stroke();
     }

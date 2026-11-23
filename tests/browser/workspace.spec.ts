@@ -38,6 +38,45 @@ test('layer dragging reparents objects, synchronizes selection, and moves proper
   await page.locator('#canvas').focus(); await page.keyboard.press('Delete');
   expect((await saved(page)).pages[0].elements).toHaveLength(3);
 });
+for (const theme of ['light', 'dark']) for (const width of [375, 1440]) {
+  test(`layer destinations use the shared dropdown at ${width}px in ${theme}`, async ({ page, browserName }, testInfo) => {
+    await page.setViewportSize({ width, height: 812 });
+    await seed(page, [rectangle('frame', 450, { type: 'frame', name: 'Container' }), rectangle('a', 500)], theme);
+    const actions = page.getByRole('button', { name: 'Actions for Rectangle', exact: true });
+    const trigger = page.getByRole('combobox', { name: /Move Rectangle to/ });
+    const list = page.getByRole('listbox', { name: 'Move Rectangle to', exact: true });
+    await actions.click();
+    await expect(trigger).toHaveText('Choose destination');
+    expect(await trigger.locator('span').evaluate(label => label.scrollWidth <= label.clientWidth)).toBe(true);
+    await trigger.click();
+    await expect(list).toBeVisible();
+    await expect(list.getByRole('option')).toHaveText(['Page root', 'Container']);
+    await expect(list.getByRole('option', { selected: true })).toHaveCount(0);
+    if (browserName === 'chromium') await page.screenshot({ path: testInfo.outputPath('layer-destinations.png') });
+    await page.keyboard.press('Escape');
+    await expect(list).toBeHidden();
+    await expect(actions).toHaveAttribute('aria-expanded', 'true');
+    await expect(trigger).toBeFocused();
+    await trigger.press('c');
+    await expect(list.getByRole('option', { name: 'Container' })).toHaveAttribute('data-active', 'true');
+    await trigger.press('Enter');
+    await expect(trigger).toBeHidden();
+    const parent = page.locator('[data-layer-key="e:frame"]');
+    const layer = page.locator('[data-layer-select="e:a"]');
+    await expect(parent.locator('[data-layer-select="e:a"]')).toBeVisible();
+    await expect(layer).toBeFocused();
+    expect((await saved(page)).pages[0].elements.find((element: { id: string }) => element.id === 'a').frameId).toBe('frame');
+    await layer.press('ControlOrMeta+z');
+    await expect(parent.locator('[data-layer-select="e:a"]')).toHaveCount(0);
+    await page.locator('#canvas').press('ControlOrMeta+Shift+z');
+    await expect(parent.locator('[data-layer-select="e:a"]')).toBeVisible();
+    await actions.click();
+    await trigger.click();
+    await list.getByRole('option', { name: 'Page root' }).click();
+    await expect(parent.locator('[data-layer-select="e:a"]')).toHaveCount(0);
+  });
+}
+
 for (const theme of ['light', 'dark']) {
   test(`layer icon centers and fits a partially covered shape on desktop in ${theme}`, async ({ page, browserName }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
