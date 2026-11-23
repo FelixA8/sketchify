@@ -22,7 +22,13 @@ test('pages keep independent canvases and undo histories, and native saves inclu
 test('layer dragging reparents objects, synchronizes selection, and moves properties to the right', async ({ page }) => {
   await seed(page, [rectangle('frame', 450, { type: 'frame', name: 'Container', width: 500, height: 240 }), rectangle('a', 500), rectangle('b', 700)]);
   const source = page.locator('[data-layer-key="e:a"] > .layer-row'), target = page.locator('[data-layer-key="e:frame"] > .layer-row');
-  await source.dragTo(target);
+  const sourceBox = (await source.boundingBox())!, targetBox = (await target.boundingBox())!;
+  await page.mouse.move(sourceBox.x + sourceBox.width / 2, sourceBox.y + sourceBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(targetBox.x + targetBox.width / 2, targetBox.y + targetBox.height / 2, { steps: 10 });
+  await page.mouse.move(targetBox.x + targetBox.width / 2, targetBox.y + targetBox.height / 2);
+  await expect(target).toHaveAttribute('data-drop', 'inside');
+  await page.mouse.up();
   expect((await saved(page)).pages[0].elements.find((element: { id: string }) => element.id === 'a').frameId).toBe('frame');
   await page.locator('[data-layer-select="e:a"] > svg').click();
   await expect(page.locator('[data-layer-select="e:a"]')).toHaveAttribute('aria-pressed', 'true');
