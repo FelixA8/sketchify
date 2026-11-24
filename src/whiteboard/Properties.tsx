@@ -94,12 +94,12 @@ export function Properties() {
   const rectangleText = alignmentSelection.length > 0 && alignmentSelection.every(element => ['rectangle', 'stickynote'].includes(element.type) || element.type === 'text' && (['rectangle', 'stickynote'].includes(s.editing?.container?.type ?? '') || s.elements.some(parent => parent.id === element.containerId && ['rectangle', 'stickynote'].includes(parent.type))));
   const standaloneText = alignmentSelection.length ? alignmentSelection.every(element => element.type === 'text' && !element.containerId) : s.tool === 'text';
   return <section id="properties" className="surface properties" aria-label="Shape properties" hidden={!show}>
-    {!s.editing && (selected.some(e => e.type === 'arrow') || !selected.length && s.tool === 'arrow') && <ArrowTypes selected={selected} />}
     {!images && <Section label={notes ? 'Text color' : 'Stroke'}><Swatches property="strokeColor" colors={['#1b1b1f', '#c92a2a', '#2b8a3e', '#1971c2', '#e67700']} value={style.strokeColor} /></Section>}
     {notes && <Section label="Note color"><Swatches property="backgroundColor" colors={[...NOTE_COLORS]} value={style.backgroundColor} /></Section>}
     {!images && (!text && !notes ? <>
       <Section label="Background"><Swatches property="backgroundColor" colors={['transparent', '#ffc9c9', '#b2f2bb', '#a5d8ff', '#ffec99']} value={style.backgroundColor} /></Section>
       {style.backgroundColor !== 'transparent' && <Section label="Fill"><Choices property="fillStyle" items={[[ 'hachure', 'Hachure', '╱╱'], ['cross-hatch', 'Cross hatch', '╳'], ['solid', 'Solid', '■']]} value={style.fillStyle} /></Section>}
+      {!s.editing && (selected.some(e => e.type === 'arrow') || !selected.length && s.tool === 'arrow') && <ArrowTypes selected={selected} />}
       <Section label="Stroke width"><Choices property="strokeWidth" items={[[1, 'Thin', <StrokeWidth key="thin" value={1} />], [2, 'Medium', <StrokeWidth key="medium" value={2} />], [4, 'Thick', <StrokeWidth key="thick" value={4} />]]} value={style.strokeWidth} /></Section>
       <Section label="Stroke style"><Choices property="strokeStyle" items={[[ 'solid', 'Solid stroke', '━'], ['dashed', 'Dashed stroke', '╍╍'], ['dotted', 'Dotted stroke', '···']]} value={style.strokeStyle} /></Section>
       <Section label="Sloppiness"><Choices property="roughness" items={[[0, 'Architect', <Sloppiness key="0" value={0} />], [1, 'Artist', <Sloppiness key="1" value={1} />], [2, 'Cartoonist', <Sloppiness key="2" value={2} />]]} value={style.roughness} /></Section>
