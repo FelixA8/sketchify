@@ -4,7 +4,7 @@ import { HANDWRITING_FONT_URL, EXCALIFONT_CSS } from '../fonts';
 import { appearanceBootstrap } from '../appearance';
 export const metadata: Metadata = {
   title: 'Sketchify | Local whiteboard',
-  description: 'A local sketching canvas. Draw shapes, connect ideas, and save your work on your device.',
+  description: 'Sketchify is a browser whiteboard with a friendly UI for sketching hand-drawn diagrams and saving your work on your device.',
   icons: {
     icon: [{ url: '/favicon.ico', sizes: '16x16 32x32 48x48' }, { url: '/favicon-32.png', type: 'image/png', sizes: '32x32' }],
     apple: { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },

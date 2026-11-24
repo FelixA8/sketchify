@@ -17,6 +17,8 @@ for (const mobile of [false, true]) for (const theme of ['light', 'dark']) test(
   await page.goto('/');
   await page.locator('[data-tool="arrow"]').click();
   if (mobile) await page.locator('#style-toggle').click();
+  await expect(page.locator('#properties .prop-label').filter({ hasText: /^(Background|Arrow type|Stroke width)$/ }))
+    .toHaveText(['Background', 'Arrow type', 'Stroke width']);
   const types = page.getByRole('group', { name: 'Arrow type' });
   const straight = types.getByRole('button', { name: 'Straight', exact: true });
   const curved = types.getByRole('button', { name: 'Curved', exact: true });
